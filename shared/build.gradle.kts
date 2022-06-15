@@ -3,6 +3,7 @@ plugins {
     kotlin("multiplatform")
     id("com.android.library")
     alias(libs.plugins.kotest)
+    alias(libs.plugins.moko.kswift)
 }
 
 kotlin {
@@ -28,7 +29,20 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting
+        all {
+            languageSettings.apply {
+                optIn("kotlin.RequiresOptIn")
+                optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
+            }
+        }
+
+        val commonMain by getting {
+            dependencies {
+                implementation(libs.koin.core)
+                implementation(libs.kotlinx.koroutines.core)
+                implementation(libs.moko.mvvm)
+            }
+        }
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
@@ -42,7 +56,11 @@ kotlin {
                 implementation(libs.kotest.runner.junit5.jvm)
             }
         }
-        val androidMain by getting
+        val androidMain by getting {
+            dependencies {
+                implementation(libs.koin.android)
+            }
+        }
         val androidTest by getting
         val iosX64Main by getting
         val iosArm64Main by getting
@@ -72,4 +90,10 @@ android {
         minSdk = 26
         targetSdk = 32
     }
+}
+
+kswift {
+    install(dev.icerock.moko.kswift.plugin.feature.SealedToSwiftEnumFeature)
+
+    excludeLibrary("kotlinx-coroutines-core")
 }
