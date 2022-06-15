@@ -1,12 +1,10 @@
 package ru.olegivo.repeatodo
 
-import kotlin.test.Test
-import kotlin.test.assertTrue
+import io.kotest.core.spec.style.FreeSpec
+import kotlin.test.assertContains
 
-class CommonGreetingTest {
-
-    @Test
-    fun testExample() {
-        assertTrue(Greeting().greeting().contains("Hello"), "Check 'Hello' is mentioned")
+class GreetingTest : FreeSpec({
+    "should contains Hello" {
+        assertContains(Greeting().greeting(), "Hello", message = "Check 'Hello' is mentioned")
     }
-}
+})

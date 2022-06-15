@@ -6,6 +6,8 @@ pluginManagement {
     }
 }
 
+enableFeaturePreview("VERSION_CATALOGS")
+
 rootProject.name = "RepeaTodo"
 include(":androidApp")
 include(":shared")

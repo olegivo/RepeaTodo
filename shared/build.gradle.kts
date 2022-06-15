@@ -1,11 +1,22 @@
+@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
+    alias(libs.plugins.kotest)
 }
 
 kotlin {
+    jvm {
+//        compilations.all {
+//            kotlinOptions.jvmTarget = "1.8"
+//        }
+//        withJava()
+        testRuns["test"].executionTask.configure {
+            useJUnitPlatform()
+        }
+    }
     android()
-    
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -21,6 +32,14 @@ kotlin {
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
+                implementation(libs.kotest.framework.engine)
+                implementation(libs.kotest.framework.datatest)
+                implementation(libs.kotest.assertions.core)
+            }
+        }
+        val jvmTest by getting {
+            dependencies {
+                implementation(libs.kotest.runner.junit5.jvm)
             }
         }
         val androidMain by getting
