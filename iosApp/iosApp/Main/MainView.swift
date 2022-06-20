@@ -18,8 +18,7 @@ struct MainView: View {
     var body: some View {
         NavigationView {
             ZStack(alignment: .bottomTrailing) {
-                List {
-                }
+                TasksListView.factory()
                 Button(action: {
                     viewModel.onAddTaskClicked()
                 }) {

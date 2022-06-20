@@ -9,10 +9,13 @@ import ru.olegivo.repeatodo.add.presentation.AddTaskViewModelImpl
 import ru.olegivo.repeatodo.main.navigation.MainNavigator
 import ru.olegivo.repeatodo.main.presentation.MainViewModel
 import ru.olegivo.repeatodo.main.presentation.MainViewModelImpl
+import ru.olegivo.repeatodo.presentation.TasksListViewModelImpl
+import ru.olegivo.repeatodo.presentation.TasksListViewModel
 
 actual fun platformModule() = module {
     factory { MainViewModelImpl(get()) }.bind<MainViewModel>()
     factory { AddTaskViewModelImpl(get()) }.bind<AddTaskViewModel>()
+    factory { TasksListViewModelImpl(get()) }.bind<TasksListViewModel>()
 }
 
 object MainComponent : KoinComponent {
@@ -22,4 +25,8 @@ object MainComponent : KoinComponent {
 
 object AddTaskComponent : KoinComponent {
     fun addTaskViewModel() = get<AddTaskViewModel>()
+}
+
+object TasksListComponent : KoinComponent {
+    fun tasksListViewModel() = get<TasksListViewModel>()
 }

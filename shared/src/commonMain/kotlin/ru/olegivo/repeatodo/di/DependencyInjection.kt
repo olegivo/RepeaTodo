@@ -29,6 +29,7 @@ object DependencyInjection {
         single { MainNavigatorImpl() }.bind<MainNavigator>()
         single<TasksRepository> { TasksRepositoryImpl() }
         factory<AddTaskUseCase> { AddTaskUseCaseImpl(get()) }
+        factory<GetTasksListUseCase> { GetTasksListUseCaseImpl(get()) }
     }
 }
 
