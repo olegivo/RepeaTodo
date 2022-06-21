@@ -51,11 +51,14 @@ kotlin {
                 implementation(libs.kotest.framework.engine)
                 implementation(libs.kotest.framework.datatest)
                 implementation(libs.kotest.assertions.core)
+                implementation(libs.kotlinx.coroutines.test)
+                implementation(libs.turbine)
             }
         }
         val jvmTest by getting {
             dependencies {
                 implementation(libs.kotest.runner.junit5.jvm)
+                implementation(libs.sqlDelight.driver.sqlite)
             }
         }
         val androidMain by getting {

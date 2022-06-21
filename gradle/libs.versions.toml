@@ -6,6 +6,7 @@ kotlinxCoroutines = "1.6.0-native-mt"
 mokoKswift = "0.5.0"
 mokoMvvm = "0.13.0"
 sqlDelight = "1.5.3"
+turbine = "0.8.0"
 
 [plugins]
 kotest = { id = "io.kotest.multiplatform", version.ref = "kotest" }
@@ -24,6 +25,7 @@ kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.
 kotest-runner-junit5-jvm = { module = "io.kotest:kotest-runner-junit5-jvm", version.ref = "kotest" }
 
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 
 moko-mvvm = { module = "dev.icerock.moko:mvvm-core", version.ref = "mokoMvvm" }
 
@@ -31,3 +33,5 @@ sqlDelight-driver-android = { module = "com.squareup.sqldelight:android-driver",
 sqlDelight-driver-native = { module = "com.squareup.sqldelight:native-driver", version.ref = "sqlDelight" }
 sqlDelight-driver-sqlite = { module = "com.squareup.sqldelight:sqlite-driver", version.ref = "sqlDelight" }
 sqlDelight-extensions-coroutines = { module = "com.squareup.sqldelight:coroutines-extensions", version.ref = "sqlDelight" }
+
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
