@@ -4,5 +4,5 @@ import kotlinx.coroutines.flow.Flow
 import ru.olegivo.repeatodo.domain.models.Task
 
 class GetTasksListUseCaseImpl(private val tasksRepository: TasksRepository) : GetTasksListUseCase {
-    override fun invoke(): Flow<List<Task>> = tasksRepository.tasks
+    override fun invoke(): Flow<List<Task>> = tasksRepository.getTasks()
 }

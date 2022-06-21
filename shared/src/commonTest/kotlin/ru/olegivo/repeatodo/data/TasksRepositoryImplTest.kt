@@ -1,47 +1,95 @@
 package ru.olegivo.repeatodo.data
 
-import app.cash.turbine.test
-import io.kotest.core.spec.style.FreeSpec
+import io.kotest.core.spec.IsolationMode
 import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.collections.shouldNotContain
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.*
+import ru.olegivo.repeatodo.assertItem
 import ru.olegivo.repeatodo.domain.TasksRepository
 import ru.olegivo.repeatodo.domain.models.Task
+import ru.olegivo.repeatodo.domain.models.createTask
+import ru.olegivo.repeatodo.kotest.FreeSpec
+import ru.olegivo.repeatodo.kotest.LifecycleMode
 import ru.olegivo.repeatodo.randomString
 
-internal class TasksRepositoryImplTest : FreeSpec({
-    "TasksRepositoryImpl created" - {
-        val task = Task(uuid = randomString(), title = randomString())
-        val tasks = mutableListOf<Task>()
-        val localTasksDataSource = FakeLocalTasksDataSource(tasks)
+internal class TasksRepositoryImplTest : FreeSpec(LifecycleMode.Root) {
 
-        val tasksRepository: TasksRepository = TasksRepositoryImpl(localTasksDataSource)
+    override fun isolationMode() = IsolationMode.InstancePerLeaf
 
-        tasksRepository.tasks.test {
-            awaitItem().shouldBeEmpty()
-            awaitComplete()
-        }
+    init {
+        "TasksRepositoryImpl created" - {
+            val task = createTask()
+            val localTasksDataSource = FakeLocalTasksDataSource()
 
-        "add" {
-            tasksRepository.add(task)
+            val tasksRepository: TasksRepository = TasksRepositoryImpl(localTasksDataSource)
 
-            tasksRepository.tasks.test {
-                awaitItem() shouldBe listOf(task)
-                awaitComplete()
+            "empty data source" - {
+
+                "tasks should be empty" {
+                    tasksRepository.getTasks().assertItem { shouldBeEmpty() }
+                }
+
+                "update not exist before should add the task" {
+                    tasksRepository.update(task)
+
+                    localTasksDataSource.getTasks().assertItem {
+                        shouldContain(task)
+                    }
+                }
+
+                "add" - {
+                    tasksRepository.add(task)
+
+                    "tasks should contain added task" {
+                        tasksRepository.getTasks().assertItem { shouldBe(listOf(task)) }
+                    }
+
+                    "get should return null WHEN specified not exist task uuid" {
+                        tasksRepository.getTask(uuid = randomString()).assertItem { shouldBeNull() }
+                    }
+
+                    "get should return added task WHEN specified added task uuid" {
+                        tasksRepository.getTask(uuid = task.uuid).assertItem { shouldBe(task) }
+                    }
+
+                    "update added task" {
+                        val newVersion = createTask().copy(uuid = task.uuid)
+                        tasksRepository.update(newVersion)
+
+                        localTasksDataSource.getTasks().assertItem {
+                            shouldNotContain(task)
+                            shouldContain(newVersion)
+                        }
+                    }
+                }
             }
         }
     }
-}) {
 
-    class FakeLocalTasksDataSource(var tasks: MutableList<Task>) : LocalTasksDataSource {
+    class FakeLocalTasksDataSource : LocalTasksDataSource {
 
-        override fun getTasks(): Flow<List<Task>> {
-            return flowOf(tasks)
-        }
+        private val tasks = MutableStateFlow(listOf<Task>())
+
+        override fun getTasks(): Flow<List<Task>> = tasks
 
         override fun add(task: Task) {
-            tasks.add(task)
+            tasks.update { it + task }
+        }
+
+        override fun getTask(uuid: String) =
+            tasks.map { it.firstOrNull { task -> task.uuid == uuid } }
+
+        override suspend fun update(task: Task): Boolean {
+            val exist = getTask(task.uuid).first()
+            return if (exist != null) {
+                tasks.update { prev -> prev.filter { it != exist } + task }
+                true
+            } else {
+                false
+            }
         }
     }
 }

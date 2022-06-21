@@ -15,7 +15,15 @@ class LocalTasksDataSourceImpl(private val db: RepeaTodoDb) : LocalTasksDataSour
             .asFlow()
             .mapToList()
 
+    override fun getTask(uuid: String): Flow<Task?> {
+        TODO("Not yet implemented")
+    }
+
     override fun add(task: Task) {
         db.taskQueries.addTask(task.doDb())
+    }
+
+    override suspend fun update(task: Task): Boolean {
+        TODO("Not yet implemented")
     }
 }

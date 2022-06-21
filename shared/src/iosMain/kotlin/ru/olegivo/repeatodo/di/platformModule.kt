@@ -7,11 +7,12 @@ import org.koin.dsl.module
 import ru.olegivo.repeatodo.add.presentation.AddTaskViewModel
 import ru.olegivo.repeatodo.add.presentation.AddTaskViewModelImpl
 import ru.olegivo.repeatodo.db.DriverFactory
+import ru.olegivo.repeatodo.edit.presentation.EditTaskViewModel
+import ru.olegivo.repeatodo.list.presentation.TasksListViewModel
+import ru.olegivo.repeatodo.list.presentation.TasksListViewModelImpl
 import ru.olegivo.repeatodo.main.navigation.MainNavigator
 import ru.olegivo.repeatodo.main.presentation.MainViewModel
 import ru.olegivo.repeatodo.main.presentation.MainViewModelImpl
-import ru.olegivo.repeatodo.list.presentation.TasksListViewModel
-import ru.olegivo.repeatodo.list.presentation.TasksListViewModelImpl
 
 actual fun platformModule() = module {
     single { DriverFactory() }
@@ -21,14 +22,22 @@ actual fun platformModule() = module {
 }
 
 object MainComponent : KoinComponent {
+
     fun mainViewModel() = get<MainViewModel>()
     fun mainNavigator() = get<MainNavigator>()
 }
 
 object AddTaskComponent : KoinComponent {
+
     fun addTaskViewModel() = get<AddTaskViewModel>()
 }
 
+object EditTaskComponent : KoinComponent {
+
+    fun editTaskViewModel() = get<EditTaskViewModel>()
+}
+
 object TasksListComponent : KoinComponent {
+
     fun tasksListViewModel() = get<TasksListViewModel>()
 }

@@ -10,10 +10,14 @@ fun Random.azstring(size: Int): String {
 }
 
 data class Position(private val range: IntRange, val position: Int) {
+
     val isLast = position == range.last
 }
 
-fun <T> randomList(count: Int = Random.nextInt(from = 5, until = 10), producer: Position.() -> T): List<T> =
+fun <T> randomList(
+    count: Int = Random.nextInt(from = 5, until = 10),
+    producer: Position.() -> T,
+): List<T> =
     (0 until count).let { range ->
         range.map { position ->
             Position(range, position).producer()

@@ -22,6 +22,8 @@
 		5570ECF5285F05A50062D58D /* TasksListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5570ECF4285F05A50062D58D /* TasksListView.swift */; };
 		5570ECF72861B0370062D58D /* AddTaskInlinedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5570ECF62861B0370062D58D /* AddTaskInlinedView.swift */; };
 		5570ECFA2861BCBC0062D58D /* EnvironmentValuesExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5570ECF92861BCBC0062D58D /* EnvironmentValuesExtensions.swift */; };
+		5570ECFD28620C640062D58D /* EditTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5570ECFC28620C640062D58D /* EditTaskView.swift */; };
+		5570ECFF28620CEC0062D58D /* EditTaskViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5570ECFE28620CEC0062D58D /* EditTaskViewModel.swift */; };
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
 /* End PBXBuildFile section */
 
@@ -54,6 +56,8 @@
 		5570ECF4285F05A50062D58D /* TasksListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksListView.swift; sourceTree = "<group>"; };
 		5570ECF62861B0370062D58D /* AddTaskInlinedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskInlinedView.swift; sourceTree = "<group>"; };
 		5570ECF92861BCBC0062D58D /* EnvironmentValuesExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentValuesExtensions.swift; sourceTree = "<group>"; };
+		5570ECFC28620C640062D58D /* EditTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTaskView.swift; sourceTree = "<group>"; };
+		5570ECFE28620CEC0062D58D /* EditTaskViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTaskViewModel.swift; sourceTree = "<group>"; };
 		7555FF7B242A565900829871 /* iosApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iosApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF82242A565900829871 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -122,6 +126,15 @@
 			path = Utils;
 			sourceTree = "<group>";
 		};
+		5570ECFB28620C450062D58D /* EditTask */ = {
+			isa = PBXGroup;
+			children = (
+				5570ECFE28620CEC0062D58D /* EditTaskViewModel.swift */,
+				5570ECFC28620C640062D58D /* EditTaskView.swift */,
+			);
+			path = EditTask;
+			sourceTree = "<group>";
+		};
 		7555FF72242A565900829871 = {
 			isa = PBXGroup;
 			children = (
@@ -143,6 +156,7 @@
 			isa = PBXGroup;
 			children = (
 				552A5B59285B64940059083D /* AddTask */,
+				5570ECFB28620C450062D58D /* EditTask */,
 				552A5B56285B62D00059083D /* Main */,
 				5570ECF1285F04C30062D58D /* TasksList */,
 				552A5B4D285B60D90059083D /* Modifiers */,
@@ -265,8 +279,10 @@
 				552A5B4F285B60EE0059083D /* NavigationHandler.swift in Sources */,
 				5570ECF5285F05A50062D58D /* TasksListView.swift in Sources */,
 				5570ECF3285F04E60062D58D /* TasksListViewModel.swift in Sources */,
+				5570ECFF28620CEC0062D58D /* EditTaskViewModel.swift in Sources */,
 				5570ECF0285E00FE0062D58D /* AddTaskViewModel.swift in Sources */,
 				5570ECEC285DC1EA0062D58D /* FlowPublisher.swift in Sources */,
+				5570ECFD28620C640062D58D /* EditTaskView.swift in Sources */,
 				5570ECEE285DC2740062D58D /* MainViewModel.swift in Sources */,
 				555A7D0F285A266F00AAD493 /* AddTaskView.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
