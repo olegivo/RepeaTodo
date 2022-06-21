@@ -1,10 +1,9 @@
-package ru.olegivo.repeatodo.domain
+package ru.olegivo.repeatodo.data
 
 import kotlinx.coroutines.flow.Flow
 import ru.olegivo.repeatodo.domain.models.Task
 
-interface TasksRepository {
-    val tasks: Flow<List<Task>>
-
+interface LocalTasksDataSource {
+    fun getTasks(): Flow<List<Task>>
     fun add(task: Task)
 }

@@ -6,13 +6,15 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import ru.olegivo.repeatodo.add.presentation.AddTaskViewModel
 import ru.olegivo.repeatodo.add.presentation.AddTaskViewModelImpl
+import ru.olegivo.repeatodo.db.DriverFactory
 import ru.olegivo.repeatodo.main.navigation.MainNavigator
 import ru.olegivo.repeatodo.main.presentation.MainViewModel
 import ru.olegivo.repeatodo.main.presentation.MainViewModelImpl
-import ru.olegivo.repeatodo.presentation.TasksListViewModelImpl
-import ru.olegivo.repeatodo.presentation.TasksListViewModel
+import ru.olegivo.repeatodo.list.presentation.TasksListViewModel
+import ru.olegivo.repeatodo.list.presentation.TasksListViewModelImpl
 
 actual fun platformModule() = module {
+    single { DriverFactory() }
     factory { MainViewModelImpl(get()) }.bind<MainViewModel>()
     factory { AddTaskViewModelImpl(get()) }.bind<AddTaskViewModel>()
     factory { TasksListViewModelImpl(get()) }.bind<TasksListViewModel>()

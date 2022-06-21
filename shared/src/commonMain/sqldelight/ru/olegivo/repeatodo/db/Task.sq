@@ -1,0 +1,13 @@
+CREATE TABLE Task (
+    uuid TEXT NOT NULL PRIMARY KEY,
+    title TEXT NOT NULL
+);
+
+CREATE INDEX task_uuid ON Task(uuid);
+
+getTasks:
+SELECT * FROM Task;
+
+addTask:
+INSERT INTO Task
+VALUES ?;

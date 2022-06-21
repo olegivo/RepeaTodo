@@ -10,7 +10,7 @@ import ru.olegivo.repeatodo.randomString
 internal class TasksRepositoryImplTest : FreeSpec({
     "TasksRepositoryImpl created" - {
         val tasksRepository: TasksRepository = TasksRepositoryImpl()
-        val task = Task(title = randomString())
+        val task = Task(, title = randomString())
 
         tasksRepository.tasks.shouldBeEmpty()
 

@@ -4,6 +4,7 @@ plugins {
     id("com.android.library")
     alias(libs.plugins.kotest)
     alias(libs.plugins.moko.kswift)
+    alias(libs.plugins.sqlDelight)
 }
 
 kotlin {
@@ -39,8 +40,9 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(libs.koin.core)
-                implementation(libs.kotlinx.koroutines.core)
+                implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.moko.mvvm)
+                implementation(libs.sqlDelight.extensions.coroutines)
             }
         }
         val commonTest by getting {
@@ -59,6 +61,7 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 implementation(libs.koin.android)
+                implementation(libs.sqlDelight.driver.android)
             }
         }
         val androidTest by getting
@@ -66,6 +69,10 @@ kotlin {
         val iosArm64Main by getting
         val iosSimulatorArm64Main by getting
         val iosMain by creating {
+            dependencies {
+                implementation(libs.sqlDelight.driver.native)
+            }
+
             dependsOn(commonMain)
             iosX64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)
@@ -96,4 +103,12 @@ kswift {
     install(dev.icerock.moko.kswift.plugin.feature.SealedToSwiftEnumFeature)
 
     excludeLibrary("kotlinx-coroutines-core")
+}
+
+sqldelight {
+    database("RepeaTodoDb") {
+        packageName = "ru.olegivo.repeatodo.db"
+        schemaOutputDirectory = file("build/dbs")
+        verifyMigrations = true
+    }
 }
