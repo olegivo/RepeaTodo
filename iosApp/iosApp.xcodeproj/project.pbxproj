@@ -20,6 +20,7 @@
 		5570ECF0285E00FE0062D58D /* AddTaskViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5570ECEF285E00FE0062D58D /* AddTaskViewModel.swift */; };
 		5570ECF3285F04E60062D58D /* TasksListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5570ECF2285F04E60062D58D /* TasksListViewModel.swift */; };
 		5570ECF5285F05A50062D58D /* TasksListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5570ECF4285F05A50062D58D /* TasksListView.swift */; };
+		5570ECFA2861BCBC0062D58D /* EnvironmentValuesExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5570ECF92861BCBC0062D58D /* EnvironmentValuesExtensions.swift */; };
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
 /* End PBXBuildFile section */
 
@@ -50,6 +51,7 @@
 		5570ECEF285E00FE0062D58D /* AddTaskViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskViewModel.swift; sourceTree = "<group>"; };
 		5570ECF2285F04E60062D58D /* TasksListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksListViewModel.swift; sourceTree = "<group>"; };
 		5570ECF4285F05A50062D58D /* TasksListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksListView.swift; sourceTree = "<group>"; };
+		5570ECF92861BCBC0062D58D /* EnvironmentValuesExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentValuesExtensions.swift; sourceTree = "<group>"; };
 		7555FF7B242A565900829871 /* iosApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iosApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF82242A565900829871 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -109,6 +111,14 @@
 			path = TasksList;
 			sourceTree = "<group>";
 		};
+		5570ECF82861BC930062D58D /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				5570ECF92861BCBC0062D58D /* EnvironmentValuesExtensions.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
 		7555FF72242A565900829871 = {
 			isa = PBXGroup;
 			children = (
@@ -133,6 +143,7 @@
 				5570ECF1285F04C30062D58D /* TasksList */,
 				552A5B59285B64940059083D /* AddTask */,
 				552A5B4D285B60D90059083D /* Modifiers */,
+				5570ECF82861BC930062D58D /* Utils */,
 				058557BA273AAA24004C7B11 /* Assets.xcassets */,
 				7555FF82242A565900829871 /* ContentView.swift */,
 				7555FF8C242A565B00829871 /* Info.plist */,
@@ -246,6 +257,7 @@
 			files = (
 				552A5B58285B62E50059083D /* MainView.swift in Sources */,
 				552A5B53285B619C0059083D /* NavigationDirection.swift in Sources */,
+				5570ECFA2861BCBC0062D58D /* EnvironmentValuesExtensions.swift in Sources */,
 				552A5B4F285B60EE0059083D /* NavigationHandler.swift in Sources */,
 				5570ECF5285F05A50062D58D /* TasksListView.swift in Sources */,
 				5570ECF3285F04E60062D58D /* TasksListViewModel.swift in Sources */,
