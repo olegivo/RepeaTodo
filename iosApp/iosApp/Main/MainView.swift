@@ -10,6 +10,8 @@ import SwiftUI
 import shared
 
 struct MainView: View {
+    @Environment(\.isPreview) var isPreview
+    
     @StateObject
     private var viewModel: MainViewModelObservableObject
     @StateObject
@@ -17,35 +19,30 @@ struct MainView: View {
 
     var body: some View {
         NavigationView {
-            ZStack(alignment: .bottomTrailing) {
-                TasksListView.factory()
-                Button(action: {
-                    viewModel.onAddTaskClicked()
-                }) {
-                    Image(systemName: "plus")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .foregroundColor(.white)
-                        .frame(width: 24, height: 24)
-                        .padding()
-                        .background(Color.accentColor)
-                        .cornerRadius(12)
-                }
-                .padding([.bottom, .trailing])
+            VStack() {
+                Spacer()
+                Divider()
+                TasksListView.factory(isPreview: isPreview)
+                Divider()
+                AddTaskInlinedView.factory(isPreview: isPreview)
+                    .padding()
             }
         }
         .navigationTitle("Todos")
         .handleNavigation($navigator.navigationDirection)
     }
     
-    static func factory() -> MainView {
+    static func factory(isPreview: Bool = false) -> MainView {
         let di = MainComponent()
-        return MainView(viewModel: di.mainViewModel().asObservableObject(), navigator: di.mainNavigator().asObservableObject())
+        return MainView(
+            viewModel: (isPreview ? FakeMainViewModel() : di.mainViewModel()).asObservableObject(),
+            navigator: (isPreview ? FakeMainNavigator() : di.mainNavigator()).asObservableObject()
+        )
     }
 }
 
-//struct MainView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        MainView()
-//    }
-//}
+struct MainView_Previews: PreviewProvider {
+    static var previews: some View {
+        MainView.factory(isPreview: true)
+    }
+}
