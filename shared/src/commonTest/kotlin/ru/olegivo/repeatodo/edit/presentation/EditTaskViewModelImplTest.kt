@@ -17,20 +17,19 @@
 
 package ru.olegivo.repeatodo.edit.presentation
 
-import app.cash.turbine.test
 import io.kotest.core.spec.IsolationMode
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldBeEmpty
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.update
 import ru.olegivo.repeatodo.assertItem
-import ru.olegivo.repeatodo.assertNoEvents
 import ru.olegivo.repeatodo.domain.GetTaskUseCase
 import ru.olegivo.repeatodo.domain.SaveTaskUseCase
+import ru.olegivo.repeatodo.domain.WorkState
 import ru.olegivo.repeatodo.domain.models.Task
 import ru.olegivo.repeatodo.kotest.FreeSpec
 import ru.olegivo.repeatodo.kotest.LifecycleMode
@@ -56,24 +55,41 @@ internal class EditTaskViewModelImplTest : FreeSpec(LifecycleMode.Root) {
             )
 
             "initial state" - {
-                viewModel.isLoading.assertItem { shouldBeFalse() } // TODO: change loading state
-                viewModel.isSaving.assertItem { shouldBeFalse() }
+                viewModel.isLoading.assertItem { shouldBeTrue() }
+                viewModel.isLoadingError.assertItem { shouldBeFalse() }
                 viewModel.canSave.assertItem { shouldBeFalse() }
+                viewModel.isSaving.assertItem { shouldBeFalse() }
                 viewModel.title.assertItem { shouldBeEmpty() }
-                viewModel.onSaved.assertNoEvents()
-                saveTaskUseCase.hasStarted.shouldBeFalse()
-                saveTaskUseCase.hasCompleted.shouldBeFalse()
 
-                "when has no task with specified uuid" {
-                    getTaskUseCase.completeRequest(null)
+                "request failed" {
+                    getTaskUseCase.setResultError()
 
-                    viewModel.title.test { awaitItem() shouldBe "" }
+                    viewModel.isLoading.assertItem { shouldBeFalse() }
+                    viewModel.isLoadingError.assertItem { shouldBeTrue() }
+                    viewModel.canSave.assertItem { shouldBeFalse() }
+                    viewModel.isSaving.assertItem { shouldBeFalse() }
+                    viewModel.title.assertItem { shouldBeEmpty() }
                 }
 
-                "after request complete" - {
-                    getTaskUseCase.completeRequest(initialTask)
+                "request complete successfully" - {
+                    getTaskUseCase.setResultCompleted(initialTask)
 
+                    viewModel.isLoading.assertItem { shouldBeFalse() }
+                    viewModel.isLoadingError.assertItem { shouldBeFalse() }
+                    viewModel.isSaving.assertItem { shouldBeFalse() }
                     viewModel.title.assertItem { shouldBe(initialTask.title) }
+
+                    "can't save WHEN has no changes" {
+                        viewModel.canSave.assertItem { shouldBeFalse() }
+                    }
+
+                    "clear title" - {
+                        viewModel.title.update { "" }
+
+                        "canSave should be false WHEN the state is invalid" {
+                            viewModel.canSave.assertItem { shouldBeFalse() }
+                        }
+                    }
 
                     "change title to other not empty" - {
                         val newTitle = randomString()
@@ -84,49 +100,29 @@ internal class EditTaskViewModelImplTest : FreeSpec(LifecycleMode.Root) {
                         }
 
                         "onSaveClicked" - {
-                            viewModel.onSaved.test {
-                                viewModel.onSaveClicked()
+                            viewModel.onSaveClicked()
 
-                                "isSaving should be true" {
-                                    viewModel.isSaving.assertItem { shouldBeTrue() }
-                                }
+                            "should start saving" - {
+                                viewModel.isSaving.assertItem { shouldBeTrue() }
 
-                                "onSaved should not be signaled" {
-                                    expectNoEvents()
-                                }
+                                "save completed" - {
+                                    saveTaskUseCase.setResultCompleted()
 
-                                "should start saving" - {
-                                    saveTaskUseCase.hasStarted.shouldBeTrue()
-
-                                    "still saving" {
-                                        viewModel.isSaving.assertItem { shouldBeTrue() }
+                                    "saving state is completed" {
+                                        viewModel.isSaving.assertItem { shouldBeFalse() }
+                                        viewModel.isSaveError.assertItem { shouldBeFalse() }
                                     }
+                                }
 
-                                    "after save" - {
-                                        saveTaskUseCase.completeRequest()
+                                "save error" - {
+                                    saveTaskUseCase.setResultError()
 
-                                        "should not be in saving state" {
-                                            viewModel.isSaving.assertItem { shouldBeFalse() }
-                                        }
-
-                                        "should be saved" {
-                                            saveTaskUseCase.hasCompleted.shouldBeTrue()
-                                        }
-
-                                        "onSaved should be signaled" {
-                                            awaitItem()
-                                        }
+                                    "saving state is error" {
+                                        viewModel.isSaving.assertItem { shouldBeFalse() }
+                                        viewModel.isSaveError.assertItem { shouldBeTrue() }
                                     }
                                 }
                             }
-                        }
-                    }
-
-                    "clear title" - {
-                        viewModel.title.update { "" }
-
-                        "canSave should be true" {
-                            viewModel.canSave.assertItem { shouldBeFalse() }
                         }
                     }
                 }
@@ -134,37 +130,39 @@ internal class EditTaskViewModelImplTest : FreeSpec(LifecycleMode.Root) {
         }
     }
 
-    class FakeGetTaskUseCase() : GetTaskUseCase {
+    class FakeGetTaskUseCase : GetTaskUseCase {
 
-        private val getTaskRequest = CompletableDeferred<Task?>()
+        private val workState = MutableStateFlow<WorkState<Task>?>(null)
 
-        fun completeRequest(task: Task?) {
-            getTaskRequest.complete(task)
+        override operator fun invoke(uuid: String): Flow<WorkState<Task>> {
+            workState.update { WorkState.InProgress() }
+            return workState.filterNotNull()
         }
 
-        override operator fun invoke(uuid: String) = flow {
-            emit(getTaskRequest.await())
+        fun setResultCompleted(task: Task) {
+            workState.update { WorkState.Completed(task) }
+        }
+
+        fun setResultError() {
+            workState.update { WorkState.Error() }
         }
     }
 
     class FakeSaveTaskUseCase : SaveTaskUseCase {
 
-        private val saveTaskRequest = Job()
+        private val workState = MutableStateFlow<WorkState<Unit>?>(null)
 
-        var hasStarted = false
-            private set
-
-        var hasCompleted = false
-            private set
-
-        fun completeRequest() {
-            saveTaskRequest.complete()
+        override suspend operator fun invoke(task: Task): Flow<WorkState<Unit>> {
+            workState.update { WorkState.InProgress() }
+            return workState.filterNotNull()
         }
 
-        override suspend operator fun invoke(task: Task) {
-            hasStarted = true
-            saveTaskRequest.join()
-            hasCompleted = true
+        fun setResultCompleted() {
+            workState.update { WorkState.Completed(Unit) }
+        }
+
+        fun setResultError() {
+            workState.update { WorkState.Error() }
         }
     }
 }

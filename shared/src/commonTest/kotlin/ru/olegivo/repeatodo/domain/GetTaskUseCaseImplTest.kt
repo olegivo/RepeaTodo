@@ -17,11 +17,12 @@
 
 package ru.olegivo.repeatodo.domain
 
+import app.cash.turbine.test
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
-import ru.olegivo.repeatodo.assertItem
+import io.kotest.matchers.types.shouldBeInstanceOf
 import ru.olegivo.repeatodo.data.FakeTasksRepository
+import ru.olegivo.repeatodo.domain.models.Task
 import ru.olegivo.repeatodo.domain.models.createTask
 import ru.olegivo.repeatodo.randomString
 
@@ -32,16 +33,21 @@ internal class GetTaskUseCaseImplTest : FreeSpec() {
             val tasksRepository = FakeTasksRepository()
             val useCase: GetTaskUseCase = GetTaskUseCaseImpl(tasksRepository = tasksRepository)
 
-            "null should be returned WHEN has no task with specified uuid" {
+            "error should be returned WHEN has no task with specified uuid" {
                 useCase.invoke(uuid = randomString())
-                    .assertItem { shouldBeNull() }
+                    .test {
+                        awaitItem() shouldBe (WorkState.InProgress())
+                        awaitItem() shouldBe (WorkState.Error())
+                    }
             }
 
-            "!the task should be returned WHEN has task with specified uuid" - {
+            "the task should be returned WHEN has task with specified uuid" {
                 tasksRepository.add(task)
 
-                useCase.invoke(uuid = randomString())
-                    .assertItem { shouldBe(task) }
+                useCase.invoke(uuid = task.uuid).test {
+                    awaitItem() shouldBe (WorkState.InProgress())
+                    awaitItem().shouldBeInstanceOf<WorkState.Completed<Task>>().result shouldBe task
+                }
             }
         }
     }

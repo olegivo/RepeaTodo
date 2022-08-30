@@ -15,24 +15,15 @@
  * RepeaTodo.
  */
 
-package ru.olegivo.repeatodo.edit.presentation
+package ru.olegivo.repeatodo
 
+import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import ru.olegivo.repeatodo.domain.WorkState
-import ru.olegivo.repeatodo.domain.models.Task
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 
-interface EditTaskViewModel {
+abstract class BaseViewModel : ViewModel() {
 
-    val title: MutableStateFlow<String>
-    val isLoading: Flow<Boolean>
-    val isLoadingError: StateFlow<Boolean>
-    val canSave: StateFlow<Boolean>
-    val isSaving: StateFlow<Boolean>
-    val isSaveError: StateFlow<Boolean>
-    val onSaved: Flow<Unit>
-    fun onSaveClicked()
-    fun onCleared()
+    protected fun <T> Flow<T>.asState(initialValue: T) =
+        stateIn(viewModelScope, SharingStarted.Lazily, initialValue)
 }

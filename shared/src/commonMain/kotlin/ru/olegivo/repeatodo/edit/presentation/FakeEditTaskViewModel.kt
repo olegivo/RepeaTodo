@@ -13,26 +13,26 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * RepeaTodo.
- */
+ */package ru.olegivo.repeatodo.edit.presentation
 
-package ru.olegivo.repeatodo.edit.presentation
-
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import ru.olegivo.repeatodo.domain.WorkState
-import ru.olegivo.repeatodo.domain.models.Task
 
-interface EditTaskViewModel {
+class FakeEditTaskViewModel : EditTaskViewModel {
 
-    val title: MutableStateFlow<String>
-    val isLoading: Flow<Boolean>
-    val isLoadingError: StateFlow<Boolean>
-    val canSave: StateFlow<Boolean>
-    val isSaving: StateFlow<Boolean>
-    val isSaveError: StateFlow<Boolean>
-    val onSaved: Flow<Unit>
-    fun onSaveClicked()
-    fun onCleared()
+    override val title = MutableStateFlow("Task 1")
+    override val isLoading = MutableStateFlow(false)
+    override val isLoadingError = MutableStateFlow(false)
+    override val canSave = MutableStateFlow(false)
+    override val isSaving = MutableStateFlow(false)
+    override val isSaveError = MutableStateFlow(false)
+    override val onSaved = MutableSharedFlow<Unit>()
+
+    override fun onSaveClicked() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onCleared() {
+        TODO("Not yet implemented")
+    }
 }

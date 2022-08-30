@@ -20,11 +20,18 @@ package ru.olegivo.repeatodo.main.navigation
 import kotlinx.coroutines.flow.SharedFlow
 
 interface MainNavigator {
+
     val navigationDestination: SharedFlow<NavigationDestination?>
 
     fun addTask()
 }
 
-enum class NavigationDestination {
-    AddTask
+//enum class NavigationDestination {
+//    AddTask,
+//    EditTask()
+//}
+
+sealed class NavigationDestination {
+    object AddTask : NavigationDestination()
+    data class EditTask(val uuid: String) : NavigationDestination()
 }
