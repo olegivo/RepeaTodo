@@ -25,6 +25,7 @@ import ru.olegivo.repeatodo.add.presentation.AddTaskViewModel
 import ru.olegivo.repeatodo.add.presentation.AddTaskViewModelImpl
 import ru.olegivo.repeatodo.db.DriverFactory
 import ru.olegivo.repeatodo.edit.presentation.EditTaskViewModel
+import ru.olegivo.repeatodo.edit.presentation.EditTaskViewModelImpl
 import ru.olegivo.repeatodo.list.presentation.TasksListViewModel
 import ru.olegivo.repeatodo.list.presentation.TasksListViewModelImpl
 import ru.olegivo.repeatodo.main.navigation.MainNavigator
@@ -35,6 +36,7 @@ actual fun platformModule() = module {
     single { DriverFactory() }
     factory { MainViewModelImpl(get()) }.bind<MainViewModel>()
     factory { AddTaskViewModelImpl(get()) }.bind<AddTaskViewModel>()
+    factory { EditTaskViewModelImpl(get(), get(), get()) }.bind<EditTaskViewModel>()
     factory { TasksListViewModelImpl(get()) }.bind<TasksListViewModel>()
 }
 

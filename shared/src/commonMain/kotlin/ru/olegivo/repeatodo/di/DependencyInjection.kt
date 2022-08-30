@@ -17,6 +17,7 @@
 
 package ru.olegivo.repeatodo.di
 
+import org.koin.core.Koin
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.koin.dsl.KoinAppDeclaration
@@ -31,6 +32,7 @@ import ru.olegivo.repeatodo.main.navigation.MainNavigator
 import ru.olegivo.repeatodo.main.navigation.MainNavigatorImpl
 
 object DependencyInjection {
+
     fun initKoin(appDeclaration: KoinAppDeclaration = {}) {
         startKoin {
             appDeclaration()
@@ -38,7 +40,7 @@ object DependencyInjection {
         }
     }
 
-    fun initKoinAndReturnInstance(appDeclaration: KoinAppDeclaration = {}): org.koin.core.Koin =
+    fun initKoinAndReturnInstance(appDeclaration: KoinAppDeclaration = {}): Koin =
         startKoin {
             appDeclaration()
             modules(commonModule(), platformModule())
@@ -51,6 +53,8 @@ object DependencyInjection {
         single { createDatabase(get()) }
         factory<AddTaskUseCase> { AddTaskUseCaseImpl(get()) }
         factory<GetTasksListUseCase> { GetTasksListUseCaseImpl(get()) }
+        factory<GetTaskUseCase> { GetTaskUseCaseImpl(get()) }
+        factory<SaveTaskUseCase> { SaveTaskUseCaseImpl(get()) }
     }
 }
 

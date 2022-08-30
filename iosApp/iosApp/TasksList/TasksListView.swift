@@ -16,12 +16,31 @@ struct TasksListView: View {
     @StateObject
     private var viewModel: TasksListViewModelObservableObject
     
+    @EnvironmentObject
+    private var navigator: MainNavigatorObservableObject
+
     var body: some View {
         ScrollView {
             LazyVStack(alignment: .leading) {
                 ForEach(viewModel.state.tasks) { task in
-                    Text(task.title)
-                        .padding()
+                    HStack {
+                        Text(task.title)
+                            .padding()
+                        Spacer()
+                        Button {
+                            navigator.navigationDirection = .forward(destination: .EditTask(uuid: task.uuid), style: .present)
+                        } label: {
+                            Image(systemName: "pencil")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .foregroundColor(.white)
+                                .frame(width: 20, height: 20)
+                                .padding()
+//                                .background(Color.accentColor)
+                                .cornerRadius(12)
+                        }
+
+                    }
                 }
             }
             .cornerRadius(CGFloat(12))
@@ -30,7 +49,9 @@ struct TasksListView: View {
     }
     
     static func factory(isPreview: Bool = false) -> TasksListView {
-        return TasksListView(viewModel: (isPreview ? FakeTasksListViewModel() : TasksListComponent().tasksListViewModel()).asObservableObject())
+        return TasksListView(
+            viewModel: (isPreview ? FakeTasksListViewModel() : TasksListComponent().tasksListViewModel()).asObservableObject()
+        )
     }
 }
 
@@ -42,8 +63,9 @@ struct TasksListView_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
             TasksListView.factory(isPreview: true)
+                .environmentObject(FakeMainNavigator().asObservableObject())
         }
-        .background(Color.purple)
+        .background(Color.gray)
         .cornerRadius(CGFloat(12))
     }
 }

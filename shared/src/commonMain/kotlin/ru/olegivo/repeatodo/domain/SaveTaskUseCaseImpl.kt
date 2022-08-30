@@ -17,11 +17,18 @@
 
 package ru.olegivo.repeatodo.domain
 
+import kotlinx.coroutines.flow.flow
 import ru.olegivo.repeatodo.domain.models.Task
 
 class SaveTaskUseCaseImpl(private val tasksRepository: TasksRepository) : SaveTaskUseCase {
 
-    override suspend fun invoke(task: Task) {
-        tasksRepository.update(task)
+    override suspend fun invoke(task: Task) = flow {
+        try {
+            emit(WorkState.InProgress())
+            tasksRepository.update(task)
+            emit(WorkState.Completed(Unit))
+        } catch (e: Throwable) {
+            emit(WorkState.Error())
+        }
     }
 }

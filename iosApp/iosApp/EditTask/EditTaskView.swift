@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import shared
 
 struct EditTaskView: View {
     @Environment(\.isPreview) var isPreview
@@ -25,7 +26,7 @@ struct EditTaskView: View {
                     Button(action: {
                         viewModel.onSaveClicked()
                     }) {
-                        if viewModel.isLoading {
+                        if viewModel.isSaving {
                             ProgressView()
                         } else {
                             Text("Save")
@@ -49,7 +50,8 @@ struct EditTaskView: View {
     }
     
     static func factory(isPreview: Bool = false) -> EditTaskView {
-        return EditTaskView(viewModel: EditTaskViewModelObservableObject())
+        let viewModel = isPreview ? FakeEditTaskViewModel() : EditTaskComponent().editTaskViewModel()
+        return EditTaskView(viewModel: viewModel.asObservableObject())
     }
 
 }

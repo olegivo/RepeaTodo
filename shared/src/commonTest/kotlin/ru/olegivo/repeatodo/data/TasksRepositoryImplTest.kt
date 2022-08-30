@@ -76,7 +76,7 @@ internal class TasksRepositoryImplTest : FreeSpec(LifecycleMode.Root) {
                         val newVersion = createTask().copy(uuid = task.uuid)
                         tasksRepository.update(newVersion)
 
-                        localTasksDataSource.getTasks().assertItem {
+                        localTasksDataSource.getTasks().value.apply {
                             shouldNotContain(task)
                             shouldContain(newVersion)
                         }
@@ -90,7 +90,7 @@ internal class TasksRepositoryImplTest : FreeSpec(LifecycleMode.Root) {
 
         private val tasks = MutableStateFlow(listOf<Task>())
 
-        override fun getTasks(): Flow<List<Task>> = tasks
+        override fun getTasks(): StateFlow<List<Task>> = tasks
 
         override fun add(task: Task) {
             tasks.update { it + task }
