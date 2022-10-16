@@ -34,6 +34,7 @@ android {
             isMinifyEnabled = false
         }
     }
+    namespace = "ru.olegivo.repeatodo.android"
 }
 
 dependencies {
