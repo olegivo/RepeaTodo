@@ -117,6 +117,7 @@ android {
         minSdk = 26
         targetSdk = 32
     }
+    namespace = "ru.olegivo.repeatodo"
 }
 
 kswift {
