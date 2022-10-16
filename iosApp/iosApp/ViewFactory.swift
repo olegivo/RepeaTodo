@@ -13,11 +13,12 @@ class ViewFactory {
     
     @ViewBuilder
     func makeView(_ destination: NavigationDestination) -> some View {
+        let d: NavigationDestination = .AddTask.shared
         switch destination {
-        case .AddTask:
+        case .AddTask.shared:
             AddTaskView.factory()
-//        case .EditTask(let taskUuid):
-//            EditTaskView.factory()
+        case .EditTask(let taskUuid):
+            EditTaskView.factory()
         default:
             EmptyView()
         }

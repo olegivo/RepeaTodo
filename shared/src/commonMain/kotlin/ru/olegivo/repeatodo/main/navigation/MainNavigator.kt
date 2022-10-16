@@ -26,12 +26,12 @@ interface MainNavigator {
     fun addTask()
 }
 
-//enum class NavigationDestination {
-//    AddTask,
-//    EditTask()
-//}
-
-sealed class NavigationDestination {
-    object AddTask : NavigationDestination()
-    data class EditTask(val uuid: String) : NavigationDestination()
+enum class NavigationDestination {
+    AddTask,
+    EditTask()
 }
+
+//sealed class NavigationDestination {
+//    object AddTask : NavigationDestination()
+//    data class EditTask(val uuid: String) : NavigationDestination()
+//}
