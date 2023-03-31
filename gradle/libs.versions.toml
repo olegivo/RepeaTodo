@@ -1,12 +1,12 @@
 [versions]
-koin = "3.2.0"
-kotlin = "1.6.21"
-kotest = "5.3.1"
-kotlinxCoroutines = "1.6.0-native-mt"
-mokoKswift = "0.5.0"
-mokoMvvm = "0.13.0"
-sqlDelight = "1.5.3"
-turbine = "0.8.0"
+koin = "3.2.2"
+kotlin = "1.8.10"
+kotest = "5.5.1"
+kotlinxCoroutines = "1.6.4"
+mokoKswift = "0.6.1"
+mokoMvvm = "0.14.0"
+sqlDelight = "1.5.5"
+turbine = "0.12.0"
 
 [plugins]
 kotest = { id = "io.kotest.multiplatform", version.ref = "kotest" }
