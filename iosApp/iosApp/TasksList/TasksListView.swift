@@ -28,7 +28,7 @@ struct TasksListView: View {
                             .padding()
                         Spacer()
                         Button {
-                            navigator.navigationDirection = .forward(destination: .EditTask(uuid: task.uuid), style: .present)
+                            navigator.navigationDirection = .forward(destination: .edittask(uuid: task.uuid), style: .present)
                         } label: {
                             Image(systemName: "pencil")
                                 .resizable()
