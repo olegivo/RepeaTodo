@@ -19,6 +19,7 @@ package ru.olegivo.repeatodo.di
 
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import org.koin.core.parameter.parametersOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import ru.olegivo.repeatodo.add.presentation.AddTaskViewModel
@@ -53,7 +54,7 @@ object AddTaskComponent : KoinComponent {
 
 object EditTaskComponent : KoinComponent {
 
-    fun editTaskViewModel() = get<EditTaskViewModel>()
+    fun editTaskViewModel(uuid: String) = get<EditTaskViewModel> { parametersOf(uuid) }
 }
 
 object TasksListComponent : KoinComponent {

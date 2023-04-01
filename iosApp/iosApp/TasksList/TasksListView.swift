@@ -18,7 +18,7 @@ struct TasksListView: View {
     
     @EnvironmentObject
     private var navigator: MainNavigatorObservableObject
-
+    
     var body: some View {
         ScrollView {
             LazyVStack(alignment: .leading) {
@@ -27,19 +27,22 @@ struct TasksListView: View {
                         Text(task.title)
                             .padding()
                         Spacer()
-                        Button {
-                            navigator.navigationDirection = .forward(destination: .edittask(uuid: task.uuid), style: .present)
-                        } label: {
-                            Image(systemName: "pencil")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .foregroundColor(.white)
-                                .frame(width: 20, height: 20)
-                                .padding()
-//                                .background(Color.accentColor)
-                                .cornerRadius(12)
-                        }
-
+                        Button (
+                            action: {
+                                navigator.navigationDirection = .forward(destination: .EditTask(uuid: task.uuid), style: .present)
+                            },
+                            label: {
+                                Image(systemName: "pencil")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .foregroundColor(.gray)
+                                    .frame(width: 32, height: 32)
+                                    .padding()
+                                //                                .background(Color.accentColor)
+                                    .cornerRadius(12)
+                                
+                            }
+                        )
                     }
                 }
             }

@@ -54,7 +54,7 @@ public class AddTaskViewModelObservableObject : ObservableObject {
             .receive(on: RunLoop.main)
             .assign(to: &$canAdd)
         
-        (wrapped.onAdded.asPublisher() as AnyPublisher<KotlinUnit, Never>)
+        (wrapped.onAdded.asPublisher() as AnyPublisher<Void, Never>)
             .receive(on: RunLoop.main)
             .sink(receiveValue: { [weak self] _ in
                 self?.navigationDirection = .back

@@ -49,8 +49,8 @@ struct EditTaskView: View {
         }
     }
     
-    static func factory(isPreview: Bool = false) -> EditTaskView {
-        let viewModel = isPreview ? FakeEditTaskViewModel() : EditTaskComponent().editTaskViewModel()
+    static func factory(uuid: String, isPreview: Bool = false) -> EditTaskView {
+        let viewModel = isPreview ? FakeEditTaskViewModel() : EditTaskComponent().editTaskViewModel(uuid: uuid)
         return EditTaskView(viewModel: viewModel.asObservableObject())
     }
 
@@ -58,6 +58,6 @@ struct EditTaskView: View {
 
 struct EditTaskView_Previews: PreviewProvider {
     static var previews: some View {
-        EditTaskView.factory(isPreview: true)
+        EditTaskView.factory(uuid: "The UUID", isPreview: true)
     }
 }
