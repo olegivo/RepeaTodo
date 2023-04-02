@@ -11,3 +11,7 @@ SELECT * FROM Task;
 addTask:
 INSERT INTO Task
 VALUES ?;
+
+getTask:
+SELECT * FROM Task
+WHERE uuid = :uuid;
