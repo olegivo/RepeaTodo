@@ -40,24 +40,28 @@ public class EditTaskViewModelObservableObject : ObservableObject {
         self.isSaving = wrapped.isSaving.value as! Bool
         self.canSave = wrapped.canSave.value as! Bool
         
-        (wrapped.title.asPublisher() as AnyPublisher<String, Never>)
+        wrapped.title.asPublisher()
             .receive(on: RunLoop.main)
             .assign(to: &$title)
         
-        (wrapped.isSaving.asPublisher() as AnyPublisher<Bool, Never>)
+        wrapped.isSaving.asPublisher()
             .receive(on: RunLoop.main)
             .assign(to: &$isSaving)
         
-        (wrapped.canSave.asPublisher() as AnyPublisher<Bool, Never>)
+        wrapped.canSave.asPublisher()
             .receive(on: RunLoop.main)
             .assign(to: &$canSave)
         
-        (wrapped.onSaved.asPublisher() as AnyPublisher<Void, Never>)
+        wrapped.onSaved.asPublisher()
             .receive(on: RunLoop.main)
-            .sink(receiveValue: { [weak self] _ in
+            .sink(receiveValue: { [weak self]  in
                 self?.navigationDirection = .back
             })
             .store(in: &cancellables)
+    }
+    
+    func onTitleChanged(_ title: String) {
+        wrapped.title.setValue(title)
     }
     
     func onSaveClicked() {

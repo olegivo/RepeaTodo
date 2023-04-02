@@ -19,7 +19,17 @@ struct EditTaskView: View {
         NavigationView {
             Form {
                 Section {
-                    TextField("Enter A Title Here", text: $viewModel.title)
+                    TextField(
+                        "Enter A Title Here",
+                        text: Binding(
+                            get: {
+                                viewModel.title
+                            },
+                            set: { v in
+                                viewModel.onTitleChanged(v)
+                            }
+                        )
+                    )
                 }
                 
                 Section {
