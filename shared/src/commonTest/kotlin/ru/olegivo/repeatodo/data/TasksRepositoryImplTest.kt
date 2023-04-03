@@ -45,20 +45,16 @@ internal class TasksRepositoryImplTest : FreeSpec(LifecycleMode.Root) {
 
             "empty data source" - {
 
-                "tasks should be empty" {
+                "getTasks should be empty" {
                     tasksRepository.getTasks().assertItem { shouldBeEmpty() }
                 }
 
-                "update not exist before should add the task" {
-                    tasksRepository.update(task)
-
-                    localTasksDataSource.getTasks().assertItem {
-                        shouldContain(task)
-                    }
+                "get should return null" {
+                    tasksRepository.getTask(uuid = task.uuid).assertItem { shouldBeNull() }
                 }
 
-                "add" - {
-                    tasksRepository.add(task)
+                "save" - {
+                    tasksRepository.save(task)
 
                     "tasks should contain added task" {
                         tasksRepository.getTasks().assertItem { shouldBe(listOf(task)) }
@@ -74,7 +70,7 @@ internal class TasksRepositoryImplTest : FreeSpec(LifecycleMode.Root) {
 
                     "update added task" {
                         val newVersion = createTask().copy(uuid = task.uuid)
-                        tasksRepository.update(newVersion)
+                        tasksRepository.save(newVersion)
 
                         localTasksDataSource.getTasks().value.apply {
                             shouldNotContain(task)
@@ -92,21 +88,11 @@ internal class TasksRepositoryImplTest : FreeSpec(LifecycleMode.Root) {
 
         override fun getTasks(): StateFlow<List<Task>> = tasks
 
-        override fun add(task: Task) {
-            tasks.update { it + task }
+        override fun save(task: Task) {
+            tasks.update { prev -> prev.filter { it.uuid != task.uuid } + task  }
         }
 
         override fun getTask(uuid: String) =
             tasks.map { it.firstOrNull { task -> task.uuid == uuid } }
-
-        override suspend fun update(task: Task): Boolean {
-            val exist = getTask(task.uuid).first()
-            return if (exist != null) {
-                tasks.update { prev -> prev.filter { it != exist } + task }
-                true
-            } else {
-                false
-            }
-        }
     }
 }

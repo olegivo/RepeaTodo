@@ -34,7 +34,7 @@ internal class SaveTaskUseCaseImplTest : FreeSpec() {
                 tasksRepository = tasksRepository
             )
             val origin = createTask()
-            tasksRepository.add(origin)
+            tasksRepository.save(origin)
             val newVersion = createTask().copy(uuid = origin.uuid)
 
             saveTaskUseCase(newVersion).test {

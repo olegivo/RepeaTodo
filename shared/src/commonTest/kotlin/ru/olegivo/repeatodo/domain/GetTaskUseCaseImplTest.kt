@@ -42,7 +42,7 @@ internal class GetTaskUseCaseImplTest : FreeSpec() {
             }
 
             "the task should be returned WHEN has task with specified uuid" {
-                tasksRepository.add(task)
+                tasksRepository.save(task)
 
                 useCase.invoke(uuid = task.uuid).test {
                     awaitItem() shouldBe (WorkState.InProgress())

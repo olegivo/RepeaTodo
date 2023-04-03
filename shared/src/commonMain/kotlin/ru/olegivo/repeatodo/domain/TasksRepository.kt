@@ -24,7 +24,6 @@ interface TasksRepository {
 
     fun getTasks(): Flow<List<Task>>
 
-    fun add(task: Task)
-    suspend fun update(task: Task)
+    suspend fun save(task: Task)
     fun getTask(uuid: String): Flow<Task?>
 }

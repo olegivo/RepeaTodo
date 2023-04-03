@@ -32,13 +32,9 @@ class FakeTasksRepository : TasksRepository {
 
     override fun getTasks() = tasks
 
-    override fun add(task: Task) {
-        tasks.update { it + task }
+    override suspend fun save(task: Task) {
+        tasks.update { prev -> prev.filter { it.uuid != task.uuid } + task }
         lastAddedTask = task
-    }
-
-    override suspend fun update(task: Task) {
-        getTasks().update { prev -> prev.filter { it.uuid != task.uuid } + task }
     }
 
     override fun getTask(uuid: String) =
