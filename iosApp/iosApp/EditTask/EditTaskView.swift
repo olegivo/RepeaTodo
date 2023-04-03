@@ -18,31 +18,35 @@ struct EditTaskView: View {
     var body: some View {
         NavigationView {
             Form {
-                Section {
-                    TextField(
-                        "Enter A Title Here",
-                        text: Binding(
-                            get: {
-                                viewModel.title
-                            },
-                            set: { v in
-                                viewModel.onTitleChanged(v)
-                            }
+                if viewModel.isLoading {
+                    ProgressView()
+                } else {
+                    Section {
+                        TextField(
+                            "Enter A Title Here",
+                            text: Binding(
+                                get: {
+                                    viewModel.title
+                                },
+                                set: { v in
+                                    viewModel.onTitleChanged(v)
+                                }
+                            )
                         )
-                    )
-                }
-                
-                Section {
-                    Button(action: {
-                        viewModel.onSaveClicked()
-                    }) {
-                        if viewModel.isSaving {
-                            ProgressView()
-                        } else {
-                            Text("Save")
-                        }
                     }
-                    .disabled(!viewModel.canSave)
+                    
+                    Section {
+                        Button(action: {
+                            viewModel.onSaveClicked()
+                        }) {
+                            if viewModel.isSaving {
+                                ProgressView()
+                            } else {
+                                Text("Save")
+                            }
+                        }
+                        .disabled(!viewModel.canSave)
+                    }
                 }
             }
             .navigationBarTitle("Edit Todo", displayMode: .inline)

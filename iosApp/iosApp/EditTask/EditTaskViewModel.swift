@@ -26,6 +26,9 @@ public class EditTaskViewModelObservableObject : ObservableObject {
     var title: String
     
     @Published
+    var isLoading:Bool
+    
+    @Published
     var isSaving:Bool
     
     @Published
@@ -37,12 +40,17 @@ public class EditTaskViewModelObservableObject : ObservableObject {
     init(wrapped: EditTaskViewModel) {
         self.wrapped = wrapped
         self.title = wrapped.title.value as! String
+        self.isLoading = true // TODO: self.isLoading = wrapped.isLoading.value as! Bool
         self.isSaving = wrapped.isSaving.value as! Bool
         self.canSave = wrapped.canSave.value as! Bool
         
         wrapped.title.asPublisher()
             .receive(on: RunLoop.main)
             .assign(to: &$title)
+        
+        wrapped.isLoading.asPublisher()
+            .receive(on: RunLoop.main)
+            .assign(to: &$isLoading)
         
         wrapped.isSaving.asPublisher()
             .receive(on: RunLoop.main)
