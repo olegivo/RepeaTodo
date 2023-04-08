@@ -60,6 +60,20 @@ struct EditTaskView: View {
                 }
             }
             .handleNavigation($viewModel.navigationDirection)
+            .alert(
+                "Can't load Task",
+                isPresented: $viewModel.isLoadingError,
+                actions: {
+                    Button("OK") {
+                        viewModel.onCancelClicked()
+                    }
+                }
+            )
+            .alert(
+                "Save error",
+                isPresented: $viewModel.isSaveError,
+                actions: { }
+            )
         }
     }
     
