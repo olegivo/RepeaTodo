@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Oleg Ivashchenko <olegivo@gmail.com>
+ * Copyright (C) 2023 Oleg Ivashchenko <olegivo@gmail.com>
  *
  * This file is part of RepeaTodo.
  *
@@ -15,17 +15,8 @@
  * RepeaTodo.
  */
 
-package ru.olegivo.repeatodo.di
+package ru.olegivo.repeatodo.android
 
-import org.koin.androidx.viewmodel.dsl.viewModelOf
-import org.koin.dsl.bind
-import org.koin.dsl.module
-import ru.olegivo.repeatodo.add.presentation.AddTaskViewModel
-import ru.olegivo.repeatodo.add.presentation.AddTaskViewModelImpl
-import ru.olegivo.repeatodo.main.presentation.MainViewModel
-import ru.olegivo.repeatodo.main.presentation.MainViewModelImpl
-
-actual fun platformModule() = module {
-    viewModelOf(::MainViewModelImpl).bind<MainViewModel>()
-    viewModelOf(::AddTaskViewModelImpl).bind<AddTaskViewModel>()
+enum class Routes(val route: String) {
+    Home("home");
 }

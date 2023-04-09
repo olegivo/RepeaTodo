@@ -17,21 +17,34 @@
 
 package ru.olegivo.repeatodo.android
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import ru.olegivo.repeatodo.Greeting
-import android.widget.TextView
-
-fun greet(): String {
-    return Greeting().greeting()
-}
+import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.Modifier
+import androidx.core.view.WindowCompat
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
-        val tv: TextView = findViewById(R.id.text_view)
-        tv.text = greet()
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        setContent {
+            MaterialTheme {
+                val navController = rememberNavController()
+                NavHost(navController = navController, startDestination = Routes.Home.route) {
+                    composable(Routes.Home.route) {
+                        MainScreen(Modifier.statusBarsPadding())
+                    }
+                }
+
+            }
+        }
     }
+
 }

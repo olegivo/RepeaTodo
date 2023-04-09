@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Oleg Ivashchenko <olegivo@gmail.com>
+ * Copyright (C) 2023 Oleg Ivashchenko <olegivo@gmail.com>
  *
  * This file is part of RepeaTodo.
  *
@@ -14,18 +14,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * RepeaTodo.
  */
+package ru.olegivo.repeatodo.android
 
-package ru.olegivo.repeatodo.di
+import android.app.Application
+import org.koin.android.ext.koin.androidContext
+import ru.olegivo.repeatodo.di.DependencyInjection
 
-import org.koin.androidx.viewmodel.dsl.viewModelOf
-import org.koin.dsl.bind
-import org.koin.dsl.module
-import ru.olegivo.repeatodo.add.presentation.AddTaskViewModel
-import ru.olegivo.repeatodo.add.presentation.AddTaskViewModelImpl
-import ru.olegivo.repeatodo.main.presentation.MainViewModel
-import ru.olegivo.repeatodo.main.presentation.MainViewModelImpl
-
-actual fun platformModule() = module {
-    viewModelOf(::MainViewModelImpl).bind<MainViewModel>()
-    viewModelOf(::AddTaskViewModelImpl).bind<AddTaskViewModel>()
+class App : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        DependencyInjection.initKoin {
+//            androidLogger(level = Level.ERROR)
+            androidContext(this@App)
+            modules(appModule)
+        }
+    }
 }
