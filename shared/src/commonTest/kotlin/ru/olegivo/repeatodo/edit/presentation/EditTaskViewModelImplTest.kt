@@ -61,7 +61,7 @@ internal class EditTaskViewModelImplTest : FreeSpec(LifecycleMode.Root) {
                 viewModel.isSaving.assertItem { shouldBeFalse() }
                 viewModel.title.assertItem { shouldBeEmpty() }
 
-                "request failed" {
+                "load request failed" {
                     getTaskUseCase.setResultError()
 
                     viewModel.isLoading.assertItem { shouldBeFalse() }
@@ -71,7 +71,7 @@ internal class EditTaskViewModelImplTest : FreeSpec(LifecycleMode.Root) {
                     viewModel.title.assertItem { shouldBeEmpty() }
                 }
 
-                "request complete successfully" - {
+                "load request complete successfully" - {
                     getTaskUseCase.setResultCompleted(initialTask)
 
                     viewModel.isLoading.assertItem { shouldBeFalse() }
@@ -108,9 +108,17 @@ internal class EditTaskViewModelImplTest : FreeSpec(LifecycleMode.Root) {
                                 "save completed" - {
                                     saveTaskUseCase.setResultCompleted()
 
-                                    "saving state is completed" {
+                                    "saving state is completed" - {
                                         viewModel.isSaving.assertItem { shouldBeFalse() }
                                         viewModel.isSaveError.assertItem { shouldBeFalse() }
+                                        viewModel.canSave.assertItem { shouldBeTrue() }
+
+                                        "can't save WHEN new task became origin" {
+                                            getTaskUseCase.setResultCompleted(
+                                                initialTask.copy(title = newTitle)
+                                            )
+                                            viewModel.canSave.assertItem { shouldBeFalse() }
+                                        }
                                     }
                                 }
 
@@ -120,6 +128,7 @@ internal class EditTaskViewModelImplTest : FreeSpec(LifecycleMode.Root) {
                                     "saving state is error" {
                                         viewModel.isSaving.assertItem { shouldBeFalse() }
                                         viewModel.isSaveError.assertItem { shouldBeTrue() }
+                                        viewModel.canSave.assertItem { shouldBeTrue() }
                                     }
                                 }
                             }
