@@ -15,13 +15,15 @@
  * RepeaTodo.
  */
 
-package ru.olegivo.repeatodo.db
+package ru.olegivo.repeatodo
 
-import ru.olegivo.repeatodo.db.Task as TaskDb
-import ru.olegivo.repeatodo.domain.models.Task as TaskDomain
+import dev.icerock.moko.mvvm.viewmodel.ViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 
-internal fun TaskDomain.toDb() =
-    TaskDb(
-        uuid = uuid,
-        title = title
-    )
+abstract class BaseViewModel : ViewModel() {
+
+    protected fun <T> Flow<T>.asState(initialValue: T) =
+        stateIn(viewModelScope, SharingStarted.Lazily, initialValue)
+}

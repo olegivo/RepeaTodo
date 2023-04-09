@@ -8,6 +8,10 @@ CREATE INDEX task_uuid ON Task(uuid);
 getTasks:
 SELECT * FROM Task;
 
-addTask:
-INSERT INTO Task
+saveTask:
+INSERT OR REPLACE INTO Task
 VALUES ?;
+
+getTask:
+SELECT * FROM Task
+WHERE uuid = :uuid;

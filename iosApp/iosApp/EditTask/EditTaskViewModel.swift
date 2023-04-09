@@ -10,7 +10,18 @@ import SwiftUI
 import Combine
 import shared
 
+
+public extension EditTaskViewModel {
+    func asObservableObject() -> EditTaskViewModelObservableObject {
+        return EditTaskViewModelObservableObject(wrapped: self)
+    }
+}
+
 public class EditTaskViewModelObservableObject : ObservableObject {
+    
+    private var wrapped: EditTaskViewModel
+    private var cancellables = Set<AnyCancellable>()
+
     @Published
     var title: String
     
@@ -18,20 +29,70 @@ public class EditTaskViewModelObservableObject : ObservableObject {
     var isLoading:Bool
     
     @Published
+    var isLoadingError:Bool
+    
+    @Published
     var canSave:Bool
+    
+    @Published
+    var isSaving:Bool
+    
+    @Published
+    var isSaveError:Bool
     
     @Published
     var navigationDirection: NavigationDirection?
     
-    init() {
-        title = ""
-        isLoading = false
-        canSave = false
+    init(wrapped: EditTaskViewModel) {
+        self.wrapped = wrapped
+        self.title = wrapped.title.value as! String
+        self.isLoading = true // TODO: self.isLoading = wrapped.isLoading.value as! Bool
+        self.isLoadingError = wrapped.isLoadingError.value as! Bool
+        self.canSave = wrapped.canSave.value as! Bool
+        self.isSaving = wrapped.isSaving.value as! Bool
+        self.isSaveError = wrapped.isSaveError.value as! Bool
+        
+        wrapped.title.asPublisher()
+            .receive(on: RunLoop.main)
+            .assign(to: &$title)
+        
+        wrapped.isLoading.asPublisher()
+            .receive(on: RunLoop.main)
+            .assign(to: &$isLoading)
+        
+        wrapped.isLoadingError.asPublisher()
+            .receive(on: RunLoop.main)
+            .assign(to: &$isLoadingError)
+        
+        wrapped.isSaving.asPublisher()
+            .receive(on: RunLoop.main)
+            .assign(to: &$isSaving)
+        
+        wrapped.isSaveError.asPublisher()
+            .receive(on: RunLoop.main)
+            .assign(to: &$isSaveError)
+        
+        wrapped.canSave.asPublisher()
+            .receive(on: RunLoop.main)
+            .assign(to: &$canSave)
+        
+        wrapped.onSaved.asPublisher()
+            .receive(on: RunLoop.main)
+            .sink(receiveValue: { [weak self]  in
+                self?.navigationDirection = .back
+            })
+            .store(in: &cancellables)
+    }
+    
+    func onTitleChanged(_ title: String) {
+        wrapped.title.setValue(title)
     }
     
     func onSaveClicked() {
+        wrapped.onSaveClicked()
     }
     
     func onCancelClicked() {
+        navigationDirection = .back
     }
 }

@@ -17,9 +17,11 @@
 
 package ru.olegivo.repeatodo.domain
 
+import app.cash.turbine.test
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldNotContain
+import io.kotest.matchers.shouldBe
 import ru.olegivo.repeatodo.assertItem
 import ru.olegivo.repeatodo.data.FakeTasksRepository
 import ru.olegivo.repeatodo.domain.models.createTask
@@ -32,10 +34,12 @@ internal class SaveTaskUseCaseImplTest : FreeSpec() {
                 tasksRepository = tasksRepository
             )
             val origin = createTask()
-            tasksRepository.add(origin)
+            tasksRepository.save(origin)
             val newVersion = createTask().copy(uuid = origin.uuid)
 
-            saveTaskUseCase(newVersion)
+            saveTaskUseCase(newVersion).test {
+                expectMostRecentItem() shouldBe WorkState.Completed(Unit)
+            }
 
             tasksRepository.getTasks().assertItem {
                 shouldNotContain(origin)
