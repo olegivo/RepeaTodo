@@ -18,8 +18,10 @@
 package ru.olegivo.repeatodo.list.presentation
 
 import kotlinx.coroutines.flow.StateFlow
+import ru.olegivo.repeatodo.domain.models.Task
 
 interface TasksListViewModel {
     val state: StateFlow<TasksListUiState>
+    fun onTaskEditClicked(task: Task)
     fun onCleared()
 }

@@ -34,6 +34,9 @@ class FakeTasksListViewModel(count: Int = 20) : TasksListViewModel {
         )
     )
 
+    override fun onTaskEditClicked(task: Task) {
+    }
+
     override fun onCleared() {
     }
 }

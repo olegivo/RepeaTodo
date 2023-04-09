@@ -15,14 +15,8 @@
  * RepeaTodo.
  */
 
-package ru.olegivo.repeatodo.android
+package ru.olegivo.repeatodo.edit.navigation
 
-import org.koin.android.ext.koin.androidContext
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.module
-import ru.olegivo.repeatodo.db.DriverFactory
-
-val appModule = module {
-    single { DriverFactory(androidContext()) }
-    singleOf(::AndroidNavigator)
+interface EditTaskNavigator {
+    fun editTask(uuid: String)
 }

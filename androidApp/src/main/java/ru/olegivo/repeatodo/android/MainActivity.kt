@@ -25,10 +25,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import org.koin.android.ext.android.inject
 
 class MainActivity : AppCompatActivity() {
+    private val androidNavigator: AndroidNavigator by inject()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -37,14 +39,15 @@ class MainActivity : AppCompatActivity() {
         setContent {
             MaterialTheme {
                 val navController = rememberNavController()
-                NavHost(navController = navController, startDestination = Routes.Home.route) {
-                    composable(Routes.Home.route) {
-                        MainScreen(Modifier.statusBarsPadding())
-                    }
+                androidNavigator.attachNavigation(navController)
+                NavHost(
+                    navController = navController,
+                    startDestination = NavRoutes.startRoute.getDestinationRoute(),
+                    modifier = Modifier.statusBarsPadding()
+                ) {
+                    NavRoutes.addTo(this)
                 }
-
             }
         }
     }
-
 }

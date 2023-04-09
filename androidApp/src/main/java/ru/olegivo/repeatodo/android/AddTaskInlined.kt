@@ -20,6 +20,8 @@ package ru.olegivo.repeatodo.android
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.Button
@@ -31,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.koin.compose.koinInject
@@ -59,7 +62,9 @@ internal fun AddTaskInlined(
                 .padding(16.dp)
                 .weight(1f),
             placeholder = { Text("Enter A Title Here") },
-            label = { Text("Title") }
+            label = { Text("Title") },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(onDone = { viewModel.onAddClicked() })
         )
         Button(
             onClick = { viewModel.onAddClicked() },

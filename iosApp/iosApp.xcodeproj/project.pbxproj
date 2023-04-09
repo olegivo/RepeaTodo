@@ -10,6 +10,8 @@
 		058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557BA273AAA24004C7B11 /* Assets.xcassets */; };
 		058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
+		5131CA6329EC461800BFC251 /* MainNavigator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5131CA6229EC461800BFC251 /* MainNavigator.swift */; };
+		5131CA6629EC47ED00BFC251 /* EnvironmentValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5131CA6529EC47ED00BFC251 /* EnvironmentValues.swift */; };
 		5168799D29D8CFA30067450C /* RepeaTodo_shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5168799B29D8CFA30067450C /* RepeaTodo_shared.swift */; };
 		552A5B4F285B60EE0059083D /* NavigationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552A5B4E285B60EE0059083D /* NavigationHandler.swift */; };
 		552A5B53285B619C0059083D /* NavigationDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552A5B52285B619C0059083D /* NavigationDirection.swift */; };
@@ -46,6 +48,8 @@
 		058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		2152FB032600AC8F00CF470E /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
 		4A8D5B7F5C25DCDF16C1D951 /* libPods-iosApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-iosApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5131CA6229EC461800BFC251 /* MainNavigator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainNavigator.swift; sourceTree = "<group>"; };
+		5131CA6529EC47ED00BFC251 /* EnvironmentValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentValues.swift; sourceTree = "<group>"; };
 		5168799B29D8CFA30067450C /* RepeaTodo_shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RepeaTodo_shared.swift; path = ../shared/build/bin/iosSimulatorArm64/debugFramework/sharedSwift/RepeaTodo_shared.swift; sourceTree = "<group>"; };
 		53F3EB61A669B189A1488218 /* Pods-iosApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.debug.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.debug.xcconfig"; sourceTree = "<group>"; };
 		552A5B4E285B60EE0059083D /* NavigationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationHandler.swift; sourceTree = "<group>"; };
@@ -85,6 +89,22 @@
 				058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		5131CA6129EC460200BFC251 /* Navigation */ = {
+			isa = PBXGroup;
+			children = (
+				5131CA6229EC461800BFC251 /* MainNavigator.swift */,
+				5131CA6529EC47ED00BFC251 /* EnvironmentValues.swift */,
+			);
+			path = Navigation;
+			sourceTree = "<group>";
+		};
+		5131CA6429EC47CE00BFC251 /* Environment */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Environment;
 			sourceTree = "<group>";
 		};
 		552A5B4D285B60D90059083D /* Modifiers */ = {
@@ -164,6 +184,8 @@
 			children = (
 				552A5B59285B64940059083D /* AddTask */,
 				5570ECFB28620C450062D58D /* EditTask */,
+				5131CA6429EC47CE00BFC251 /* Environment */,
+				5131CA6129EC460200BFC251 /* Navigation */,
 				552A5B56285B62D00059083D /* Main */,
 				5570ECF1285F04C30062D58D /* TasksList */,
 				552A5B4D285B60D90059083D /* Modifiers */,
@@ -194,7 +216,6 @@
 				53F3EB61A669B189A1488218 /* Pods-iosApp.debug.xcconfig */,
 				780BC1ADF091371F9BCAA8A3 /* Pods-iosApp.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -317,8 +338,10 @@
 				552A5B58285B62E50059083D /* MainView.swift in Sources */,
 				552A5B53285B619C0059083D /* NavigationDirection.swift in Sources */,
 				5570ECFA2861BCBC0062D58D /* EnvironmentValuesExtensions.swift in Sources */,
+				5131CA6329EC461800BFC251 /* MainNavigator.swift in Sources */,
 				552A5B4F285B60EE0059083D /* NavigationHandler.swift in Sources */,
 				5570ECF5285F05A50062D58D /* TasksListView.swift in Sources */,
+				5131CA6629EC47ED00BFC251 /* EnvironmentValues.swift in Sources */,
 				5570ECF3285F04E60062D58D /* TasksListViewModel.swift in Sources */,
 				5570ECFF28620CEC0062D58D /* EditTaskViewModel.swift in Sources */,
 				5570ECF0285E00FE0062D58D /* AddTaskViewModel.swift in Sources */,

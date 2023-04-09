@@ -26,7 +26,20 @@ class MainNavigatorImpl : MainNavigator {
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
 
+    override val navigationBack = MutableSharedFlow<Unit>(
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+
+    override fun back() {
+        navigationBack.tryEmit(Unit)
+    }
+
     override fun addTask() {
         navigationDestination.tryEmit(NavigationDestination.AddTask)
+    }
+
+    override fun editTask(uuid: String) {
+        navigationDestination.tryEmit(NavigationDestination.EditTask(uuid))
     }
 }
