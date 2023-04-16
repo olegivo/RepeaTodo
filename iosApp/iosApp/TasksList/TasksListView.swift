@@ -53,7 +53,7 @@ struct TasksListView: View {
     
     static func factory(isPreview: Bool = false) -> TasksListView {
         return TasksListView(
-            viewModel: (isPreview ? FakeTasksListViewModel() : TasksListComponent().tasksListViewModel()).asObservableObject()
+            viewModel: (isPreview ? FakeTasksListViewModel(count: 5) : TasksListComponent().tasksListViewModel()).asObservableObject()
         )
     }
 }

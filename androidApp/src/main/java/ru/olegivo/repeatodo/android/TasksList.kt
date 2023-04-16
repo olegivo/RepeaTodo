@@ -45,7 +45,7 @@ import ru.olegivo.repeatodo.list.presentation.TasksListViewModel
 internal fun TasksList(
     modifier: Modifier = Modifier,
     isPreview: Boolean = false,
-    viewModel: TasksListViewModel = if (isPreview) FakeTasksListViewModel() else koinInject()
+    viewModel: TasksListViewModel = if (isPreview) FakeTasksListViewModel(5) else koinInject()
 ) {
     val tasks = viewModel.state.collectAsState().value.tasks
     LazyColumn(
