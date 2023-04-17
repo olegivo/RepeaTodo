@@ -38,6 +38,7 @@ import ru.olegivo.repeatodo.domain.GetTasksListUseCaseImpl
 import ru.olegivo.repeatodo.domain.SaveTaskUseCase
 import ru.olegivo.repeatodo.domain.SaveTaskUseCaseImpl
 import ru.olegivo.repeatodo.domain.TasksRepository
+import ru.olegivo.repeatodo.edit.navigation.EditTaskNavigator
 import ru.olegivo.repeatodo.main.navigation.MainNavigator
 import ru.olegivo.repeatodo.main.navigation.MainNavigatorImpl
 
@@ -57,7 +58,9 @@ object DependencyInjection {
         }.koin
 
     private fun commonModule() = module {
-        singleOf(::MainNavigatorImpl).bind<MainNavigator>()
+        singleOf(::MainNavigatorImpl)
+            .bind<MainNavigator>()
+            .bind<EditTaskNavigator>()
         singleOf(::TasksRepositoryImpl).bind<TasksRepository>()
         singleOf(::LocalTasksDataSourceImpl).bind<LocalTasksDataSource>()
         singleOf(::createDatabase)

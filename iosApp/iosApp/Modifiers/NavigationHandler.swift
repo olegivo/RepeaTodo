@@ -11,8 +11,8 @@ import SwiftUI
 import shared
 
 struct NavigationHandler: ViewModifier {
-    @Binding
-    var navigationDirection: NavigationDirection?
+    @StateObject
+    var navigator: MainNavigatorObservableObject
     var onDismiss: ((NavigationDestination) -> Void)?
     @State
     private var destination: NavigationDestination?
@@ -40,7 +40,7 @@ struct NavigationHandler: ViewModifier {
                     EmptyView()
                 }
             )
-            .onChange(of: navigationDirection, perform: { direction in
+            .onChange(of: navigator.navigationDirection, perform: { direction in
                 switch direction {
                 case .forward(let destination, let style):
                     self.destination = destination
@@ -55,14 +55,14 @@ struct NavigationHandler: ViewModifier {
                 case .none:
                     break
                 }
-                navigationDirection = nil
+                navigator.navigationDirection = nil
             })
     }
 
     @ViewBuilder
     private func buildDestination(_ destination: NavigationDestination?) -> some View {
         if let destination = destination {
-            viewFactory.makeView(NavigationDestinationKs(destination))
+            viewFactory.makeView(destination)
         } else {
             EmptyView()
         }
@@ -70,9 +70,9 @@ struct NavigationHandler: ViewModifier {
 }
 
 extension View {
-    func handleNavigation(_ navigationDirection: Binding<NavigationDirection?>,
-                          onDismiss: ((NavigationDestination) -> Void)? = nil) -> some View {
-        self.modifier(NavigationHandler(navigationDirection: navigationDirection,
-                                        onDismiss: onDismiss))
-    }
+    func handleNavigation(
+        _ navigator: MainNavigatorObservableObject,
+        onDismiss: ((NavigationDestination) -> Void)? = nil) -> some View {
+            self.modifier(NavigationHandler(navigator: navigator, onDismiss: onDismiss))
+        }
 }

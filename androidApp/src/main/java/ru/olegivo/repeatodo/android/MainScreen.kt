@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -59,7 +60,7 @@ internal fun MainScreen(
                 Modifier
                     .padding(16.dp)
                     .fillMaxWidth()
-                    .wrapContentHeight()
+                    .wrapContentHeight(align = Alignment.Top)
                     .constrainAs(list) {
                         height = Dimension.fillToConstraints
                         top.linkTo(parent.top)

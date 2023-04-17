@@ -11,6 +11,7 @@ import shared
 
 struct EditTaskView: View {
     @Environment(\.isPreview) var isPreview
+    @Environment(\.navigator) var navigator: MainNavigatorObservableObject
 
     @StateObject
     private var viewModel: EditTaskViewModelObservableObject
@@ -59,7 +60,7 @@ struct EditTaskView: View {
                     }
                 }
             }
-            .handleNavigation($viewModel.navigationDirection)
+            .handleNavigation(navigator)
             .alert(
                 "Can't load Task",
                 isPresented: $viewModel.isLoadingError,

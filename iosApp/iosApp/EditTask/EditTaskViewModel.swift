@@ -40,9 +40,6 @@ public class EditTaskViewModelObservableObject : ObservableObject {
     @Published
     var isSaveError:Bool
     
-    @Published
-    var navigationDirection: NavigationDirection?
-    
     init(wrapped: EditTaskViewModel) {
         self.wrapped = wrapped
         self.title = wrapped.title.value as! String
@@ -74,14 +71,7 @@ public class EditTaskViewModelObservableObject : ObservableObject {
         
         wrapped.canSave.asPublisher()
             .receive(on: RunLoop.main)
-            .assign(to: &$canSave)
-        
-        wrapped.onSaved.asPublisher()
-            .receive(on: RunLoop.main)
-            .sink(receiveValue: { [weak self]  in
-                self?.navigationDirection = .back
-            })
-            .store(in: &cancellables)
+            .assign(to: &$canSave)        
     }
     
     func onTitleChanged(_ title: String) {
@@ -93,6 +83,6 @@ public class EditTaskViewModelObservableObject : ObservableObject {
     }
     
     func onCancelClicked() {
-        navigationDirection = .back
+        wrapped.onCancelClicked()
     }
 }

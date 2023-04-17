@@ -17,6 +17,22 @@
 
 package ru.olegivo.repeatodo.android
 
-enum class Routes(val route: String) {
-    Home("home");
+sealed class Routes(val route: String) {
+    object Home : Routes("home")
+
+    object Tasks {
+        private const val usersPath = "tasks"
+
+        data class Edit(val uuid: String) : Routes("$usersPath/$uuid") {
+            companion object {
+                const val route = "$usersPath/{${Args.Uuid.name}}"
+            }
+
+            object Args {
+                object Uuid {
+                    const val name = "uuid"
+                }
+            }
+        }
+    }
 }

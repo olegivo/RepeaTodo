@@ -21,11 +21,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import ru.olegivo.repeatodo.domain.models.Task
 import ru.olegivo.repeatodo.utils.newUuid
 
-class FakeTasksListViewModel : TasksListViewModel {
+class FakeTasksListViewModel(count: Int = 20) : TasksListViewModel {
 
     override val state = MutableStateFlow(
         TasksListUiState(
-            (1..20).map {
+            (1..count).map {
                 Task(
                     uuid = newUuid(),
                     title = "Task $it"
@@ -33,6 +33,9 @@ class FakeTasksListViewModel : TasksListViewModel {
             }
         )
     )
+
+    override fun onTaskEditClicked(task: Task) {
+    }
 
     override fun onCleared() {
     }

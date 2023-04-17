@@ -19,6 +19,7 @@ package ru.olegivo.repeatodo.di
 
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import org.koin.core.module.dsl.factoryOf
 import org.koin.core.parameter.parametersOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -35,10 +36,10 @@ import ru.olegivo.repeatodo.main.presentation.MainViewModelImpl
 
 actual fun platformModule() = module {
     single { DriverFactory() }
-    factory { MainViewModelImpl(get()) }.bind<MainViewModel>()
-    factory { AddTaskViewModelImpl(get()) }.bind<AddTaskViewModel>()
-    factory { EditTaskViewModelImpl(get(), get(), get()) }.bind<EditTaskViewModel>()
-    factory { TasksListViewModelImpl(get()) }.bind<TasksListViewModel>()
+    factoryOf(::MainViewModelImpl).bind<MainViewModel>()
+    factoryOf(::AddTaskViewModelImpl).bind<AddTaskViewModel>()
+    factoryOf(::EditTaskViewModelImpl).bind<EditTaskViewModel>()
+    factoryOf(::TasksListViewModelImpl).bind<TasksListViewModel>()
 }
 
 object MainComponent : KoinComponent {
@@ -58,6 +59,5 @@ object EditTaskComponent : KoinComponent {
 }
 
 object TasksListComponent : KoinComponent {
-
     fun tasksListViewModel() = get<TasksListViewModel>()
 }

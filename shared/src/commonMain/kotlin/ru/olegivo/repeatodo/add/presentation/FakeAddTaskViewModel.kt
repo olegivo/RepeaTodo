@@ -17,16 +17,18 @@
 
 package ru.olegivo.repeatodo.add.presentation
 
+import dev.icerock.moko.mvvm.flow.cFlow
+import dev.icerock.moko.mvvm.flow.cMutableStateFlow
+import dev.icerock.moko.mvvm.flow.cStateFlow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 
 class FakeAddTaskViewModel(initialState: AddTaskUiState) : AddTaskViewModel {
 
-    override val title = MutableStateFlow("")
-    override val isLoading = MutableStateFlow(false)
-    override val canAdd = MutableStateFlow(false)
-    override val onAdded: SharedFlow<Unit> = MutableSharedFlow()
+    override val title = MutableStateFlow("").cMutableStateFlow()
+    override val isLoading = MutableStateFlow(false).cStateFlow()
+    override val canAdd = MutableStateFlow(false).cStateFlow()
+    override val onAdded = MutableSharedFlow<Unit>().cFlow()
 
     override fun onAddClicked() {
     }

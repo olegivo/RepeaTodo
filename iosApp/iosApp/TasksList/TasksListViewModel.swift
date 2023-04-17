@@ -17,7 +17,7 @@ public extension TasksListViewModel {
 }
 
 public class TasksListViewModelObservableObject : ObservableObject {
-    private var wrapped: TasksListViewModel
+    var wrapped: TasksListViewModel
     @Published private(set) var state: TasksListUiState
     
     @Published
