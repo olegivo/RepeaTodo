@@ -37,6 +37,10 @@ class FakeTasksRepository : TasksRepository {
         lastAddedTask = task
     }
 
+    override suspend fun delete(uuid: String) {
+        tasks.update { prev -> prev.filter { it.uuid != uuid } }
+    }
+
     override fun getTask(uuid: String) =
         tasks.map { it.firstOrNull { task -> task.uuid == uuid } }
 }

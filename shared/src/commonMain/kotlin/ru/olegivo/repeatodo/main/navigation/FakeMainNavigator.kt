@@ -18,18 +18,31 @@
 package ru.olegivo.repeatodo.main.navigation
 
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 
 class FakeMainNavigator : MainNavigator {
 
-    override val navigationDestination = MutableSharedFlow<NavigationDestination?>()
-    override val navigationBack = MutableSharedFlow<Unit>()
+    override val navigationDestination = MutableSharedFlow<NavigationDestination?>().asSharedFlow()
+    override val navigationBack = MutableSharedFlow<Unit>().asSharedFlow()
+
+    var invocations: Invocations = Invocations.None
+        private set
 
     override fun back() {
+        invocations = Invocations.Back
     }
 
     override fun addTask() {
+        invocations = Invocations.To(NavigationDestination.AddTask)
     }
 
     override fun editTask(uuid: String) {
+        invocations = Invocations.To(NavigationDestination.EditTask(uuid))
+    }
+
+    sealed interface Invocations {
+        object None : Invocations
+        data class To(val destination: NavigationDestination?) : Invocations
+        object Back : Invocations
     }
 }

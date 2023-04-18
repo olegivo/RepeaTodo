@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.update
 import ru.olegivo.repeatodo.assertItem
+import ru.olegivo.repeatodo.domain.DeleteTaskUseCase
 import ru.olegivo.repeatodo.domain.GetTaskUseCase
 import ru.olegivo.repeatodo.domain.SaveTaskUseCase
 import ru.olegivo.repeatodo.domain.WorkState
@@ -48,12 +49,15 @@ internal class EditTaskViewModelImplTest : FreeSpec(LifecycleMode.Root) {
             )
             val getTaskUseCase = FakeGetTaskUseCase()
             val saveTaskUseCase = FakeSaveTaskUseCase()
+            val deleteTaskUseCase = FakeDeleteTaskUseCase()
+            val mainNavigator = FakeMainNavigator()
 
             val viewModel: EditTaskViewModel = EditTaskViewModelImpl(
                 uuid = initialTask.uuid,
                 getTask = getTaskUseCase,
                 saveTask = saveTaskUseCase,
-                mainNavigator = FakeMainNavigator()
+                deleteTask = deleteTaskUseCase,
+                mainNavigator = mainNavigator
             )
 
             "initial state" - {
@@ -61,7 +65,16 @@ internal class EditTaskViewModelImplTest : FreeSpec(LifecycleMode.Root) {
                 viewModel.isLoadingError.assertItem { shouldBeFalse() }
                 viewModel.canSave.assertItem { shouldBeFalse() }
                 viewModel.isSaving.assertItem { shouldBeFalse() }
+                viewModel.canDelete.assertItem { shouldBeFalse() }
+                viewModel.isDeleting.assertItem { shouldBeFalse() }
+                viewModel.isDeleteError.assertItem { shouldBeFalse() }
                 viewModel.title.assertItem { shouldBeEmpty() }
+
+                "onCancelClicked should navigate back" {
+                    viewModel.onCancelClicked()
+
+                    mainNavigator.invocations shouldBe FakeMainNavigator.Invocations.Back
+                }
 
                 "load request failed" {
                     getTaskUseCase.setResultError()
@@ -70,6 +83,9 @@ internal class EditTaskViewModelImplTest : FreeSpec(LifecycleMode.Root) {
                     viewModel.isLoadingError.assertItem { shouldBeTrue() }
                     viewModel.canSave.assertItem { shouldBeFalse() }
                     viewModel.isSaving.assertItem { shouldBeFalse() }
+                    viewModel.canDelete.assertItem { shouldBeFalse() }
+                    viewModel.isDeleting.assertItem { shouldBeFalse() }
+                    viewModel.isDeleteError.assertItem { shouldBeFalse() }
                     viewModel.title.assertItem { shouldBeEmpty() }
                 }
 
@@ -79,7 +95,14 @@ internal class EditTaskViewModelImplTest : FreeSpec(LifecycleMode.Root) {
                     viewModel.isLoading.assertItem { shouldBeFalse() }
                     viewModel.isLoadingError.assertItem { shouldBeFalse() }
                     viewModel.isSaving.assertItem { shouldBeFalse() }
+                    viewModel.canDelete.assertItem { shouldBeTrue() }
+                    viewModel.isDeleting.assertItem { shouldBeFalse() }
+                    viewModel.isDeleteError.assertItem { shouldBeFalse() }
                     viewModel.title.assertItem { shouldBe(initialTask.title) }
+
+                    "should not navigate" {
+                        mainNavigator.invocations shouldBe FakeMainNavigator.Invocations.None
+                    }
 
                     "can't save WHEN has no changes" {
                         viewModel.canSave.assertItem { shouldBeFalse() }
@@ -121,6 +144,10 @@ internal class EditTaskViewModelImplTest : FreeSpec(LifecycleMode.Root) {
                                             )
                                             viewModel.canSave.assertItem { shouldBeFalse() }
                                         }
+
+                                        "should navigate back" {
+                                            mainNavigator.invocations shouldBe FakeMainNavigator.Invocations.Back
+                                        }
                                     }
                                 }
 
@@ -131,6 +158,50 @@ internal class EditTaskViewModelImplTest : FreeSpec(LifecycleMode.Root) {
                                         viewModel.isSaving.assertItem { shouldBeFalse() }
                                         viewModel.isSaveError.assertItem { shouldBeTrue() }
                                         viewModel.canSave.assertItem { shouldBeTrue() }
+                                    }
+
+                                    "should not navigate" {
+                                        mainNavigator.invocations shouldBe FakeMainNavigator.Invocations.None
+                                    }
+                                }
+                            }
+                        }
+
+                        "onDeleteClicked" - {
+                            viewModel.onDeleteClicked()
+
+                            "should start deleting" - {
+                                viewModel.isDeleting.assertItem { shouldBeTrue() }
+
+                                "can't delete while deleting" {
+                                    viewModel.canDelete.assertItem { shouldBeFalse() }
+                                }
+
+                                "delete completed" - {
+                                    deleteTaskUseCase.setResultCompleted()
+
+                                    "deleting state is completed" - {
+                                        viewModel.isDeleting.assertItem { shouldBeFalse() }
+                                        viewModel.isDeleteError.assertItem { shouldBeFalse() }
+                                        viewModel.canDelete.assertItem { shouldBeFalse() }
+
+                                        "should navigate back" {
+                                            mainNavigator.invocations shouldBe FakeMainNavigator.Invocations.Back
+                                        }
+                                    }
+                                }
+
+                                "delete error" - {
+                                    deleteTaskUseCase.setResultError()
+
+                                    "deleting state is error" {
+                                        viewModel.isDeleting.assertItem { shouldBeFalse() }
+                                        viewModel.isDeleteError.assertItem { shouldBeTrue() }
+                                        viewModel.canDelete.assertItem { shouldBeTrue() }
+                                    }
+
+                                    "should not navigate" {
+                                        mainNavigator.invocations shouldBe FakeMainNavigator.Invocations.None
                                     }
                                 }
                             }
@@ -160,6 +231,24 @@ internal class EditTaskViewModelImplTest : FreeSpec(LifecycleMode.Root) {
     }
 
     class FakeSaveTaskUseCase : SaveTaskUseCase {
+
+        private val workState = MutableStateFlow<WorkState<Unit>?>(null)
+
+        override suspend operator fun invoke(task: Task): Flow<WorkState<Unit>> {
+            workState.update { WorkState.InProgress() }
+            return workState.filterNotNull()
+        }
+
+        fun setResultCompleted() {
+            workState.update { WorkState.Completed(Unit) }
+        }
+
+        fun setResultError() {
+            workState.update { WorkState.Error() }
+        }
+    }
+
+    class FakeDeleteTaskUseCase : DeleteTaskUseCase {
 
         private val workState = MutableStateFlow<WorkState<Unit>?>(null)
 
