@@ -33,6 +33,7 @@ import ru.olegivo.repeatodo.domain.WorkState
 import ru.olegivo.repeatodo.domain.models.Task
 import ru.olegivo.repeatodo.kotest.FreeSpec
 import ru.olegivo.repeatodo.kotest.LifecycleMode
+import ru.olegivo.repeatodo.main.navigation.FakeMainNavigator
 import ru.olegivo.repeatodo.randomString
 
 internal class EditTaskViewModelImplTest : FreeSpec(LifecycleMode.Root) {
@@ -51,7 +52,8 @@ internal class EditTaskViewModelImplTest : FreeSpec(LifecycleMode.Root) {
             val viewModel: EditTaskViewModel = EditTaskViewModelImpl(
                 uuid = initialTask.uuid,
                 getTask = getTaskUseCase,
-                saveTask = saveTaskUseCase
+                saveTask = saveTaskUseCase,
+                mainNavigator = FakeMainNavigator()
             )
 
             "initial state" - {
