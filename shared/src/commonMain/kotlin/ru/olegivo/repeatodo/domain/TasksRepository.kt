@@ -21,9 +21,8 @@ import kotlinx.coroutines.flow.Flow
 import ru.olegivo.repeatodo.domain.models.Task
 
 interface TasksRepository {
-
     fun getTasks(): Flow<List<Task>>
-
-    suspend fun save(task: Task)
     fun getTask(uuid: String): Flow<Task?>
+    suspend fun save(task: Task)
+    suspend fun delete(uuid: String)
 }

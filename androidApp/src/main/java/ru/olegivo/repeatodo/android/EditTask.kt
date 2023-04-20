@@ -30,16 +30,23 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.rounded.Done
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
@@ -49,6 +56,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -63,53 +71,117 @@ internal fun EditTask(
     uuid: String? = null,
     viewModel: EditTaskViewModel = koinInject { parametersOf(uuid) }
 ) {
-    Card(
-        modifier = modifier
-            .padding(16.dp)
-            .fillMaxSize(),
-        shape = RoundedCornerShape(20.dp)
-    ) {
-        val isLoading = viewModel.isLoading.collectAsState(true)
-        if (isLoading.value) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                CircularProgressIndicator(
-                    Modifier
-                )
+    val showAlertDialog = remember { mutableStateOf(false) }
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            TopAppBar(
+                title = { Text("Edit Task") },
+                navigationIcon = {
+                    IconButton(onClick = { viewModel.onCancelClicked() }) {
+                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { showAlertDialog.value = true }) {
+                        Icon(Icons.Filled.Delete, contentDescription = "Delete task")
+                    }
+                }
+            )
+        }
+    ) { contentPadding ->
+        Card(
+            modifier = Modifier
+                .padding(contentPadding)
+                .padding(16.dp)
+                .fillMaxSize(),
+            shape = RoundedCornerShape(20.dp)
+        ) {
+            val isLoading = viewModel.isLoading.collectAsState(true)
+            if (isLoading.value) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    CircularProgressIndicator(
+                        Modifier
+                    )
+                }
+            } else {
+                val title = viewModel.title.collectAsState()
+                Column {
+                    ConfirmDeleteTaskDialog(
+                        taskTitle = title,
+                        showDialog = showAlertDialog,
+                        onConfirm = { viewModel.onDeleteClicked() }
+                    )
+                    TextField(
+                        value = title.value,
+                        onValueChange = { viewModel.title.value = it },
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .focusRequester(oneTimeFocusRequester()),
+                        placeholder = { Text("Enter A Title Here") },
+                        label = { Text("Title") },
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(onDone = { viewModel.onSaveClicked() })
+                    )
+                    Spacer(
+                        modifier =
+                        Modifier
+                            .width(IntrinsicSize.Max)
+                            .weight(1f)
+                    )
+                    SaveTaskButton(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxWidth()
+                            .imePadding(),
+                        onClick = { viewModel.onSaveClicked() },
+                        canSave = viewModel.canSave.collectAsState(false),
+                        isSaving = viewModel.isSaving.collectAsState(false),
+                    )
+                }
             }
-        } else {
-            val title = viewModel.title.collectAsState()
-            Column {
-                TextField(
-                    value = title.value,
-                    onValueChange = { viewModel.title.value = it },
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .focusRequester(oneTimeFocusRequester()),
-                    placeholder = { Text("Enter A Title Here") },
-                    label = { Text("Title") },
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(onDone = { viewModel.onSaveClicked() })
-                )
-                Spacer(
-                    modifier =
-                    Modifier
-                        .width(IntrinsicSize.Max)
-                        .weight(1f)
-                )
-                SaveTaskButton(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth()
-                        .imePadding(),
-                    onClick = { viewModel.onSaveClicked() },
-                    canSave = viewModel.canSave.collectAsState(false),
-                    isSaving = viewModel.isSaving.collectAsState(false),
-                )
+        }
+    }
+}
+
+@Composable
+private fun ConfirmDeleteTaskDialog(
+    taskTitle: State<String>,
+    showDialog: MutableState<Boolean>,
+    onConfirm: () -> Unit
+) {
+    if (showDialog.value) {
+        ConfirmDialog(
+            title = "Do you want to delete the '${taskTitle.value}'?",
+            text = "",
+            onDismiss = { showDialog.value = false },
+            onConfirm = {
+                showDialog.value = false
+                onConfirm()
             }
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun ConfirmDeleteTaskDialogPreview() {
+    MaterialTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.primary
+        ) {
+            val showDialog = remember { mutableStateOf(true) }
+            val taskTitle = remember { mutableStateOf("Task 1") }
+            ConfirmDeleteTaskDialog(
+                taskTitle = taskTitle,
+                showDialog = showDialog,
+                onConfirm = {}
+            )
         }
     }
 }
@@ -151,6 +223,7 @@ private fun SaveTaskButton(
     }
 }
 
+
 @Preview
 @Composable
 private fun EditTaskPreview() {
@@ -175,6 +248,63 @@ private fun EditTaskPreviewLoading() {
             EditTask(viewModel = FakeEditTaskViewModel().also {
                 it.isLoading.value = true
             })
+        }
+    }
+}
+
+@Composable
+fun ConfirmDialog(
+    modifier: Modifier = Modifier,
+    title: String,
+    text: String,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+    confirmButtonText: String = "Yes",
+    dismissButtonText: String = "No"
+) {
+    AlertDialog(
+        modifier = modifier,
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = title,
+                modifier = Modifier.padding(4.dp),
+                fontWeight = FontWeight.Bold
+            )
+        },
+        text = {
+            Text(
+                text = text,
+                modifier = Modifier.padding(4.dp)
+            )
+        },
+        confirmButton = {
+            Button(onClick = { onConfirm.invoke() }) {
+                Text(text = confirmButtonText)
+            }
+        },
+        dismissButton = {
+            Button(onClick = { onDismiss.invoke() }) {
+                Text(text = dismissButtonText)
+            }
+        }
+    )
+}
+
+@Preview
+@Composable
+private fun PopupDialogPreview() {
+    MaterialTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.primary
+        ) {
+            ConfirmDialog(
+                title = "Update title here",
+                text = "Update message here",
+                onConfirm = {},
+                onDismiss = {},
+            )
         }
     }
 }

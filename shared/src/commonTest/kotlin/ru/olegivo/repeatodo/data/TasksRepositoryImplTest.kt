@@ -23,7 +23,10 @@ import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import ru.olegivo.repeatodo.assertItem
 import ru.olegivo.repeatodo.domain.TasksRepository
 import ru.olegivo.repeatodo.domain.models.Task
@@ -49,8 +52,16 @@ internal class TasksRepositoryImplTest : FreeSpec(LifecycleMode.Root) {
                     tasksRepository.getTasks().assertItem { shouldBeEmpty() }
                 }
 
-                "get should return null" {
+                "get should return null WHEN specified not exist task uuid" {
                     tasksRepository.getTask(uuid = task.uuid).assertItem { shouldBeNull() }
+                }
+
+                "delete should do nothing WHEN specified not exist task uuid" {
+                    val uuid = randomString()
+
+                    tasksRepository.delete(uuid = uuid)
+
+                    localTasksDataSource.deletedTasksUuids shouldNotContain uuid
                 }
 
                 "save" - {
@@ -66,6 +77,22 @@ internal class TasksRepositoryImplTest : FreeSpec(LifecycleMode.Root) {
 
                     "get should return added task WHEN specified added task uuid" {
                         tasksRepository.getTask(uuid = task.uuid).assertItem { shouldBe(task) }
+                    }
+
+                    "delete should do nothing WHEN specified not exist task uuid" {
+                        val uuid = randomString()
+
+                        tasksRepository.delete(uuid = uuid)
+
+                        localTasksDataSource.deletedTasksUuids shouldNotContain uuid
+                        localTasksDataSource.getTasks().value shouldContain task
+                    }
+
+                    "delete should delete added task WHEN specified added task uuid" {
+                        tasksRepository.delete(uuid = task.uuid)
+
+                        localTasksDataSource.deletedTasksUuids shouldContain task.uuid
+                        localTasksDataSource.getTasks().value shouldNotContain task
                     }
 
                     "update added task" {
@@ -85,11 +112,19 @@ internal class TasksRepositoryImplTest : FreeSpec(LifecycleMode.Root) {
     class FakeLocalTasksDataSource : LocalTasksDataSource {
 
         private val tasks = MutableStateFlow(listOf<Task>())
+        val deletedTasksUuids = mutableListOf<String>()
 
         override fun getTasks(): StateFlow<List<Task>> = tasks
 
         override fun save(task: Task) {
-            tasks.update { prev -> prev.filter { it.uuid != task.uuid } + task  }
+            tasks.update { prev -> prev.filter { it.uuid != task.uuid } + task }
+        }
+
+        override fun delete(uuid: String) {
+            if (tasks.value.any { task -> task.uuid == uuid }) {
+                tasks.update { prev -> prev.filter { it.uuid != uuid } }
+                deletedTasksUuids += uuid
+            }
         }
 
         override fun getTask(uuid: String) =

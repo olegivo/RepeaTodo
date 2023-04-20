@@ -25,9 +25,11 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.olegivo.repeatodo.BaseViewModel
+import ru.olegivo.repeatodo.domain.DeleteTaskUseCase
 import ru.olegivo.repeatodo.domain.GetTaskUseCase
 import ru.olegivo.repeatodo.domain.SaveTaskUseCase
 import ru.olegivo.repeatodo.domain.WorkState
@@ -39,6 +41,7 @@ class EditTaskViewModelImpl(
     private val uuid: String,
     private val getTask: GetTaskUseCase,
     private val saveTask: SaveTaskUseCase,
+    private val deleteTask: DeleteTaskUseCase,
     private val mainNavigator: MainNavigator,
 ) : BaseViewModel(), EditTaskViewModel {
 
@@ -51,6 +54,8 @@ class EditTaskViewModelImpl(
         replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
+
+    private val deletingState = MutableStateFlow<WorkState<Unit>?>(null)
 
     private val loadedTask: Flow<Task> = loadingState.filterCompleted()
 
@@ -82,6 +87,20 @@ class EditTaskViewModelImpl(
     override val isSaveError: StateFlow<Boolean> = savingState.map { it is WorkState.Error }
         .asState(false)
 
+    override val isDeleting: StateFlow<Boolean> = deletingState.map { it is WorkState.InProgress }
+        .asState(false)
+
+    override val canDelete: StateFlow<Boolean> =
+        combine(
+            loadingState.map { it is WorkState.Completed },
+            deletingState
+        ) { isLoaded, deleting ->
+            isLoaded && (deleting == null || deleting is WorkState.Error)
+        }.asState(false)
+
+    override val isDeleteError: StateFlow<Boolean> = deletingState.map { it is WorkState.Error }
+        .asState(false)
+
     init {
         loadTask()
     }
@@ -98,7 +117,7 @@ class EditTaskViewModelImpl(
             }
         }
         viewModelScope.launch {
-            savingState.collect {
+            merge(savingState, deletingState).collect {
                 if (it is WorkState.Completed) {
                     mainNavigator.back()
                 }
@@ -127,6 +146,12 @@ class EditTaskViewModelImpl(
 
     override fun onCancelClicked() {
         mainNavigator.back()
+    }
+
+    override fun onDeleteClicked() {
+        viewModelScope.launch {
+            deletingState.emitAll(deleteTask(actualTask.first()))
+        }
     }
 
     private fun Task.isValid() = title.isNotBlank()

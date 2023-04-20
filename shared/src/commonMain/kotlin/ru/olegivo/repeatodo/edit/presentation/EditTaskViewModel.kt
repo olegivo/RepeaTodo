@@ -29,7 +29,11 @@ interface EditTaskViewModel {
     val canSave: StateFlow<Boolean>
     val isSaving: StateFlow<Boolean>
     val isSaveError: StateFlow<Boolean>
+    val canDelete: StateFlow<Boolean>
+    val isDeleting: StateFlow<Boolean>
+    val isDeleteError: StateFlow<Boolean>
     fun onSaveClicked()
     fun onCancelClicked()
+    fun onDeleteClicked()
     fun onCleared()
 }

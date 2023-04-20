@@ -31,6 +31,8 @@ import ru.olegivo.repeatodo.db.LocalTasksDataSourceImpl
 import ru.olegivo.repeatodo.db.createDatabase
 import ru.olegivo.repeatodo.domain.AddTaskUseCase
 import ru.olegivo.repeatodo.domain.AddTaskUseCaseImpl
+import ru.olegivo.repeatodo.domain.DeleteTaskUseCase
+import ru.olegivo.repeatodo.domain.DeleteTaskUseCaseImpl
 import ru.olegivo.repeatodo.domain.GetTaskUseCase
 import ru.olegivo.repeatodo.domain.GetTaskUseCaseImpl
 import ru.olegivo.repeatodo.domain.GetTasksListUseCase
@@ -68,6 +70,7 @@ object DependencyInjection {
         factoryOf(::GetTasksListUseCaseImpl).bind<GetTasksListUseCase>()
         factoryOf(::GetTaskUseCaseImpl).bind<GetTaskUseCase>()
         factoryOf(::SaveTaskUseCaseImpl).bind<SaveTaskUseCase>()
+        factoryOf(::DeleteTaskUseCaseImpl).bind<DeleteTaskUseCase>()
     }
 }
 
