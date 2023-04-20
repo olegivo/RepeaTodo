@@ -74,21 +74,7 @@ internal fun EditTask(
     val showAlertDialog = remember { mutableStateOf(false) }
     Scaffold(
         modifier = modifier,
-        topBar = {
-            TopAppBar(
-                title = { Text("Edit Task") },
-                navigationIcon = {
-                    IconButton(onClick = { viewModel.onCancelClicked() }) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { showAlertDialog.value = true }) {
-                        Icon(Icons.Filled.Delete, contentDescription = "Delete task")
-                    }
-                }
-            )
-        }
+        topBar = { AppBar(viewModel, showAlertDialog) }
     ) { contentPadding ->
         Card(
             modifier = Modifier
@@ -116,17 +102,7 @@ internal fun EditTask(
                         showDialog = showAlertDialog,
                         onConfirm = { viewModel.onDeleteClicked() }
                     )
-                    TextField(
-                        value = title.value,
-                        onValueChange = { viewModel.title.value = it },
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .focusRequester(oneTimeFocusRequester()),
-                        placeholder = { Text("Enter A Title Here") },
-                        label = { Text("Title") },
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                        keyboardActions = KeyboardActions(onDone = { viewModel.onSaveClicked() })
-                    )
+                    TitleEditor(title, viewModel)
                     Spacer(
                         modifier =
                         Modifier
@@ -146,6 +122,44 @@ internal fun EditTask(
             }
         }
     }
+}
+
+@Composable
+private fun TitleEditor(
+    title: State<String>,
+    viewModel: EditTaskViewModel
+) {
+    TextField(
+        value = title.value,
+        onValueChange = { viewModel.title.value = it },
+        modifier = Modifier
+            .padding(16.dp)
+            .focusRequester(oneTimeFocusRequester()),
+        placeholder = { Text("Enter A Title Here") },
+        label = { Text("Title") },
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+        keyboardActions = KeyboardActions(onDone = { viewModel.onSaveClicked() })
+    )
+}
+
+@Composable
+private fun AppBar(
+    viewModel: EditTaskViewModel,
+    showAlertDialog: MutableState<Boolean>
+) {
+    TopAppBar(
+        title = { Text("Edit Task") },
+        navigationIcon = {
+            IconButton(onClick = { viewModel.onCancelClicked() }) {
+                Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+            }
+        },
+        actions = {
+            IconButton(onClick = { showAlertDialog.value = true }) {
+                Icon(Icons.Filled.Delete, contentDescription = "Delete task")
+            }
+        }
+    )
 }
 
 @Composable
