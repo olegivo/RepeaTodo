@@ -19,6 +19,8 @@ package ru.olegivo.repeatodo
 
 import kotlin.random.Random
 
+fun randomInt(from: Int = 0, until: Int = 1000) = Random.nextInt(from, until)
+
 fun randomString(size: Int = 10) = Random.azstring(size)
 fun Random.azchar(): Char = nextInt(from = 97, until = 123).toChar()
 fun Random.azstring(size: Int): String {
