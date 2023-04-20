@@ -19,7 +19,7 @@ package ru.olegivo.repeatodo.domain
 
 import io.kotest.core.spec.style.FreeSpec
 import ru.olegivo.repeatodo.data.FakeTasksRepository
-import ru.olegivo.repeatodo.domain.models.createTask
+import ru.olegivo.repeatodo.domain.models.randomTask
 import kotlin.test.assertEquals
 
 class AddTaskUseCaseImplTest : FreeSpec({
@@ -28,7 +28,7 @@ class AddTaskUseCaseImplTest : FreeSpec({
         val useCase: AddTaskUseCase = AddTaskUseCaseImpl(tasksRepository = tasksRepository)
 
         "invoke should add task to repository" {
-            val task = createTask()
+            val task = randomTask()
 
             useCase.invoke(task)
 

@@ -58,6 +58,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.koin.compose.koinInject
@@ -74,21 +75,7 @@ internal fun EditTask(
     val showAlertDialog = remember { mutableStateOf(false) }
     Scaffold(
         modifier = modifier,
-        topBar = {
-            TopAppBar(
-                title = { Text("Edit Task") },
-                navigationIcon = {
-                    IconButton(onClick = { viewModel.onCancelClicked() }) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { showAlertDialog.value = true }) {
-                        Icon(Icons.Filled.Delete, contentDescription = "Delete task")
-                    }
-                }
-            )
-        }
+        topBar = { AppBar(viewModel, showAlertDialog) }
     ) { contentPadding ->
         Card(
             modifier = Modifier
@@ -116,17 +103,8 @@ internal fun EditTask(
                         showDialog = showAlertDialog,
                         onConfirm = { viewModel.onDeleteClicked() }
                     )
-                    TextField(
-                        value = title.value,
-                        onValueChange = { viewModel.title.value = it },
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .focusRequester(oneTimeFocusRequester()),
-                        placeholder = { Text("Enter A Title Here") },
-                        label = { Text("Title") },
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                        keyboardActions = KeyboardActions(onDone = { viewModel.onSaveClicked() })
-                    )
+                    TitleEditor(title, viewModel)
+                    DaysPeriodicityEditor(viewModel)
                     Spacer(
                         modifier =
                         Modifier
@@ -146,6 +124,64 @@ internal fun EditTask(
             }
         }
     }
+}
+
+@Composable
+private fun TitleEditor(
+    title: State<String>,
+    viewModel: EditTaskViewModel
+) {
+    TextField(
+        value = title.value,
+        onValueChange = { viewModel.title.value = it },
+        modifier = Modifier
+            .padding(16.dp)
+            .focusRequester(oneTimeFocusRequester()),
+        placeholder = { Text("Enter a title here") },
+        label = { Text("Title") },
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+        keyboardActions = KeyboardActions(onDone = { viewModel.onSaveClicked() })
+    )
+}
+
+@Composable
+private fun DaysPeriodicityEditor(
+    viewModel: EditTaskViewModel
+) {
+    val daysPeriodicity = viewModel.daysPeriodicity.collectAsState()
+    TextField(
+        value = daysPeriodicity.value,
+        onValueChange = { viewModel.daysPeriodicity.value = it },
+        modifier = Modifier
+            .padding(16.dp),
+        placeholder = { Text("Enter a days periodicity here") },
+        label = { Text("Days periodicity") },
+        keyboardOptions = KeyboardOptions.Default.copy(
+            keyboardType = KeyboardType.Number,
+            imeAction = ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions(onDone = { viewModel.onSaveClicked() })
+    )
+}
+
+@Composable
+private fun AppBar(
+    viewModel: EditTaskViewModel,
+    showAlertDialog: MutableState<Boolean>
+) {
+    TopAppBar(
+        title = { Text("Edit Task") },
+        navigationIcon = {
+            IconButton(onClick = { viewModel.onCancelClicked() }) {
+                Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+            }
+        },
+        actions = {
+            IconButton(onClick = { showAlertDialog.value = true }) {
+                Icon(Icons.Filled.Delete, contentDescription = "Delete task")
+            }
+        }
+    )
 }
 
 @Composable

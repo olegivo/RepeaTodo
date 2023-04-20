@@ -28,7 +28,8 @@ class FakeTasksListViewModel(count: Int = 20) : TasksListViewModel {
             (1..count).map {
                 Task(
                     uuid = newUuid(),
-                    title = "Task $it"
+                    title = "Task $it",
+                    daysPeriodicity = it
                 )
             }
         )

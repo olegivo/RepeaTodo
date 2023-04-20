@@ -23,13 +23,13 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import ru.olegivo.repeatodo.data.FakeTasksRepository
 import ru.olegivo.repeatodo.domain.models.Task
-import ru.olegivo.repeatodo.domain.models.createTask
+import ru.olegivo.repeatodo.domain.models.randomTask
 import ru.olegivo.repeatodo.randomString
 
 internal class GetTaskUseCaseImplTest : FreeSpec() {
     init {
         "GetTaskUseCaseImplTest created" - {
-            val task = createTask()
+            val task = randomTask()
             val tasksRepository = FakeTasksRepository()
             val useCase: GetTaskUseCase = GetTaskUseCaseImpl(tasksRepository = tasksRepository)
 

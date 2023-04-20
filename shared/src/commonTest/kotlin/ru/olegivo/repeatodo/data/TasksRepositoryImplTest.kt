@@ -30,7 +30,7 @@ import kotlinx.coroutines.flow.update
 import ru.olegivo.repeatodo.assertItem
 import ru.olegivo.repeatodo.domain.TasksRepository
 import ru.olegivo.repeatodo.domain.models.Task
-import ru.olegivo.repeatodo.domain.models.createTask
+import ru.olegivo.repeatodo.domain.models.randomTask
 import ru.olegivo.repeatodo.kotest.FreeSpec
 import ru.olegivo.repeatodo.kotest.LifecycleMode
 import ru.olegivo.repeatodo.randomString
@@ -41,7 +41,7 @@ internal class TasksRepositoryImplTest : FreeSpec(LifecycleMode.Root) {
 
     init {
         "TasksRepositoryImpl created" - {
-            val task = createTask()
+            val task = randomTask()
             val localTasksDataSource = FakeLocalTasksDataSource()
 
             val tasksRepository: TasksRepository = TasksRepositoryImpl(localTasksDataSource)
@@ -96,7 +96,7 @@ internal class TasksRepositoryImplTest : FreeSpec(LifecycleMode.Root) {
                     }
 
                     "update added task" {
-                        val newVersion = createTask().copy(uuid = task.uuid)
+                        val newVersion = randomTask().copy(uuid = task.uuid)
                         tasksRepository.save(newVersion)
 
                         localTasksDataSource.getTasks().value.apply {
