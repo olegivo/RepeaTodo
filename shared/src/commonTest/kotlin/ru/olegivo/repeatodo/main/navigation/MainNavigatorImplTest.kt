@@ -49,16 +49,6 @@ internal class MainNavigatorImplTest : FreeSpec(LifecycleMode.Root) {
                 navigationDestination.expectNoEvents()
             }
 
-            "!navigationBack" - {
-                navigator.navigationBack.test {
-                    "back should emit navigationBack signal" {
-                        navigator.back()
-
-                        awaitItem()
-                    }
-                }
-            }
-
             "back" - {
                 navigator.back()
 
