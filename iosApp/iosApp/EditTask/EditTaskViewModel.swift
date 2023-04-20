@@ -19,7 +19,7 @@ public extension EditTaskViewModel {
 
 public class EditTaskViewModelObservableObject : ObservableObject {
     
-    private var wrapped: EditTaskViewModel
+    let wrapped: EditTaskViewModel
     private var cancellables = Set<AnyCancellable>()
 
     @Published
@@ -76,13 +76,5 @@ public class EditTaskViewModelObservableObject : ObservableObject {
     
     func onTitleChanged(_ title: String) {
         wrapped.title.setValue(title)
-    }
-    
-    func onSaveClicked() {
-        wrapped.onSaveClicked()
-    }
-    
-    func onCancelClicked() {
-        wrapped.onCancelClicked()
     }
 }
