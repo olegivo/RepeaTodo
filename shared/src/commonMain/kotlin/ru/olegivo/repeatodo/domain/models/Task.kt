@@ -17,4 +17,14 @@
 
 package ru.olegivo.repeatodo.domain.models
 
-data class Task(val uuid: String, val title: String)
+data class Task(
+    val uuid: String,
+    val title: String,
+    val daysPeriodicity: Int,
+) {
+    companion object {
+        const val DEFAULT_DAYS_PERIODICITY: Int = 1
+        const val MIN_DAYS_PERIODICITY: Int = 1
+        const val MAX_DAYS_PERIODICITY: Int = 1000
+    }
+}

@@ -23,8 +23,11 @@ struct EditTaskView: View {
                 if viewModel.isLoading {
                     ProgressView()
                 } else {
-                    Section {
+                    Section(header: Text("Title")) {
                         titleEditor()
+                    }
+                    Section(header: Text("Days periodicity")) {
+                        daysPeriodicityEditor()
                     }
                     
                     Section {
@@ -60,7 +63,7 @@ struct EditTaskView: View {
 
     fileprivate func titleEditor() -> TextField<Text> {
         return TextField(
-            "Enter A Title Here",
+            "Enter a title here",
             text: Binding(
                 get: {
                     viewModel.title
@@ -70,6 +73,21 @@ struct EditTaskView: View {
                 }
             )
         )
+    }
+
+    fileprivate func daysPeriodicityEditor() -> some View {
+        TextField(
+            "Enter a days periodicity here",
+            text: Binding(
+                get: {
+                    viewModel.daysPeriodicity
+                },
+                set: { v in
+                    viewModel.onDaysPeriodicityChanged(v)
+                }
+            )
+        )
+        .keyboardType(.numberPad)
     }
 
     fileprivate func saveButton() -> some View {

@@ -24,7 +24,7 @@ import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.shouldBe
 import ru.olegivo.repeatodo.assertItem
 import ru.olegivo.repeatodo.data.FakeTasksRepository
-import ru.olegivo.repeatodo.domain.models.createTask
+import ru.olegivo.repeatodo.domain.models.randomTask
 
 internal class SaveTaskUseCaseImplTest : FreeSpec() {
     init {
@@ -33,9 +33,9 @@ internal class SaveTaskUseCaseImplTest : FreeSpec() {
             val saveTaskUseCase: SaveTaskUseCase = SaveTaskUseCaseImpl(
                 tasksRepository = tasksRepository
             )
-            val origin = createTask()
+            val origin = randomTask()
             tasksRepository.save(origin)
-            val newVersion = createTask().copy(uuid = origin.uuid)
+            val newVersion = randomTask().copy(uuid = origin.uuid)
 
             saveTaskUseCase(newVersion).test {
                 expectMostRecentItem() shouldBe WorkState.Completed(Unit)

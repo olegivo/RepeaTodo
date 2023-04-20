@@ -52,7 +52,12 @@ class AddTaskViewModelImpl(private val addTask: AddTaskUseCase) : ViewModel(), A
     override fun onAddClicked() {
         viewModelScope.launch {
             _isLoading.update { true }
-            addTask(Task(uuid = newUuid(), title = title.value))
+            val task = Task(
+                uuid = newUuid(),
+                title = title.value,
+                daysPeriodicity = Task.DEFAULT_DAYS_PERIODICITY
+            )
+            addTask(task)
             _onAdded.emit(Unit)
             title.update { "" }
             _isLoading.update { false }

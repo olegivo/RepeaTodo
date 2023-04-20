@@ -1,6 +1,7 @@
 CREATE TABLE Task (
     uuid TEXT NOT NULL PRIMARY KEY,
-    title TEXT NOT NULL
+    title TEXT NOT NULL,
+    daysPeriodicity INTEGER AS Int NOT NULL
 );
 
 CREATE INDEX task_uuid ON Task(uuid);

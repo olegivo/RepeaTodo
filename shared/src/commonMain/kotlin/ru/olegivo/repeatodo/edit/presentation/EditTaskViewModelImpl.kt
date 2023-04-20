@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
@@ -61,12 +62,16 @@ class EditTaskViewModelImpl(
 
     override val title: MutableStateFlow<String> = MutableStateFlow("")
 
+    override val daysPeriodicity: MutableStateFlow<String> = MutableStateFlow("")
+
     private val actualTask: Flow<Task> = combine(
         loadedTask,
-        title
-    ) { task, title ->
+        title,
+        daysPeriodicity.filter { it.toIntOrNull() != null }
+    ) { task, title, daysPeriodicity ->
         task.copy(
-            title = title
+            title = title,
+            daysPeriodicity = daysPeriodicity.toInt()
         )
     }
 
@@ -109,11 +114,7 @@ class EditTaskViewModelImpl(
         viewModelScope.launch {
             loadedTask.collect { origin ->
                 title.update { origin.title }
-            }
-        }
-        viewModelScope.launch {
-            loadingState.collect {
-                //
+                daysPeriodicity.update { origin.daysPeriodicity.toString() }
             }
         }
         viewModelScope.launch {
@@ -125,16 +126,6 @@ class EditTaskViewModelImpl(
         }
         viewModelScope.launch {
             loadingState.emitAll(getTask(uuid))
-//            loadingState.update { EditTaskState.Loading }
-//            originTask.collect { loadingState ->
-//                this@EditTaskViewModelImpl.loadingState.update {
-//                    when (loadingState) {
-//                        is WorkState.Completed -> EditTaskState.Editing(loadingState.result)
-//                        is WorkState.Error -> EditTaskState.LoadingError
-//                        is WorkState.InProgress -> EditTaskState.Loading
-//                    }
-//                }
-//            }
         }
     }
 
@@ -154,5 +145,7 @@ class EditTaskViewModelImpl(
         }
     }
 
-    private fun Task.isValid() = title.isNotBlank()
+    private fun Task.isValid() =
+        title.isNotBlank() &&
+                daysPeriodicity in (Task.MIN_DAYS_PERIODICITY..Task.MAX_DAYS_PERIODICITY)
 }

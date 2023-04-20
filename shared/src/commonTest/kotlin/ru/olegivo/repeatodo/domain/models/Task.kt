@@ -17,9 +17,11 @@
 
 package ru.olegivo.repeatodo.domain.models
 
+import ru.olegivo.repeatodo.randomInt
 import ru.olegivo.repeatodo.randomString
 
-fun createTask() = Task(
+fun randomTask() = Task(
     uuid = randomString(),
-    title = randomString()
+    title = randomString(),
+    daysPeriodicity = randomInt()
 )

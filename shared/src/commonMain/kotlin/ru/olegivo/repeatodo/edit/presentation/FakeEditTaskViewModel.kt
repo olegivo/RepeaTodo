@@ -27,6 +27,7 @@ class FakeEditTaskViewModel : EditTaskViewModel {
     override val isSaveError = MutableStateFlow(false)
     override val canDelete = MutableStateFlow(false)
     override val isDeleting = MutableStateFlow(false)
+    override val daysPeriodicity = MutableStateFlow("")
     override val isDeleteError = MutableStateFlow(false)
 
     override fun onSaveClicked() {
