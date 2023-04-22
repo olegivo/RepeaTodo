@@ -17,6 +17,6 @@
 
 package ru.olegivo.repeatodo.utils
 
-import java.util.*
+import java.util.UUID
 
 actual fun newUuid(): String = UUID.randomUUID().toString()
