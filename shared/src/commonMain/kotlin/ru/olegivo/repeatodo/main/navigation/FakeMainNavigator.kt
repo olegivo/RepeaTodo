@@ -17,13 +17,13 @@
 
 package ru.olegivo.repeatodo.main.navigation
 
+import dev.icerock.moko.mvvm.flow.cFlow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 
-class FakeMainNavigator : MainNavigator {
+class FakeMainNavigator: MainNavigator {
 
-    override val navigationDestination = MutableSharedFlow<NavigationDestination?>().asSharedFlow()
-    override val navigationBack = MutableSharedFlow<Unit>().asSharedFlow()
+    override val navigationDestination = MutableSharedFlow<NavigationDestination?>().cFlow()
+    override val navigationBack = MutableSharedFlow<Unit>().cFlow()
 
     var invocations: Invocations = Invocations.None
         private set
@@ -41,8 +41,8 @@ class FakeMainNavigator : MainNavigator {
     }
 
     sealed interface Invocations {
-        object None : Invocations
-        data class To(val destination: NavigationDestination?) : Invocations
-        object Back : Invocations
+        object None: Invocations
+        data class To(val destination: NavigationDestination?): Invocations
+        object Back: Invocations
     }
 }

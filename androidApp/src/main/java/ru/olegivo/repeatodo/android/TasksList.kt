@@ -38,18 +38,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.koin.compose.koinInject
 import ru.olegivo.repeatodo.domain.models.Task
-import ru.olegivo.repeatodo.list.presentation.FakeTasksListViewModel
 import ru.olegivo.repeatodo.list.presentation.TasksListViewModel
+import ru.olegivo.repeatodo.list.presentation.taskListFakes
+import ru.olegivo.repeatodo.preview.fakeOrInjectKoin
+import ru.olegivo.repeatodo.utils.PreviewEnvironment
 import ru.olegivo.repeatodo.utils.newUuid
 
 @Composable
 internal fun TasksList(
     modifier: Modifier = Modifier,
-    isPreview: Boolean = false,
-    viewModel: TasksListViewModel = if (isPreview) FakeTasksListViewModel(5) else koinInject()
+    previewEnvironment: PreviewEnvironment? = null,
 ) {
+    val viewModel: TasksListViewModel = fakeOrInjectKoin(previewEnvironment)
     val tasks = viewModel.state.collectAsState().value.tasks
     LazyColumn(modifier) {
         itemsIndexed(
@@ -99,7 +100,9 @@ private fun TasksListPreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.primary
         ) {
-            TasksList(isPreview = true)
+            TasksList(
+                previewEnvironment = PreviewEnvironment { taskListFakes() }
+            )
         }
     }
 }

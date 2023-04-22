@@ -34,7 +34,7 @@ import ru.olegivo.repeatodo.domain.models.randomTask
 import ru.olegivo.repeatodo.main.navigation.FakeMainNavigator
 import ru.olegivo.repeatodo.randomList
 
-internal class TasksListViewModelImplTest : FreeSpec({
+internal class TasksListViewModelImplTest: FreeSpec({
     val mainThreadSurrogate = newSingleThreadContext("UI thread")
     beforeTest {
         Dispatchers.setMain(mainThreadSurrogate)
@@ -47,8 +47,8 @@ internal class TasksListViewModelImplTest : FreeSpec({
         val list = randomList { randomTask() }
         val getTasksListUseCase = FakeGetTasksListUseCase()
 
-        val viewModel: TasksListViewModel =
-            TasksListViewModelImpl(getTasksListUseCase, FakeMainNavigator())
+        val viewModel =
+            TasksListViewModel(getTasksListUseCase, FakeMainNavigator())
 
         viewModel.state.test {
             awaitItem().tasks.shouldBeEmpty()
@@ -62,7 +62,7 @@ internal class TasksListViewModelImplTest : FreeSpec({
     }
 }) {
 
-    class FakeGetTasksListUseCase : GetTasksListUseCase {
+    class FakeGetTasksListUseCase: GetTasksListUseCase {
 
         val list = MutableStateFlow<List<Task>>(emptyList())
 

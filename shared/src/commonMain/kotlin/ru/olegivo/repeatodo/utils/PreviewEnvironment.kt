@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Oleg Ivashchenko <olegivo@gmail.com>
+ * Copyright (C) 2023 Oleg Ivashchenko <olegivo@gmail.com>
  *
  * This file is part of RepeaTodo.
  *
@@ -17,6 +17,23 @@
 
 package ru.olegivo.repeatodo.utils
 
-import java.util.UUID
+import kotlin.reflect.KClass
 
-actual fun newUuid(): String = UUID.randomUUID().toString()
+class PreviewEnvironment {
+
+    val registry = mutableMapOf<KClass<*>, () -> Any>()
+
+    inline fun <reified T> get(): T = get(T::class)
+
+    inline fun <reified T> get(kClass: KClass<*>) =
+        registry.getValue(kClass).invoke() as T
+
+    inline fun <reified T: Any> register(crossinline block: () -> T) {
+        registry[T::class] = { block() }
+    }
+
+    companion object {
+        operator fun invoke(block: PreviewEnvironment.() -> Unit) =
+            PreviewEnvironment().apply(block)
+    }
+}

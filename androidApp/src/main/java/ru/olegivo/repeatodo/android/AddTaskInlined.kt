@@ -36,17 +36,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.koin.compose.koinInject
-import ru.olegivo.repeatodo.add.presentation.AddTaskUiState
 import ru.olegivo.repeatodo.add.presentation.AddTaskViewModel
-import ru.olegivo.repeatodo.add.presentation.FakeAddTaskViewModel
+import ru.olegivo.repeatodo.add.presentation.addTaskViewModelWithFakes
+import ru.olegivo.repeatodo.preview.fakeOrInjectKoin
+import ru.olegivo.repeatodo.utils.PreviewEnvironment
 
 @Composable
 internal fun AddTaskInlined(
     modifier: Modifier = Modifier,
-    isPreview: Boolean = false,
-    viewModel: AddTaskViewModel = if (isPreview) FakeAddTaskViewModel(AddTaskUiState()) else koinInject(),
+    previewEnvironment: PreviewEnvironment? = null,
 ) {
+    val viewModel: AddTaskViewModel = fakeOrInjectKoin(previewEnvironment)
     Row(
         modifier = modifier
             .padding(16.dp)
@@ -85,6 +85,8 @@ internal fun AddTaskInlined(
 @Composable
 private fun AddTaskInlinedPreview() {
     MaterialTheme {
-        AddTaskInlined(isPreview = true)
+        AddTaskInlined(
+            previewEnvironment = PreviewEnvironment { addTaskViewModelWithFakes() }
+        )
     }
 }

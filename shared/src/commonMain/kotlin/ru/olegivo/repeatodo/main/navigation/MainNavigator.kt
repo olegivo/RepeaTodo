@@ -17,13 +17,14 @@
 
 package ru.olegivo.repeatodo.main.navigation
 
+import dev.icerock.moko.mvvm.flow.CFlow
 import kotlinx.coroutines.flow.SharedFlow
 import ru.olegivo.repeatodo.edit.navigation.EditTaskNavigator
 
 interface MainNavigator: EditTaskNavigator {
 
-    val navigationDestination: SharedFlow<NavigationDestination?>
-    val navigationBack: SharedFlow<Unit>
+    val navigationDestination: CFlow<NavigationDestination?>
+    val navigationBack: CFlow<Unit>
 
     fun back()
     fun addTask()

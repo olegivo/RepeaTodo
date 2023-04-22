@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Oleg Ivashchenko <olegivo@gmail.com>
+ * Copyright (C) 2023 Oleg Ivashchenko <olegivo@gmail.com>
  *
  * This file is part of RepeaTodo.
  *
@@ -15,8 +15,17 @@
  * RepeaTodo.
  */
 
-package ru.olegivo.repeatodo.utils
+package ru.olegivo.repeatodo.preview
 
-import java.util.UUID
+import androidx.compose.runtime.Composable
+import org.koin.compose.koinInject
+import org.koin.core.parameter.ParametersDefinition
+import ru.olegivo.repeatodo.utils.PreviewEnvironment
 
-actual fun newUuid(): String = UUID.randomUUID().toString()
+
+@Composable
+internal inline fun <reified T> fakeOrInjectKoin(
+    previewEnvironment: PreviewEnvironment?,
+    noinline parameters: ParametersDefinition? = null
+): T =
+    previewEnvironment?.get() ?: koinInject(parameters = parameters)

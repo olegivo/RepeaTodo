@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Oleg Ivashchenko <olegivo@gmail.com>
+ * Copyright (C) 2023 Oleg Ivashchenko <olegivo@gmail.com>
  *
  * This file is part of RepeaTodo.
  *
@@ -17,6 +17,15 @@
 
 package ru.olegivo.repeatodo.utils
 
-import java.util.UUID
+import kotlinx.cinterop.ObjCClass
+import kotlinx.cinterop.ObjCProtocol
+import kotlinx.cinterop.getOriginalKotlinClass
 
-actual fun newUuid(): String = UUID.randomUUID().toString()
+fun PreviewEnvironment.get(objCClass: Any): Any {
+    val kClazz = when (objCClass) {
+        is ObjCProtocol -> getOriginalKotlinClass(objCClass)!!
+        else -> getOriginalKotlinClass(objCClass as ObjCClass)!!
+    }
+
+    return get(kClazz)
+}
