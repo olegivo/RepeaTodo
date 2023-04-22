@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Oleg Ivashchenko <olegivo@gmail.com>
+ * Copyright (C) 2023 Oleg Ivashchenko <olegivo@gmail.com>
  *
  * This file is part of RepeaTodo.
  *
@@ -15,22 +15,13 @@
  * RepeaTodo.
  */
 
-package ru.olegivo.repeatodo.main.navigation
+package ru.olegivo.repeatodo.main
 
-import dev.icerock.moko.mvvm.flow.CFlow
-import kotlinx.coroutines.flow.SharedFlow
-import ru.olegivo.repeatodo.edit.navigation.EditTaskNavigator
+import ru.olegivo.repeatodo.add.presentation.addTaskViewModelWithFakes
+import ru.olegivo.repeatodo.list.presentation.taskListFakes
+import ru.olegivo.repeatodo.utils.PreviewEnvironment
 
-interface MainNavigator: EditTaskNavigator {
-
-    val navigationDestination: CFlow<NavigationDestination?>
-    val navigationBack: CFlow<Unit>
-
-    fun back()
-    fun addTask()
-}
-
-sealed class NavigationDestination {
-    object AddTask : NavigationDestination()
-    data class EditTask(val uuid: String) : NavigationDestination()
+fun PreviewEnvironment.mainScreenFakes() {
+    taskListFakes()
+    addTaskViewModelWithFakes()
 }

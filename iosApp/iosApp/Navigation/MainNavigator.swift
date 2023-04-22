@@ -20,23 +20,23 @@ public extension MainNavigator {
 class MainNavigatorObservableObject: ObservableObject {
     var wrapped: MainNavigator
     @Published
-    var navigationDirection: NavigationDirection?
+    var navigationDirection: NavigationDirection? = nil
 
-    var navigationDirection1: NavigationDirection? = nil
-
-    
     init(wrapped: MainNavigator) {
         self.wrapped = wrapped
         
-        let back = (wrapped.navigationBack.asPublisher() as AnyPublisher<KotlinUnit, Never>)
+        let back = createPublisher(wrapped.navigationBack)
             .map({ navigationDestination in
-                Optional<NavigationDirection>(NavigationDirection.back)
+                Optional<NavigationDirection>(
+                    NavigationDirection.back
+                )
             })
         
-        (wrapped.navigationDestination.asPublisher() as AnyPublisher<NavigationDestination?, Never>)
+        createPublisher(wrapped.navigationDestination)
             .map({ navigationDestination in
-                guard let navigationDestination = navigationDestination else { return nil }
-                return NavigationDirection.forward(destination: navigationDestination, style: .present)
+                Optional<NavigationDirection>(
+                    NavigationDirection.forward(destination: navigationDestination, style: .present)
+                )
             })
             .merge(with: back)
             .receive(on: RunLoop.main)

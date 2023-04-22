@@ -24,12 +24,9 @@ import org.koin.core.parameter.parametersOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import ru.olegivo.repeatodo.add.presentation.AddTaskViewModel
-import ru.olegivo.repeatodo.add.presentation.AddTaskViewModelImpl
 import ru.olegivo.repeatodo.db.DriverFactory
 import ru.olegivo.repeatodo.edit.presentation.EditTaskViewModel
-import ru.olegivo.repeatodo.edit.presentation.EditTaskViewModelImpl
 import ru.olegivo.repeatodo.list.presentation.TasksListViewModel
-import ru.olegivo.repeatodo.list.presentation.TasksListViewModelImpl
 import ru.olegivo.repeatodo.main.navigation.MainNavigator
 import ru.olegivo.repeatodo.main.presentation.MainViewModel
 import ru.olegivo.repeatodo.main.presentation.MainViewModelImpl
@@ -37,27 +34,24 @@ import ru.olegivo.repeatodo.main.presentation.MainViewModelImpl
 actual fun platformModule() = module {
     single { DriverFactory() }
     factoryOf(::MainViewModelImpl).bind<MainViewModel>()
-    factoryOf(::AddTaskViewModelImpl).bind<AddTaskViewModel>()
-    factoryOf(::EditTaskViewModelImpl).bind<EditTaskViewModel>()
-    factoryOf(::TasksListViewModelImpl).bind<TasksListViewModel>()
+    factoryOf(::AddTaskViewModel)
+    factoryOf(::EditTaskViewModel)
+    factoryOf(::TasksListViewModel)
 }
 
-object MainComponent : KoinComponent {
-
+object MainComponent: KoinComponent {
     fun mainViewModel() = get<MainViewModel>()
     fun mainNavigator() = get<MainNavigator>()
 }
 
-object AddTaskComponent : KoinComponent {
-
+object AddTaskComponent: KoinComponent {
     fun addTaskViewModel() = get<AddTaskViewModel>()
 }
 
-object EditTaskComponent : KoinComponent {
-
+object EditTaskComponent: KoinComponent {
     fun editTaskViewModel(uuid: String) = get<EditTaskViewModel> { parametersOf(uuid) }
 }
 
-object TasksListComponent : KoinComponent {
+object TasksListComponent: KoinComponent {
     fun tasksListViewModel() = get<TasksListViewModel>()
 }

@@ -17,11 +17,53 @@
 
 package ru.olegivo.repeatodo.list.presentation
 
-import kotlinx.coroutines.flow.StateFlow
+import dev.icerock.moko.mvvm.flow.cStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import ru.olegivo.repeatodo.BaseViewModel
+import ru.olegivo.repeatodo.domain.GetTasksListUseCase
 import ru.olegivo.repeatodo.domain.models.Task
+import ru.olegivo.repeatodo.edit.navigation.EditTaskNavigator
+import ru.olegivo.repeatodo.main.navigation.FakeMainNavigator
+import ru.olegivo.repeatodo.utils.PreviewEnvironment
+import ru.olegivo.repeatodo.utils.newUuid
 
-interface TasksListViewModel {
-    val state: StateFlow<TasksListUiState>
-    fun onTaskEditClicked(task: Task)
-    fun onCleared()
+class TasksListViewModel(
+    getTasks: GetTasksListUseCase,
+    private val editTaskNavigator: EditTaskNavigator
+): BaseViewModel() {
+
+    val state = getTasks()
+        .map {
+            TasksListUiState(it)
+        }
+        .stateIn(
+            viewModelScope,
+            started = SharingStarted.Lazily,
+            initialValue = TasksListUiState(emptyList())
+        ).cStateFlow()
+
+    fun onTaskEditClicked(task: Task) {
+        editTaskNavigator.editTask(task.uuid)
+    }
+}
+
+fun PreviewEnvironment.taskListFakes() {
+    register<GetTasksListUseCase> {
+        object: GetTasksListUseCase {
+            override fun invoke() = flowOf(
+                (1..5).map {
+                    Task(
+                        uuid = newUuid(),
+                        title = "Task $it",
+                        daysPeriodicity = it
+                    )
+                }
+            )
+        }
+    }
+    register<EditTaskNavigator> { FakeMainNavigator() }
+    register { TasksListViewModel(get(), get()) }
 }

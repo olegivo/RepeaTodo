@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Oleg Ivashchenko <olegivo@gmail.com>
+ * Copyright (C) 2023 Oleg Ivashchenko <olegivo@gmail.com>
  *
  * This file is part of RepeaTodo.
  *
@@ -15,29 +15,28 @@
  * RepeaTodo.
  */
 
-package ru.olegivo.repeatodo.list.presentation
+package ru.olegivo.repeatodo.domain
 
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.update
 import ru.olegivo.repeatodo.domain.models.Task
-import ru.olegivo.repeatodo.utils.newUuid
 
-class FakeTasksListViewModel(count: Int = 20) : TasksListViewModel {
+class FakeGetTaskUseCase: GetTaskUseCase {
 
-    override val state = MutableStateFlow(
-        TasksListUiState(
-            (1..count).map {
-                Task(
-                    uuid = newUuid(),
-                    title = "Task $it",
-                    daysPeriodicity = it
-                )
-            }
-        )
-    )
+    private val workState = MutableStateFlow<WorkState<Task>?>(null)
 
-    override fun onTaskEditClicked(task: Task) {
+    override operator fun invoke(uuid: String): Flow<WorkState<Task>> {
+        workState.update { WorkState.InProgress() }
+        return workState.filterNotNull()
     }
 
-    override fun onCleared() {
+    fun setResultCompleted(task: Task) {
+        workState.update { WorkState.Completed(task) }
+    }
+
+    fun setResultError() {
+        workState.update { WorkState.Error() }
     }
 }
