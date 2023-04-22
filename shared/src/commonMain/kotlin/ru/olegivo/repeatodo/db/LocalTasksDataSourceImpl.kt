@@ -24,16 +24,19 @@ import kotlinx.coroutines.flow.Flow
 import ru.olegivo.repeatodo.data.LocalTasksDataSource
 import ru.olegivo.repeatodo.domain.models.Task
 
-class LocalTasksDataSourceImpl(private val db: RepeaTodoDb) : LocalTasksDataSource {
+class LocalTasksDataSourceImpl(
+    private val db: RepeaTodoDb,
+    private val localDateTimeLongAdapter: LocalDateTimeLongAdapter
+): LocalTasksDataSource {
     override fun getTasks(): Flow<List<Task>> =
         db.taskQueries
-            .getTasks(::Task)
+            .getTasks(::toDomain)
             .asFlow()
             .mapToList()
 
     override fun getTask(uuid: String): Flow<Task?> =
         db.taskQueries
-            .getTask(uuid, ::Task)
+            .getTask(uuid, ::toDomain)
             .asFlow()
             .mapToOneOrNull()
 
@@ -44,4 +47,18 @@ class LocalTasksDataSourceImpl(private val db: RepeaTodoDb) : LocalTasksDataSour
     override fun delete(uuid: String) {
         db.taskQueries.deleteTask(uuid)
     }
+
+    private fun toDomain(
+        uuid: String,
+        title: String,
+        daysPeriodicity: Int,
+        lastCompletionDate: Long?
+    ) = Task(
+        uuid = uuid,
+        title = title,
+        daysPeriodicity = daysPeriodicity,
+        lastCompletionDate = lastCompletionDate?.toLocalDateTime()
+    )
+
+    private fun Long.toLocalDateTime() = localDateTimeLongAdapter.decode(this)
 }

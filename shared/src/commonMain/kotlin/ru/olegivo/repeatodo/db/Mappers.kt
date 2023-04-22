@@ -24,5 +24,5 @@ internal fun TaskDomain.toDb() =
     TaskDb(
         uuid = uuid,
         title = title,
-        daysPeriodicity = daysPeriodicity,
+        daysPeriodicity = daysPeriodicity
     )

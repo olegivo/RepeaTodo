@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Oleg Ivashchenko <olegivo@gmail.com>
+ * Copyright (C) 2023 Oleg Ivashchenko <olegivo@gmail.com>
  *
  * This file is part of RepeaTodo.
  *
@@ -15,19 +15,10 @@
  * RepeaTodo.
  */
 
-package ru.olegivo.repeatodo.domain.models
+package ru.olegivo.repeatodo.domain
 
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
 
-data class Task(
-    val uuid: String,
-    val title: String,
-    val daysPeriodicity: Int,
-    val lastCompletionDate: LocalDateTime? = null,
-) {
-    companion object {
-        const val DEFAULT_DAYS_PERIODICITY: Int = 1
-        const val MIN_DAYS_PERIODICITY: Int = 1
-        const val MAX_DAYS_PERIODICITY: Int = 1000
-    }
+interface DateTimeProvider {
+    fun getCurrentTimeZone(): TimeZone
 }

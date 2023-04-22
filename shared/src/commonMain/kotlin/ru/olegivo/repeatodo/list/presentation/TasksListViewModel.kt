@@ -58,7 +58,8 @@ fun PreviewEnvironment.taskListFakes() {
                     Task(
                         uuid = newUuid(),
                         title = "Task $it",
-                        daysPeriodicity = it
+                        daysPeriodicity = it,
+                        lastCompletionDate = null,
                     )
                 }
             )
