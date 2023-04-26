@@ -19,10 +19,11 @@ package ru.olegivo.repeatodo.list.presentation
 
 import dev.icerock.moko.mvvm.flow.cStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import ru.olegivo.repeatodo.BaseViewModel
+import ru.olegivo.repeatodo.domain.FakeCompleteTaskUseCase
+import ru.olegivo.repeatodo.domain.FakeGetTasksListUseCase
 import ru.olegivo.repeatodo.domain.GetTasksListUseCase
 import ru.olegivo.repeatodo.domain.models.Task
 import ru.olegivo.repeatodo.edit.navigation.EditTaskNavigator
@@ -52,17 +53,15 @@ class TasksListViewModel(
 
 fun PreviewEnvironment.taskListFakes() {
     register<GetTasksListUseCase> {
-        object: GetTasksListUseCase {
-            override fun invoke() = flowOf(
-                (1..5).map {
-                    Task(
-                        uuid = newUuid(),
-                        title = "Task $it",
-                        daysPeriodicity = it,
-                        lastCompletionDate = null,
-                    )
-                }
-            )
+        FakeGetTasksListUseCase().also { instance ->
+            instance.list.value = (1..5).map {
+                Task(
+                    uuid = newUuid(),
+                    title = "Task $it",
+                    daysPeriodicity = it,
+                    lastCompletionDate = null,
+                )
+            }
         }
     }
     register<EditTaskNavigator> { FakeMainNavigator() }

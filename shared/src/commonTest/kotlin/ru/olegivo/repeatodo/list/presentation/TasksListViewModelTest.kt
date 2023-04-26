@@ -20,11 +20,8 @@ package ru.olegivo.repeatodo.list.presentation
 import io.kotest.core.spec.IsolationMode
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import ru.olegivo.repeatodo.domain.GetTasksListUseCase
-import ru.olegivo.repeatodo.domain.models.Task
+import ru.olegivo.repeatodo.domain.FakeGetTasksListUseCase
 import ru.olegivo.repeatodo.domain.models.randomTask
 import ru.olegivo.repeatodo.kotest.FreeSpec
 import ru.olegivo.repeatodo.kotest.LifecycleMode
@@ -65,12 +62,5 @@ internal class TasksListViewModelTest: FreeSpec(LifecycleMode.Root) {
                 }
             }
         }
-    }
-
-    class FakeGetTasksListUseCase: GetTasksListUseCase {
-
-        val list = MutableStateFlow<List<Task>>(emptyList())
-
-        override fun invoke(): Flow<List<Task>> = list
     }
 }
