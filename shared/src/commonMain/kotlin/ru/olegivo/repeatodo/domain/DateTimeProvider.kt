@@ -17,8 +17,12 @@
 
 package ru.olegivo.repeatodo.domain
 
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 
 interface DateTimeProvider {
     fun getCurrentTimeZone(): TimeZone
+    fun getCurrentInstant(): Instant
+    fun getCurrentLocalDateTime(): LocalDateTime
 }

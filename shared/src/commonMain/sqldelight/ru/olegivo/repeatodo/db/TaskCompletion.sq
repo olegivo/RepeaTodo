@@ -13,6 +13,13 @@ addCompletion:
 INSERT OR REPLACE INTO TaskCompletion
 VALUES ?;
 
-deleteCompletion:
+deleteLatestTaskCompletion:
 DELETE FROM TaskCompletion
-WHERE uuid = :uuid;
+WHERE uuid IN (
+    SELECT uuid
+    FROM TaskCompletion
+    WHERE taskUuid = :taskUuid
+    ORDER BY completionDateUtc DESC
+    LIMIT 1
+)
+;

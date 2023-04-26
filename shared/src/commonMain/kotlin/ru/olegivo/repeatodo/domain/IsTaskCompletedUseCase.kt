@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Oleg Ivashchenko <olegivo@gmail.com>
+ * Copyright (C) 2023 Oleg Ivashchenko <olegivo@gmail.com>
  *
  * This file is part of RepeaTodo.
  *
@@ -17,13 +17,11 @@
 
 package ru.olegivo.repeatodo.domain
 
-import ru.olegivo.repeatodo.data.LocalTasksDataSource
-import ru.olegivo.repeatodo.domain.models.Task
+import kotlinx.datetime.LocalDateTime
 
-internal class AddTaskUseCaseImpl(
-    private val localTasksDataSource: LocalTasksDataSource
-): AddTaskUseCase {
-    override suspend fun invoke(task: Task) {
-        localTasksDataSource.save(task)
-    }
+interface IsTaskCompletedUseCase {
+    operator fun invoke(
+        lastCompletionDate: LocalDateTime?,
+        daysPeriodicity: Int
+    ): Boolean
 }

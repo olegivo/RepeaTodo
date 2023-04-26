@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Oleg Ivashchenko <olegivo@gmail.com>
+ * Copyright (C) 2023 Oleg Ivashchenko <olegivo@gmail.com>
  *
  * This file is part of RepeaTodo.
  *
@@ -15,12 +15,13 @@
  * RepeaTodo.
  */
 
-package ru.olegivo.repeatodo
+package ru.olegivo.repeatodo.platform
 
-import org.koin.dsl.module
-import ru.olegivo.repeatodo.domain.AddTaskUseCase
-import ru.olegivo.repeatodo.domain.AddTaskUseCaseImpl
+import kotlinx.coroutines.CoroutineDispatcher
+import ru.olegivo.repeatodo.DispatchersProvider
 
-fun sharedModule() = module {
-    factory<AddTaskUseCase> { AddTaskUseCaseImpl(tasksRepository = get()) }
+expect class DispatchersProviderImpl: DispatchersProvider {
+    override val io: CoroutineDispatcher
+    override val default: CoroutineDispatcher
+    override val main: CoroutineDispatcher
 }

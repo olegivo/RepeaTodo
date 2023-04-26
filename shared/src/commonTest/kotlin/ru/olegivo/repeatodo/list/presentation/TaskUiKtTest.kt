@@ -15,18 +15,22 @@
  * RepeaTodo.
  */
 
-package ru.olegivo.repeatodo.domain
+package ru.olegivo.repeatodo.list.presentation
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
+import io.kotest.core.spec.style.FreeSpec
+import io.kotest.matchers.shouldBe
+import ru.olegivo.repeatodo.domain.models.randomTask
 
-class DateTimeProviderImpl: DateTimeProvider {
-    override fun getCurrentTimeZone() = TimeZone.currentSystemDefault()
+class TaskUiKtTest: FreeSpec({
+    listOf(true, false).forEach { isCompleted ->
+        "toUi WHEN IsTaskCompletedUseCase return $isCompleted" {
+            val task = randomTask()
 
-    override fun getCurrentInstant() = Clock.System.now()
+            val taskUi = task.toUi(isTaskCompleted = FakeIsTaskCompletedUseCase(isCompleted))
 
-    override fun getCurrentLocalDateTime() =
-        with(getCurrentTimeZone()) {
-            getCurrentInstant().toLocalDateTime()
+            taskUi.uuid shouldBe task.uuid
+            taskUi.title shouldBe task.title
+            taskUi.isCompleted shouldBe isCompleted
         }
-}
+    }
+})

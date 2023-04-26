@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Oleg Ivashchenko <olegivo@gmail.com>
+ * Copyright (C) 2023 Oleg Ivashchenko <olegivo@gmail.com>
  *
  * This file is part of RepeaTodo.
  *
@@ -15,15 +15,14 @@
  * RepeaTodo.
  */
 
-package ru.olegivo.repeatodo.domain
+package ru.olegivo.repeatodo.platform
 
-import ru.olegivo.repeatodo.data.LocalTasksDataSource
-import ru.olegivo.repeatodo.domain.models.Task
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import ru.olegivo.repeatodo.DispatchersProvider
 
-internal class AddTaskUseCaseImpl(
-    private val localTasksDataSource: LocalTasksDataSource
-): AddTaskUseCase {
-    override suspend fun invoke(task: Task) {
-        localTasksDataSource.save(task)
-    }
+actual class DispatchersProviderImpl: DispatchersProvider {
+    actual override val io get() = Dispatchers.IO
+    actual override val default get() = Dispatchers.Default
+    actual override val main: CoroutineDispatcher get() = Dispatchers.Main
 }

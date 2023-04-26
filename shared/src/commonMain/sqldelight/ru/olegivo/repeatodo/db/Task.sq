@@ -19,6 +19,8 @@ FROM
             TC.taskUuid,
             MAX(TC.completionDateUtc) AS lastCompletionDateUtc
         FROM TaskCompletion TC
+        GROUP BY
+            TC.taskUuid
     ) TC ON T.uuid = TC.taskUuid;
 
 getTasks:

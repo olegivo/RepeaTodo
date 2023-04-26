@@ -23,25 +23,25 @@ import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.shouldBe
 import ru.olegivo.repeatodo.assertItem
-import ru.olegivo.repeatodo.data.FakeTasksRepository
+import ru.olegivo.repeatodo.data.FakeLocalTasksDataSource
 import ru.olegivo.repeatodo.domain.models.randomTask
 
-internal class SaveTaskUseCaseImplTest : FreeSpec() {
+internal class SaveTaskUseCaseImplTest: FreeSpec() {
     init {
-        "should update exist task in repository" {
-            val tasksRepository = FakeTasksRepository()
+        "should update exist task in localTasksDataSource" {
+            val localTasksDataSource = FakeLocalTasksDataSource()
             val saveTaskUseCase: SaveTaskUseCase = SaveTaskUseCaseImpl(
-                tasksRepository = tasksRepository
+                localTasksDataSource = localTasksDataSource
             )
             val origin = randomTask()
-            tasksRepository.save(origin)
+            localTasksDataSource.save(origin)
             val newVersion = randomTask().copy(uuid = origin.uuid)
 
             saveTaskUseCase(newVersion).test {
                 expectMostRecentItem() shouldBe WorkState.Completed(Unit)
             }
 
-            tasksRepository.getTasks().assertItem {
+            localTasksDataSource.getTasks().assertItem {
                 shouldNotContain(origin)
                 shouldContain(newVersion)
             }

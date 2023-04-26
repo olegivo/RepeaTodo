@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Oleg Ivashchenko <olegivo@gmail.com>
+ * Copyright (C) 2023 Oleg Ivashchenko <olegivo@gmail.com>
  *
  * This file is part of RepeaTodo.
  *
@@ -15,23 +15,22 @@
  * RepeaTodo.
  */
 
-package ru.olegivo.repeatodo.data
+package ru.olegivo.repeatodo.list.presentation
 
-import ru.olegivo.repeatodo.domain.TasksRepository
+import ru.olegivo.repeatodo.domain.IsTaskCompletedUseCase
 import ru.olegivo.repeatodo.domain.models.Task
 
-class TasksRepositoryImpl(private val localTasksDataSource: LocalTasksDataSource) :
-    TasksRepository {
+data class TaskUi(
+    val uuid: String,
+    val title: String,
+    val isCompleted: Boolean,
+)
 
-    override fun getTasks() = localTasksDataSource.getTasks()
-
-    override fun getTask(uuid: String) = localTasksDataSource.getTask(uuid)
-
-    override suspend fun save(task: Task) {
-        localTasksDataSource.save(task)
-    }
-
-    override suspend fun delete(uuid: String) {
-        localTasksDataSource.delete(uuid)
-    }
-}
+fun Task.toUi(isTaskCompleted: IsTaskCompletedUseCase) = TaskUi(
+    uuid = uuid,
+    title = title,
+    isCompleted = isTaskCompleted(
+        lastCompletionDate = lastCompletionDate,
+        daysPeriodicity = daysPeriodicity
+    )
+)
