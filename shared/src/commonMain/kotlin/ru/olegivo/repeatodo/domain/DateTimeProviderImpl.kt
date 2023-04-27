@@ -23,7 +23,7 @@ import kotlinx.datetime.TimeZone
 class DateTimeProviderImpl: DateTimeProvider {
     override fun getCurrentTimeZone() = TimeZone.currentSystemDefault()
 
-    override fun getCurrentInstant() = Clock.System.now()
+    override fun getCurrentInstant() = Clock.System.now().roundNanoseconds()
 
     override fun getCurrentLocalDateTime() =
         with(getCurrentTimeZone()) {

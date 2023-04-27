@@ -17,19 +17,9 @@
 
 package ru.olegivo.repeatodo.domain
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
+import kotlinx.datetime.Instant
+import kotlin.time.Duration.Companion.nanoseconds
 
-class FakeDateTimeProvider(): DateTimeProvider {
-    var timeZone = TimeZone.currentSystemDefault()
-    var instant = Clock.System.now().roundNanoseconds()
-
-    override fun getCurrentTimeZone() = timeZone
-
-    override fun getCurrentInstant() = instant
-
-    override fun getCurrentLocalDateTime() =
-        with(getCurrentTimeZone()) {
-            instant.toLocalDateTime()
-        }
-}
+// https://github.com/Kotlin/kotlinx-datetime/issues/270
+fun Instant.roundNanoseconds() =
+    this - this.nanosecondsOfSecond.nanoseconds
