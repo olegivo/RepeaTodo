@@ -19,8 +19,12 @@ package ru.olegivo.repeatodo.db
 
 import com.squareup.sqldelight.db.SqlDriver
 
-expect class DriverFactory {
+interface DriverFactory {
     fun createDriver(dbName: String): SqlDriver
+}
+
+expect class DriverFactoryImpl: DriverFactory {
+    override fun createDriver(dbName: String): SqlDriver
 }
 
 private const val DbName: String = "repeatodo.db"
