@@ -17,32 +17,23 @@
 
 package ru.olegivo.repeatodo.main.navigation
 
-import app.cash.turbine.test
-import app.cash.turbine.testIn
 import io.kotest.core.spec.IsolationMode
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import ru.olegivo.repeatodo.kotest.FreeSpec
 import ru.olegivo.repeatodo.kotest.LifecycleMode
 import ru.olegivo.repeatodo.randomString
-import kotlin.time.Duration.Companion.milliseconds
 
-internal class MainNavigatorImplTest : FreeSpec(LifecycleMode.Root) {
+internal class MainNavigatorImplTest: FreeSpec(LifecycleMode.Root) {
     override fun isolationMode() = IsolationMode.InstancePerLeaf
 
     init {
         "instance" - {
             val navigator: MainNavigator = MainNavigatorImpl()
-            val navigationBack = navigator.navigationBack.testIn(
-                testCoroutineScope,
-                timeout = 10.milliseconds,
-                name = "navigationBack"
-            )
-            val navigationDestination = navigator.navigationDestination.testIn(
-                testCoroutineScope,
-                timeout = 10.milliseconds,
-                name = "navigationDestination"
-            )
+            val navigationBack =
+                navigator.navigationBack.testIn(name = "navigationBack")
+            val navigationDestination =
+                navigator.navigationDestination.testIn(name = "navigationDestination")
 
             "initial state" {
                 navigationBack.expectNoEvents()

@@ -19,10 +19,12 @@ package ru.olegivo.repeatodo.android
 
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
 import org.koin.dsl.module
 import ru.olegivo.repeatodo.db.DriverFactory
+import ru.olegivo.repeatodo.db.DriverFactoryImpl
 
 val appModule = module {
-    single { DriverFactory(androidContext()) }
+    single { DriverFactoryImpl(androidContext()) }.bind<DriverFactory>()
     singleOf(::AndroidNavigator)
 }

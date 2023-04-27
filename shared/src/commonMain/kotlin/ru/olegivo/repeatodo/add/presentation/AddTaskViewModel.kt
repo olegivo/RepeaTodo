@@ -59,7 +59,8 @@ class AddTaskViewModel(private val saveTask: SaveTaskUseCase): BaseViewModel() {
             val task = Task(
                 uuid = newUuid(),
                 title = title.value,
-                daysPeriodicity = Task.DEFAULT_DAYS_PERIODICITY
+                daysPeriodicity = Task.DEFAULT_DAYS_PERIODICITY,
+                lastCompletionDate = null
             )
             savingState.emitAll(saveTask(task))
         }

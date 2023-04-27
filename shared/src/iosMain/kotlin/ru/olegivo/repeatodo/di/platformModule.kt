@@ -20,19 +20,24 @@ package ru.olegivo.repeatodo.di
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.module.dsl.factoryOf
+import org.koin.core.module.dsl.singleOf
 import org.koin.core.parameter.parametersOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
+import ru.olegivo.repeatodo.DispatchersProvider
 import ru.olegivo.repeatodo.add.presentation.AddTaskViewModel
 import ru.olegivo.repeatodo.db.DriverFactory
+import ru.olegivo.repeatodo.db.DriverFactoryImpl
 import ru.olegivo.repeatodo.edit.presentation.EditTaskViewModel
 import ru.olegivo.repeatodo.list.presentation.TasksListViewModel
 import ru.olegivo.repeatodo.main.navigation.MainNavigator
 import ru.olegivo.repeatodo.main.presentation.MainViewModel
 import ru.olegivo.repeatodo.main.presentation.MainViewModelImpl
+import ru.olegivo.repeatodo.platform.DispatchersProviderImpl
 
 actual fun platformModule() = module {
-    single { DriverFactory() }
+    singleOf(::DispatchersProviderImpl).bind<DispatchersProvider>()
+    singleOf(::DriverFactoryImpl).bind<DriverFactory>()
     factoryOf(::MainViewModelImpl).bind<MainViewModel>()
     factoryOf(::AddTaskViewModel)
     factoryOf(::EditTaskViewModel)

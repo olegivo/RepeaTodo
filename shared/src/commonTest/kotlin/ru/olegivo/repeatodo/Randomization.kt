@@ -17,6 +17,14 @@
 
 package ru.olegivo.repeatodo
 
+import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.plus
+import kotlinx.datetime.toLocalDateTime
+import ru.olegivo.repeatodo.domain.roundNanoseconds
 import kotlin.random.Random
 
 fun randomInt(from: Int = 0, until: Int = 1000) = Random.nextInt(from, until)
@@ -42,3 +50,12 @@ fun <T> randomList(
             Position(range, position).producer()
         }
     }
+
+fun randomInstant(): Instant = Clock.System.now()
+    .roundNanoseconds()
+    .plus(randomInt(), DateTimeUnit.HOUR)
+
+fun randomLocalDateTime(): LocalDateTime =
+    randomInstant().toLocalDateTime(TimeZone.currentSystemDefault())
+
+fun randomBoolean() = Random.nextBoolean()

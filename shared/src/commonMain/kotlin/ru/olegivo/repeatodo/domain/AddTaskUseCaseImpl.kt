@@ -17,10 +17,13 @@
 
 package ru.olegivo.repeatodo.domain
 
+import ru.olegivo.repeatodo.data.LocalTasksDataSource
 import ru.olegivo.repeatodo.domain.models.Task
 
-internal class AddTaskUseCaseImpl(private val tasksRepository: TasksRepository) : AddTaskUseCase {
+internal class AddTaskUseCaseImpl(
+    private val localTasksDataSource: LocalTasksDataSource
+): AddTaskUseCase {
     override suspend fun invoke(task: Task) {
-        tasksRepository.save(task)
+        localTasksDataSource.save(task)
     }
 }

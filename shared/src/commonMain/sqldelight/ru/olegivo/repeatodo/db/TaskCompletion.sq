@@ -1,0 +1,25 @@
+import kotlinx.datetime.LocalDateTime;
+
+CREATE TABLE TaskCompletion (
+    uuid TEXT NOT NULL PRIMARY KEY,
+    taskUuid TEXT NOT NULL,
+    completionDateUtc INTEGER AS LocalDateTime
+);
+
+CREATE INDEX taskCompletion_uuid ON TaskCompletion(uuid);
+CREATE INDEX taskCompletion_taskUuid ON TaskCompletion(taskUuid);
+
+addCompletion:
+INSERT OR REPLACE INTO TaskCompletion
+VALUES ?;
+
+deleteLatestTaskCompletion:
+DELETE FROM TaskCompletion
+WHERE uuid IN (
+    SELECT uuid
+    FROM TaskCompletion
+    WHERE taskUuid = :taskUuid
+    ORDER BY completionDateUtc DESC
+    LIMIT 1
+)
+;

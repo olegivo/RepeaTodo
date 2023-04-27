@@ -21,15 +21,16 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import ru.olegivo.repeatodo.data.LocalTasksDataSource
 import ru.olegivo.repeatodo.domain.models.Task
 
-class GetTaskUseCaseImpl(private val tasksRepository: TasksRepository) : GetTaskUseCase {
+class GetTaskUseCaseImpl(private val localTasksDataSource: LocalTasksDataSource): GetTaskUseCase {
 
     override fun invoke(uuid: String): Flow<WorkState<Task>> = flow<WorkState<Task>> {
         try {
             emit(WorkState.InProgress())
             emitAll(
-                tasksRepository.getTask(uuid).map { task ->
+                localTasksDataSource.getTask(uuid).map { task ->
                     task?.let { WorkState.Completed(it) }
                         ?: WorkState.Error()
                 }
