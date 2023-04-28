@@ -50,6 +50,7 @@ import ru.olegivo.repeatodo.domain.SaveTaskUseCaseImpl
 import ru.olegivo.repeatodo.edit.navigation.EditTaskNavigator
 import ru.olegivo.repeatodo.list.presentation.RelativeDateFormatter
 import ru.olegivo.repeatodo.list.presentation.RelativeDateFormatterImpl
+import ru.olegivo.repeatodo.list.presentation.TasksSorterByCompletion
 import ru.olegivo.repeatodo.main.navigation.MainNavigator
 import ru.olegivo.repeatodo.main.navigation.MainNavigatorImpl
 
@@ -85,6 +86,7 @@ object DependencyInjection {
         factoryOf(::CompleteTaskUseCaseImpl).bind<CompleteTaskUseCase>()
         factoryOf(::CancelTaskCompletionUseCaseImpl).bind<CancelTaskCompletionUseCase>()
         factoryOf(::IsTaskCompletedUseCaseImpl).bind<IsTaskCompletedUseCase>()
+        factoryOf(::TasksSorterByCompletion)
     }
 }
 
