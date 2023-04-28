@@ -48,6 +48,8 @@ import ru.olegivo.repeatodo.domain.IsTaskCompletedUseCaseImpl
 import ru.olegivo.repeatodo.domain.SaveTaskUseCase
 import ru.olegivo.repeatodo.domain.SaveTaskUseCaseImpl
 import ru.olegivo.repeatodo.edit.navigation.EditTaskNavigator
+import ru.olegivo.repeatodo.list.presentation.RelativeDateFormatter
+import ru.olegivo.repeatodo.list.presentation.RelativeDateFormatterImpl
 import ru.olegivo.repeatodo.main.navigation.MainNavigator
 import ru.olegivo.repeatodo.main.navigation.MainNavigatorImpl
 
@@ -74,6 +76,7 @@ object DependencyInjection {
         singleOf(::createDatabase)
         factoryOf(::LocalDateTimeLongAdapter)
         factoryOf(::DateTimeProviderImpl).bind<DateTimeProvider>()
+        factoryOf(::RelativeDateFormatterImpl).bind<RelativeDateFormatter>()
         factoryOf(::AddTaskUseCaseImpl).bind<AddTaskUseCase>()
         factoryOf(::GetTasksListUseCaseImpl).bind<GetTasksListUseCase>()
         factoryOf(::GetTaskUseCaseImpl).bind<GetTaskUseCase>()

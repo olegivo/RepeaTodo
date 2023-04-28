@@ -17,17 +17,13 @@
 
 package ru.olegivo.repeatodo.domain
 
-import io.kotest.core.spec.IsolationMode
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import ru.olegivo.repeatodo.kotest.FreeSpec
-import ru.olegivo.repeatodo.kotest.LifecycleMode
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.milliseconds
 
-class IsTaskCompletedUseCaseImplTest: FreeSpec(LifecycleMode.Root) {
-
-    override fun isolationMode() = IsolationMode.InstancePerLeaf
+class IsTaskCompletedUseCaseImplTest: FreeSpec() {
 
     init {
         "instance" - {

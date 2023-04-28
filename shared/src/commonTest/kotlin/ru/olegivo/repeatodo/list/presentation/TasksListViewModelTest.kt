@@ -17,7 +17,6 @@
 
 package ru.olegivo.repeatodo.list.presentation
 
-import io.kotest.core.spec.IsolationMode
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
@@ -27,14 +26,12 @@ import ru.olegivo.repeatodo.domain.FakeCompleteTaskUseCase
 import ru.olegivo.repeatodo.domain.FakeGetTasksListUseCase
 import ru.olegivo.repeatodo.domain.models.randomTask
 import ru.olegivo.repeatodo.kotest.FreeSpec
-import ru.olegivo.repeatodo.kotest.LifecycleMode
 import ru.olegivo.repeatodo.main.navigation.FakeMainNavigator
 import ru.olegivo.repeatodo.main.navigation.NavigationDestination
 import ru.olegivo.repeatodo.randomBoolean
 import ru.olegivo.repeatodo.randomList
 
-internal class TasksListViewModelTest: FreeSpec(LifecycleMode.Root) {
-    override fun isolationMode() = IsolationMode.InstancePerLeaf
+internal class TasksListViewModelTest: FreeSpec() {
 
     init {
         "instance" - {
@@ -42,6 +39,7 @@ internal class TasksListViewModelTest: FreeSpec(LifecycleMode.Root) {
             val completeTaskUseCase = FakeCompleteTaskUseCase()
             val cancelTaskCompletionUseCase = FakeCancelTaskCompletionUseCase()
             val isTaskCompletedUseCase = FakeIsTaskCompletedUseCase(isCompleted = randomBoolean())
+            val relativeDateFormatter = FakeRelativeDateFormatter()
             val editTaskNavigator = FakeMainNavigator()
 
             val viewModel = TasksListViewModel(
@@ -50,20 +48,29 @@ internal class TasksListViewModelTest: FreeSpec(LifecycleMode.Root) {
                 cancelTaskCompletion = cancelTaskCompletionUseCase,
                 editTaskNavigator = editTaskNavigator,
                 isTaskCompleted = isTaskCompletedUseCase,
+                relativeDateFormatter = relativeDateFormatter,
             )
             val state = viewModel.state.testIn(name = "state")
 
             "initial state" - {
                 state.awaitItem().tasks.shouldBeEmpty()
 
-                val taskUi = randomTask().toUi(isTaskCompletedUseCase)
+                val taskUi = randomTask().toUi(
+                    isTaskCompleted = isTaskCompletedUseCase,
+                    relativeDateFormatter = relativeDateFormatter
+                )
 
                 "actual state after loading" {
                     val list = randomList { randomTask() }
 
                     getTasksListUseCase.list.update { list }
 
-                    state.awaitItem().tasks shouldBe list.map { it.toUi(isTaskCompletedUseCase) }
+                    state.awaitItem().tasks shouldBe list.map {
+                        it.toUi(
+                            isTaskCompleted = isTaskCompletedUseCase,
+                            relativeDateFormatter = relativeDateFormatter
+                        )
+                    }
                 }
 
                 "onTaskEditClicked should navigate to edit" {
