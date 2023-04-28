@@ -17,15 +17,12 @@
 
 package ru.olegivo.repeatodo.main.navigation
 
-import io.kotest.core.spec.IsolationMode
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import ru.olegivo.repeatodo.kotest.FreeSpec
-import ru.olegivo.repeatodo.kotest.LifecycleMode
 import ru.olegivo.repeatodo.randomString
 
-internal class MainNavigatorImplTest: FreeSpec(LifecycleMode.Root) {
-    override fun isolationMode() = IsolationMode.InstancePerLeaf
+internal class MainNavigatorImplTest: FreeSpec() {
 
     init {
         "instance" - {

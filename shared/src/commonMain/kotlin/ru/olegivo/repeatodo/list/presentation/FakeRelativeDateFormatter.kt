@@ -17,25 +17,8 @@
 
 package ru.olegivo.repeatodo.list.presentation
 
-import ru.olegivo.repeatodo.domain.IsTaskCompletedUseCase
-import ru.olegivo.repeatodo.domain.models.Task
+import kotlinx.datetime.LocalDateTime
 
-data class TaskUi(
-    val uuid: String,
-    val title: String,
-    val isCompleted: Boolean,
-    val lastCompletionDate: String?,
-)
-
-fun Task.toUi(
-    isTaskCompleted: IsTaskCompletedUseCase,
-    relativeDateFormatter: RelativeDateFormatter
-) = TaskUi(
-    uuid = uuid,
-    title = title,
-    isCompleted = isTaskCompleted(
-        lastCompletionDate = lastCompletionDate,
-        daysPeriodicity = daysPeriodicity
-    ),
-    lastCompletionDate = lastCompletionDate?.let { relativeDateFormatter.format(it) }
-)
+class FakeRelativeDateFormatter(var result: String? = null): RelativeDateFormatter {
+    override fun format(value: LocalDateTime) = result ?: value.toString()
+}

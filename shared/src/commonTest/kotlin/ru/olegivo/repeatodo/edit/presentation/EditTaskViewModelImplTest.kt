@@ -17,7 +17,6 @@
 
 package ru.olegivo.repeatodo.edit.presentation
 
-import io.kotest.core.spec.IsolationMode
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
@@ -30,13 +29,10 @@ import ru.olegivo.repeatodo.domain.FakeSaveTaskUseCase
 import ru.olegivo.repeatodo.domain.models.Task
 import ru.olegivo.repeatodo.domain.models.randomTask
 import ru.olegivo.repeatodo.kotest.FreeSpec
-import ru.olegivo.repeatodo.kotest.LifecycleMode
 import ru.olegivo.repeatodo.main.navigation.FakeMainNavigator
 import ru.olegivo.repeatodo.randomString
 
-internal class EditTaskViewModelImplTest : FreeSpec(LifecycleMode.Root) {
-
-    override fun isolationMode() = IsolationMode.InstancePerLeaf
+internal class EditTaskViewModelImplTest: FreeSpec() {
 
     init {
         "viewModel" - {

@@ -19,7 +19,6 @@ package ru.olegivo.repeatodo.db
 
 import com.squareup.sqldelight.db.SqlDriver
 import com.squareup.sqldelight.sqlite.driver.JdbcSqliteDriver
-import io.kotest.core.spec.IsolationMode
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
@@ -31,13 +30,10 @@ import ru.olegivo.repeatodo.domain.FakeDateTimeProvider
 import ru.olegivo.repeatodo.domain.models.Task
 import ru.olegivo.repeatodo.domain.models.randomTask
 import ru.olegivo.repeatodo.kotest.FreeSpec
-import ru.olegivo.repeatodo.kotest.LifecycleMode
 import ru.olegivo.repeatodo.randomString
 import kotlin.time.Duration.Companion.hours
 
-class LocalTasksDataSourceImplTest: FreeSpec(LifecycleMode.Root) {
-    override fun isolationMode() = IsolationMode.InstancePerLeaf
-
+class LocalTasksDataSourceImplTest: FreeSpec() {
     init {
         "instance" - {
             val dateTimeProvider = FakeDateTimeProvider()

@@ -92,9 +92,11 @@ private fun TaskItem(
         Column(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
+                .align(Alignment.Top)
                 .weight(1f)
         ) {
             Text(text = task.title)
+            task.lastCompletionDate?.let { Text(text = it) }
         }
         Button(onClick = { onTaskEditClicked(task) }) {
             Icon(Icons.Rounded.Edit, "Edit")
@@ -127,6 +129,7 @@ private fun TaskItemUncompletedPreview() {
                     uuid = newUuid(),
                     title = "Todo 1",
                     isCompleted = false,
+                    lastCompletionDate = null,
                 )
             )
         }
@@ -143,6 +146,7 @@ private fun TaskItemCompletedPreview() {
                     uuid = newUuid(),
                     title = "Todo 1",
                     isCompleted = true,
+                    lastCompletionDate = "several seconds ago",
                 )
             )
         }
