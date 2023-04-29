@@ -17,8 +17,6 @@
 
 package ru.olegivo.repeatodo.db
 
-import com.squareup.sqldelight.db.SqlDriver
-import com.squareup.sqldelight.sqlite.driver.JdbcSqliteDriver
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
@@ -38,13 +36,12 @@ class LocalTasksDataSourceImplTest: FreeSpec() {
         "instance" - {
             val dateTimeProvider = FakeDateTimeProvider()
             val localDateTimeLongAdapter = LocalDateTimeLongAdapter(dateTimeProvider)
-            val driver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY)
-            val database = createDatabase(
-                object: DriverFactory {
-                    override fun createDriver(dbName: String): SqlDriver = driver
-                },
-                localDateTimeLongAdapter
+            val driverFactory = DriverFactoryImpl()
+            val driver = driverFactory.createDriver(
+                dbName = "testdb",
+                foreignKeyConstraints = true
             )
+            val database = createDatabase(driverFactory, localDateTimeLongAdapter)
             RepeaTodoDb.Schema.create(driver)
 
             val localTasksDataSource: LocalTasksDataSource = LocalTasksDataSourceImpl(
@@ -123,7 +120,7 @@ class LocalTasksDataSourceImplTest: FreeSpec() {
                     }
                 }
 
-                "addTaskCompletion" {
+                "addTaskCompletion" - {
                     val task1 = Task(
                         uuid = randomString(),
                         title = randomString(),
@@ -152,6 +149,19 @@ class LocalTasksDataSourceImplTest: FreeSpec() {
                         task1.copy(lastCompletionDate = d1),
                         task2.copy(lastCompletionDate = d2)
                     )
+
+                    "delete task should delete its completions" {
+                        localTasksDataSource.delete(task1.uuid)
+                        localTasksDataSource.delete(task2.uuid)
+                        val long = driver.executeQuery(
+                            null,
+                            "select count(*) from TaskCompletion",
+                            0
+                        ).use {
+                            it.getLong(0)
+                        }
+                        long shouldBe 0L
+                    }
                 }
 
                 "deleteLatestTaskCompletion" - {

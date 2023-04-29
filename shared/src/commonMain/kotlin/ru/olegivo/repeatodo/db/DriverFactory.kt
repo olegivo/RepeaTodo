@@ -20,11 +20,11 @@ package ru.olegivo.repeatodo.db
 import com.squareup.sqldelight.db.SqlDriver
 
 interface DriverFactory {
-    fun createDriver(dbName: String): SqlDriver
+    fun createDriver(dbName: String, foreignKeyConstraints: Boolean): SqlDriver
 }
 
 expect class DriverFactoryImpl: DriverFactory {
-    override fun createDriver(dbName: String): SqlDriver
+    override fun createDriver(dbName: String, foreignKeyConstraints: Boolean): SqlDriver
 }
 
 private const val DbName: String = "repeatodo.db"
@@ -34,7 +34,10 @@ fun createDatabase(
     localDateTimeLongAdapter: LocalDateTimeLongAdapter
 ): RepeaTodoDb {
 
-    val driver = driverFactory.createDriver(dbName = DbName)
+    val driver = driverFactory.createDriver(
+        dbName = DbName,
+        foreignKeyConstraints = true
+    )
     val database = RepeaTodoDb(driver, TaskCompletion.Adapter(localDateTimeLongAdapter))
 
     // Do more work with the database (see below).

@@ -18,8 +18,17 @@
 package ru.olegivo.repeatodo.db
 
 import com.squareup.sqldelight.db.SqlDriver
+import com.squareup.sqldelight.sqlite.driver.JdbcSqliteDriver
+import java.util.Properties
 
 actual class DriverFactoryImpl: DriverFactory {
-    actual override fun createDriver(dbName: String): SqlDriver =
-        TODO("Not yet implemented")
+    actual override fun createDriver(dbName: String, foreignKeyConstraints: Boolean): SqlDriver {
+        val properties = Properties().apply {
+            setProperty(
+                /*SQLiteConfig.Pragma.FOREIGN_KEYS*/ "foreign_keys",
+                foreignKeyConstraints.toString()
+            )
+        }
+        return JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY, properties)
+    }
 }

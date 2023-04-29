@@ -2,7 +2,7 @@ import kotlinx.datetime.LocalDateTime;
 
 CREATE TABLE TaskCompletion (
     uuid TEXT NOT NULL PRIMARY KEY,
-    taskUuid TEXT NOT NULL,
+    taskUuid TEXT NOT NULL REFERENCES Task(uuid) ON DELETE CASCADE,
     completionDateUtc INTEGER AS LocalDateTime
 );
 

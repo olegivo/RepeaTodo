@@ -25,8 +25,10 @@ import kotlinx.coroutines.launch
 import ru.olegivo.repeatodo.BaseViewModel
 import ru.olegivo.repeatodo.domain.CancelTaskCompletionUseCase
 import ru.olegivo.repeatodo.domain.CompleteTaskUseCase
+import ru.olegivo.repeatodo.domain.DateTimeProvider
 import ru.olegivo.repeatodo.domain.FakeCancelTaskCompletionUseCase
 import ru.olegivo.repeatodo.domain.FakeCompleteTaskUseCase
+import ru.olegivo.repeatodo.domain.FakeDateTimeProvider
 import ru.olegivo.repeatodo.domain.FakeGetTasksListUseCase
 import ru.olegivo.repeatodo.domain.GetTasksListUseCase
 import ru.olegivo.repeatodo.domain.IsTaskCompletedUseCase
@@ -42,18 +44,20 @@ class TasksListViewModel(
     private val cancelTaskCompletion: CancelTaskCompletionUseCase,
     private val editTaskNavigator: EditTaskNavigator,
     private val isTaskCompleted: IsTaskCompletedUseCase,
-    private val relativeDateFormatter: RelativeDateFormatter
+    private val relativeDateFormatter: RelativeDateFormatter,
+    private val tasksSorterByCompletion: TasksSorterByCompletion
 ): BaseViewModel() {
 
     val state = getTasks()
         .map { tasks ->
             TasksListUiState(
-                tasks.map {
-                    it.toUi(
-                        isTaskCompleted = isTaskCompleted,
-                        relativeDateFormatter = relativeDateFormatter
-                    )
-                }
+                tasksSorterByCompletion.sort(tasks)
+                    .map {
+                        it.toUi(
+                            isTaskCompleted = isTaskCompleted,
+                            relativeDateFormatter = relativeDateFormatter
+                        )
+                    }
             )
         }
         .stateIn(
@@ -95,5 +99,7 @@ fun PreviewEnvironment.taskListFakes() {
     register<IsTaskCompletedUseCase> { FakeIsTaskCompletedUseCase(false) }
     register<RelativeDateFormatter> { FakeRelativeDateFormatter() }
     register<EditTaskNavigator> { FakeMainNavigator() }
-    register { TasksListViewModel(get(), get(), get(), get(), get(), get()) }
+    register<DateTimeProvider> { FakeDateTimeProvider() }
+    register { TasksSorterByCompletion(get()) }
+    register { TasksListViewModel(get(), get(), get(), get(), get(), get(), get()) }
 }

@@ -18,10 +18,21 @@
 package ru.olegivo.repeatodo.db
 
 import android.content.Context
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import com.squareup.sqldelight.db.SqlDriver
 
 actual class DriverFactoryImpl(private val context: Context): DriverFactory {
-    actual override fun createDriver(dbName: String): SqlDriver =
-        AndroidSqliteDriver(RepeaTodoDb.Schema, context, dbName)
+    actual override fun createDriver(dbName: String, foreignKeyConstraints: Boolean): SqlDriver =
+        AndroidSqliteDriver(
+            schema = RepeaTodoDb.Schema,
+            context = context,
+            name = dbName,
+            callback = object: AndroidSqliteDriver.Callback(RepeaTodoDb.Schema) {
+                override fun onConfigure(db: SupportSQLiteDatabase) {
+                    super.onConfigure(db)
+                    db.setForeignKeyConstraintsEnabled(true)
+                }
+            }
+        )
 }
