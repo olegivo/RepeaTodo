@@ -17,10 +17,16 @@
 
 package ru.olegivo.repeatodo.list.presentation
 
+import io.kotest.inspectors.shouldForAll
+import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.collections.shouldBeSameSizeAs
 import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.flow.update
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import ru.olegivo.repeatodo.domain.FakeCancelTaskCompletionUseCase
 import ru.olegivo.repeatodo.domain.FakeCompleteTaskUseCase
 import ru.olegivo.repeatodo.domain.FakeDateTimeProvider
@@ -29,8 +35,9 @@ import ru.olegivo.repeatodo.domain.models.randomTask
 import ru.olegivo.repeatodo.kotest.FreeSpec
 import ru.olegivo.repeatodo.main.navigation.FakeMainNavigator
 import ru.olegivo.repeatodo.main.navigation.NavigationDestination
-import ru.olegivo.repeatodo.randomBoolean
+import ru.olegivo.repeatodo.randomInstant
 import ru.olegivo.repeatodo.randomList
+import kotlin.time.Duration.Companion.minutes
 
 internal class TasksListViewModelTest: FreeSpec() {
 
@@ -39,7 +46,7 @@ internal class TasksListViewModelTest: FreeSpec() {
             val getTasksListUseCase = FakeGetTasksListUseCase()
             val completeTaskUseCase = FakeCompleteTaskUseCase()
             val cancelTaskCompletionUseCase = FakeCancelTaskCompletionUseCase()
-            val isTaskCompletedUseCase = FakeIsTaskCompletedUseCase(isCompleted = randomBoolean())
+            val isTaskCompletedUseCase = FakeIsTaskCompletedUseCase()
             val relativeDateFormatter = FakeRelativeDateFormatter()
             val editTaskNavigator = FakeMainNavigator()
 
@@ -53,30 +60,64 @@ internal class TasksListViewModelTest: FreeSpec() {
                 tasksSorterByCompletion = TasksSorterByCompletion(FakeDateTimeProvider()),
             )
             val state = viewModel.state.testIn(name = "state")
+            val isShowCompleted = viewModel.isShowCompleted.testIn(name = "isShowCompletedTasks")
 
             "initial state" - {
                 state.awaitItem().tasks.shouldBeEmpty()
+                isShowCompleted.awaitItem().shouldBeFalse()
 
                 val taskUi = randomTask().toUi(
                     isTaskCompleted = isTaskCompletedUseCase,
                     relativeDateFormatter = relativeDateFormatter
                 )
 
-                "actual state after loading" {
-                    val list = randomList { randomTask() }
+                "actual state after loading" - {
+                    val threshold = randomInstant()
+                    isTaskCompletedUseCase.considerAsCompletedAfter =
+                        threshold.toLocalDateTime(TimeZone.currentSystemDefault())
+                    val lastCompletionDate =
+                        (threshold + 1.minutes).toLocalDateTime(TimeZone.currentSystemDefault())
+
+                    val completed =
+                        randomList { randomTask().copy(lastCompletionDate = lastCompletionDate) }
+                    val notCompleted =
+                        randomList { randomTask().copy(lastCompletionDate = null) }
+                    val list = completed + notCompleted
 
                     getTasksListUseCase.list.update { list }
 
-                    state.awaitItem().tasks shouldBe list.map {
-                        it.toUi(
-                            isTaskCompleted = isTaskCompletedUseCase,
-                            relativeDateFormatter = relativeDateFormatter
-                        )
+                    "state should contain only not completed tasks" {
+                        state.awaitItem().tasks
+                            .shouldForAll { it.isCompleted.shouldBeFalse() }
+                            .shouldBeSameSizeAs(notCompleted)
+                            .shouldContainExactlyInAnyOrder(
+                                notCompleted.map {
+                                    it.toUi(
+                                        isTaskCompleted = isTaskCompletedUseCase,
+                                        relativeDateFormatter = relativeDateFormatter
+                                    )
+                                }
+                            )
+                    }
+
+                    "state should contain completed and not completed WHEN isShowCompleted = true" {
+                        viewModel.isShowCompleted.update { true }
+
+                        val tasks = state.expectMostRecentItem().tasks
+                        val (completedResult, notCompletedResult) = tasks.partition { it.isCompleted }
+                        tasks shouldContainExactlyInAnyOrder list.map {
+                            it.toUi(
+                                isTaskCompleted = isTaskCompletedUseCase,
+                                relativeDateFormatter = relativeDateFormatter
+                            )
+                        }
+
+                        notCompletedResult.shouldBeSameSizeAs(notCompleted)
+                        completedResult.shouldBeSameSizeAs(completed)
                     }
                 }
 
                 "onTaskEditClicked should navigate to edit" {
-
                     viewModel.onTaskEditClicked(task = taskUi)
 
                     editTaskNavigator.invocations shouldBe FakeMainNavigator.Invocations.To(

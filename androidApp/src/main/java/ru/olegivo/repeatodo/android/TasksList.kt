@@ -35,6 +35,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,22 +54,52 @@ internal fun TasksList(
     previewEnvironment: PreviewEnvironment? = null,
 ) {
     val viewModel: TasksListViewModel = fakeOrInjectKoin(previewEnvironment)
+
     val tasks = viewModel.state.collectAsState().value.tasks
-    LazyColumn(modifier) {
-        itemsIndexed(
-            items = tasks,
-            key = { _, task -> task.uuid }
-        ) { index, task ->
-            TaskItem(
-                Modifier.fillMaxWidth(),
-                task = task,
-                onTaskEditClicked = { viewModel.onTaskEditClicked(task) },
-                onCompleteTaskClicked = { viewModel.onTaskCompletionClicked(task) },
-            )
-            if (index != tasks.lastIndex) {
-                Divider()
+    val isAllTasksFilter = viewModel.isShowCompleted.collectAsState()
+    Column {
+        IsAllTasksFilter(
+            Modifier
+                .align(Alignment.End)
+                .padding(all = 16.dp),
+            isAllTasksFilterState = isAllTasksFilter,
+            onChange = { viewModel.isShowCompleted.value = it }
+        )
+        LazyColumn(modifier) {
+            itemsIndexed(
+                items = tasks,
+                key = { _, task -> task.uuid }
+            ) { index, task ->
+                TaskItem(
+                    Modifier.fillMaxWidth(),
+                    task = task,
+                    onTaskEditClicked = { viewModel.onTaskEditClicked(task) },
+                    onCompleteTaskClicked = { viewModel.onTaskCompletionClicked(task) },
+                )
+                if (index != tasks.lastIndex) {
+                    Divider()
+                }
             }
         }
+    }
+}
+
+
+@Composable
+private fun IsAllTasksFilter(
+    modifier: Modifier = Modifier,
+    isAllTasksFilterState: State<Boolean>,
+    onChange: (Boolean) -> Unit,
+) {
+    Row(
+        modifier,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Checkbox(
+            checked = isAllTasksFilterState.value,
+            onCheckedChange = onChange
+        )
+        Text(text = "Show completed")
     }
 }
 
@@ -113,7 +144,7 @@ private fun TasksListPreview() {
             color = MaterialTheme.colorScheme.primary
         ) {
             TasksList(
-                previewEnvironment = PreviewEnvironment { taskListFakes() }
+                previewEnvironment = PreviewEnvironment { taskListFakes() },
             )
         }
     }
