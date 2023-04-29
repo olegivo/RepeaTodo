@@ -17,6 +17,7 @@
 
 package ru.olegivo.repeatodo.db
 
+import com.squareup.sqldelight.sqlite.driver.JdbcSqliteDriver
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
@@ -29,6 +30,7 @@ import ru.olegivo.repeatodo.domain.models.Task
 import ru.olegivo.repeatodo.domain.models.randomTask
 import ru.olegivo.repeatodo.kotest.FreeSpec
 import ru.olegivo.repeatodo.randomString
+import java.util.Properties
 import kotlin.time.Duration.Companion.hours
 
 class LocalTasksDataSourceImplTest: FreeSpec() {
@@ -36,11 +38,17 @@ class LocalTasksDataSourceImplTest: FreeSpec() {
         "instance" - {
             val dateTimeProvider = FakeDateTimeProvider()
             val localDateTimeLongAdapter = LocalDateTimeLongAdapter(dateTimeProvider)
-            val driverFactory = DriverFactoryImpl()
-            val driver = driverFactory.createDriver(
-                dbName = "testdb",
-                foreignKeyConstraints = true
-            )
+            val properties = Properties().apply {
+                setProperty(
+                    /*SQLiteConfig.Pragma.FOREIGN_KEYS*/ "foreign_keys",
+                    true.toString()
+                )
+            }
+            val driver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY, properties)
+            val driverFactory = object: DriverFactory {
+                override fun createDriver(dbName: String, foreignKeyConstraints: Boolean) =
+                    driver
+            }
             val database = createDatabase(driverFactory, localDateTimeLongAdapter)
             RepeaTodoDb.Schema.create(driver)
 
@@ -68,8 +76,6 @@ class LocalTasksDataSourceImplTest: FreeSpec() {
                     val uuid = randomString()
 
                     localTasksDataSource.delete(uuid = uuid)
-
-
                 }
 
                 "save" - {
