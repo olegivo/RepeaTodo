@@ -18,6 +18,7 @@
 package ru.olegivo.repeatodo.domain
 
 import kotlinx.datetime.Instant
+import ru.olegivo.repeatodo.extensions.atStartOfDayIn
 import kotlin.time.Duration.Companion.days
 
 class IsTaskCompletedUseCaseImpl(
@@ -28,7 +29,12 @@ class IsTaskCompletedUseCaseImpl(
         daysPeriodicity: Int
     ) =
         lastCompletionDate?.let { lastCompletion ->
-            val current = dateTimeProvider.getCurrentInstant()
-            lastCompletion > current - daysPeriodicity.days
+            val currentDayStart = dateTimeProvider.getCurrentStartOfDayInstant()
+
+            val completionDayStart = lastCompletion.atStartOfDayIn(
+                dateTimeProvider.getCurrentTimeZone()
+            )
+
+            completionDayStart > currentDayStart - daysPeriodicity.days
         } ?: false
 }

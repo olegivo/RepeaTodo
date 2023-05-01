@@ -15,15 +15,13 @@
  * RepeaTodo.
  */
 
-package ru.olegivo.repeatodo.domain
+package ru.olegivo.repeatodo.extensions
 
 import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.toLocalDateTime
 
-interface DateTimeProvider {
-    fun getCurrentTimeZone(): TimeZone
-    fun getCurrentInstant(): Instant
-    fun getCurrentStartOfDayInstant(): Instant
-    fun getCurrentLocalDateTime(): LocalDateTime
-}
+
+fun Instant.atStartOfDayIn(timeZone: TimeZone) =
+    toLocalDateTime(timeZone).date.atStartOfDayIn(timeZone)
