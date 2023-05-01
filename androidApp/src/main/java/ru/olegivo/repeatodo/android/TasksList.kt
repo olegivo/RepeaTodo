@@ -17,20 +17,18 @@
 
 package ru.olegivo.repeatodo.android
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Edit
-import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Divider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -39,8 +37,12 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
 import androidx.compose.ui.unit.dp
+import ru.olegivo.repeatodo.android.preview.PreviewsDayNight
+import ru.olegivo.repeatodo.android.ui.theme.AppTheme
 import ru.olegivo.repeatodo.list.presentation.TaskUi
 import ru.olegivo.repeatodo.list.presentation.TasksListViewModel
 import ru.olegivo.repeatodo.list.presentation.taskListFakes
@@ -112,9 +114,9 @@ private fun TaskItem(
 ) {
     Row(
         modifier = modifier
-            .padding(16.dp)
-            .height(48.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .height(92.dp)
+            .clickable { onTaskEditClicked(task) },
+        verticalAlignment = Alignment.Top
     ) {
         Checkbox(
             checked = task.isCompleted,
@@ -122,26 +124,34 @@ private fun TaskItem(
         )
         Column(
             modifier = Modifier
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 4.dp)
+                .padding(top = 12.dp)
                 .align(Alignment.Top)
                 .weight(1f)
         ) {
-            Text(text = task.title)
-            task.lastCompletionDate?.let { Text(text = it) }
-        }
-        Button(onClick = { onTaskEditClicked(task) }) {
-            Icon(Icons.Rounded.Edit, "Edit")
+            Text(
+                text = task.title,
+                style = MaterialTheme.typography.titleMedium,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            task.lastCompletionDate?.let {
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
         }
     }
 }
 
-@Preview
+@PreviewsDayNight
 @Composable
 private fun TasksListPreview() {
-    MaterialTheme {
+    AppTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.primary
         ) {
             TasksList(
                 previewEnvironment = PreviewEnvironment { taskListFakes() },
@@ -150,15 +160,17 @@ private fun TasksListPreview() {
     }
 }
 
-@Preview
+@PreviewsDayNight
 @Composable
-private fun TaskItemUncompletedPreview() {
-    MaterialTheme {
-        Surface(color = MaterialTheme.colorScheme.primary) {
+private fun TaskItemUncompletedPreview(
+    @PreviewParameter(LoremIpsum::class) title: String,
+) {
+    AppTheme {
+        Surface {
             TaskItem(
                 task = TaskUi(
                     uuid = newUuid(),
-                    title = "Todo 1",
+                    title = title,
                     isCompleted = false,
                     lastCompletionDate = null,
                 )
@@ -167,15 +179,17 @@ private fun TaskItemUncompletedPreview() {
     }
 }
 
-@Preview
+@PreviewsDayNight
 @Composable
-private fun TaskItemCompletedPreview() {
-    MaterialTheme {
-        Surface(color = MaterialTheme.colorScheme.primary) {
+private fun TaskItemCompletedNightPreview(
+    @PreviewParameter(LoremIpsum::class) title: String
+) {
+    AppTheme {
+        Surface {
             TaskItem(
                 task = TaskUi(
                     uuid = newUuid(),
-                    title = "Todo 1",
+                    title = title,
                     isCompleted = true,
                     lastCompletionDate = "several seconds ago",
                 )

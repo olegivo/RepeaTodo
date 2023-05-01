@@ -20,7 +20,7 @@ struct TasksListView: View {
     
     var body: some View {
         VStack {
-            Toggle("Show completed", isOn: viewModel.binding(\.isShowCompletedTasks))
+            Toggle("Show completed", isOn: viewModel.binding(\.isShowCompleted))
                 .padding(.all)
             ScrollView {
                 LazyVStack(alignment: .leading) {
@@ -65,34 +65,28 @@ private func TasksListItemView(
         )
         VStack(alignment: .leading, spacing: CGFloat(0)) {
             Text(task.title)
+                .fixedSize(horizontal: false, vertical: true)
+                .lineLimit(2)
                 .frame(maxWidth: .infinity, alignment: .leading)
+
+            Spacer()
+
             if let lastCompletionDate = task.lastCompletionDate {
                 Text(lastCompletionDate)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
-            
-            Spacer()
         }
         .frame(alignment: .topLeading)
         .padding()
-        
-        Spacer()
-        
-        Button (
-            action: { onTaskEditClicked(task) },
-            label: {
-                Image(systemName: "pencil")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .foregroundColor(.gray)
-                    .frame(width: 32, height: 32)
-                    .padding()
-                    .cornerRadius(12)
-                
-            }
-        )
     }
-    .frame(height: CGFloat(80))
+    .frame(height: CGFloat(92))
+    .contentShape(Rectangle())
+    .gesture(
+        TapGesture()
+            .onEnded { _ in
+                onTaskEditClicked(task)
+            }
+    )
 }
 
 extension TaskUi: Identifiable {
