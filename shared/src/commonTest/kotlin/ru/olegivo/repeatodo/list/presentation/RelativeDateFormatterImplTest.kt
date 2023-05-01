@@ -18,7 +18,6 @@
 package ru.olegivo.repeatodo.list.presentation
 
 import io.kotest.matchers.shouldBe
-import kotlinx.datetime.toLocalDateTime
 import ru.olegivo.repeatodo.domain.FakeDateTimeProvider
 import ru.olegivo.repeatodo.kotest.FreeSpec
 import kotlin.time.Duration.Companion.days
@@ -52,8 +51,7 @@ class RelativeDateFormatterImplTest: FreeSpec() {
                 (-1).days - 1.hours - 10.minutes - 10.seconds to "1d ago",
                 (-10).days to "10d ago",
             ).forEach { (extraPeriod, expected) ->
-                val value =
-                    (currentInstant + extraPeriod).toLocalDateTime(dateTimeProvider.getCurrentTimeZone())
+                val value = currentInstant + extraPeriod
                 "should return `$expected` WHEN $extraPeriod from current datetime" {
                     relativeDateFormatter.format(value) shouldBe expected
                 }

@@ -19,21 +19,12 @@ package ru.olegivo.repeatodo.db
 
 import com.squareup.sqldelight.ColumnAdapter
 import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDateTime
-import ru.olegivo.repeatodo.domain.DateTimeProvider
 
-class LocalDateTimeLongAdapter(
-    private val dateTimeProvider: DateTimeProvider
-): ColumnAdapter<LocalDateTime, Long> {
+class InstantLongAdapter: ColumnAdapter<Instant, Long> {
 
-    override fun decode(databaseValue: Long): LocalDateTime =
-        with(dateTimeProvider.getCurrentTimeZone()) {
-            Instant.fromEpochMilliseconds(databaseValue)
-                .toLocalDateTime()
-        }
+    override fun decode(databaseValue: Long): Instant =
+        Instant.fromEpochMilliseconds(databaseValue)
 
-    override fun encode(value: LocalDateTime): Long =
-        with(dateTimeProvider.getCurrentTimeZone()) {
-            value.toInstant().toEpochMilliseconds()
-        }
+    override fun encode(value: Instant): Long =
+        value.toEpochMilliseconds()
 }

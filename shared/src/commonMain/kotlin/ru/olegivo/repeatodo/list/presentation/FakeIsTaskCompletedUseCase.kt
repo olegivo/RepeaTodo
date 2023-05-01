@@ -17,14 +17,14 @@
 
 package ru.olegivo.repeatodo.list.presentation
 
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.Instant
 import ru.olegivo.repeatodo.domain.IsTaskCompletedUseCase
 
 class FakeIsTaskCompletedUseCase(
     var isCompleted: Boolean? = null,
-    var considerAsCompletedAfter: LocalDateTime? = null
+    var considerAsCompletedAfter: Instant? = null
 ): IsTaskCompletedUseCase {
-    override fun invoke(lastCompletionDate: LocalDateTime?, daysPeriodicity: Int) =
+    override fun invoke(lastCompletionDate: Instant?, daysPeriodicity: Int) =
         isCompleted
             ?: considerAsCompletedAfter?.let {
                 if (lastCompletionDate != null) {

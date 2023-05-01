@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.Instant
 import ru.olegivo.repeatodo.domain.models.Task
 
 class FakeLocalTasksDataSource: LocalTasksDataSource {
@@ -44,7 +44,7 @@ class FakeLocalTasksDataSource: LocalTasksDataSource {
         }
     }
 
-    override suspend fun addTaskCompletion(taskUuid: String, completionDate: LocalDateTime) {
+    override suspend fun addTaskCompletion(taskUuid: String, completionDate: Instant) {
         completedTasks += TaskCompletionInvocation(
             taskUuid = taskUuid,
             completionDate = completionDate
@@ -58,5 +58,5 @@ class FakeLocalTasksDataSource: LocalTasksDataSource {
         deletedTaskCompletionsUuids += taskUuid
     }
 
-    data class TaskCompletionInvocation(val taskUuid: String, val completionDate: LocalDateTime)
+    data class TaskCompletionInvocation(val taskUuid: String, val completionDate: Instant)
 }

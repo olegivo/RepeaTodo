@@ -19,7 +19,6 @@ package ru.olegivo.repeatodo.list.presentation
 
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
-import kotlinx.datetime.toLocalDateTime
 import ru.olegivo.repeatodo.domain.FakeDateTimeProvider
 import ru.olegivo.repeatodo.domain.models.randomTask
 import ru.olegivo.repeatodo.kotest.FreeSpec
@@ -137,6 +136,5 @@ class TasksSorterByCompletionTest: FreeSpec() {
     )
 
     private fun getDateTime(minutesAgo: Int) =
-        (dateTimeProvider.getCurrentInstant() - minutesAgo.minutes)
-            .toLocalDateTime(dateTimeProvider.getCurrentTimeZone())
+        dateTimeProvider.getCurrentInstant() - minutesAgo.minutes
 }

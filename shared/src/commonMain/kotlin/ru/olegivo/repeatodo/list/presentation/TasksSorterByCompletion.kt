@@ -17,7 +17,6 @@
 
 package ru.olegivo.repeatodo.list.presentation
 
-import kotlinx.datetime.toInstant
 import ru.olegivo.repeatodo.domain.DateTimeProvider
 import ru.olegivo.repeatodo.domain.models.Task
 
@@ -31,7 +30,6 @@ class TasksSorterByCompletion(private val dateTimeProvider: DateTimeProvider): T
         val currentMs = current.toEpochMilliseconds()
         val byOldestLastCompletion = compareByDescending<Task> { task ->
             task.lastCompletionDate
-                ?.toInstant(dateTimeProvider.getCurrentTimeZone())
                 ?.toEpochMilliseconds()
                 ?.let { completionMs -> currentMs - completionMs }
         }

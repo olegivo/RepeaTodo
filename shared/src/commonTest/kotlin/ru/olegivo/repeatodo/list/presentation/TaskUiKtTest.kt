@@ -19,7 +19,7 @@ package ru.olegivo.repeatodo.list.presentation
 
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.Instant
 import ru.olegivo.repeatodo.booleans
 import ru.olegivo.repeatodo.combinator
 import ru.olegivo.repeatodo.domain.models.randomTask
@@ -28,7 +28,7 @@ import ru.olegivo.repeatodo.randomString
 class TaskUiKtTest: FreeSpec({
     combinator(
         booleans,
-        listOf(null, LocalDateTime.parse("2023-02-28T23:30:59.123"))
+        listOf(null, Instant.parse("2023-02-28T23:30:59.123Z"))
     ) { (isCompleted, lastCompletionDate) ->
         "toUi WHEN IsTaskCompletedUseCase return $isCompleted, lastCompletionDate is $lastCompletionDate" - {
             val task = randomTask().copy(lastCompletionDate = lastCompletionDate)

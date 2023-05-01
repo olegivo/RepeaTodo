@@ -1,9 +1,9 @@
-import kotlinx.datetime.LocalDateTime;
+import kotlinx.datetime.Instant;
 
 CREATE TABLE TaskCompletion (
     uuid TEXT NOT NULL PRIMARY KEY,
     taskUuid TEXT NOT NULL REFERENCES Task(uuid) ON DELETE CASCADE,
-    completionDateUtc INTEGER AS LocalDateTime
+    completionDateUtc INTEGER AS Instant
 );
 
 CREATE INDEX taskCompletion_uuid ON TaskCompletion(uuid);

@@ -25,8 +25,6 @@ import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.flow.update
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import ru.olegivo.repeatodo.domain.FakeCancelTaskCompletionUseCase
 import ru.olegivo.repeatodo.domain.FakeCompleteTaskUseCase
 import ru.olegivo.repeatodo.domain.FakeDateTimeProvider
@@ -73,10 +71,8 @@ internal class TasksListViewModelTest: FreeSpec() {
 
                 "actual state after loading" - {
                     val threshold = randomInstant()
-                    isTaskCompletedUseCase.considerAsCompletedAfter =
-                        threshold.toLocalDateTime(TimeZone.currentSystemDefault())
-                    val lastCompletionDate =
-                        (threshold + 1.minutes).toLocalDateTime(TimeZone.currentSystemDefault())
+                    isTaskCompletedUseCase.considerAsCompletedAfter = threshold
+                    val lastCompletionDate = threshold + 1.minutes
 
                     val completed =
                         randomList { randomTask().copy(lastCompletionDate = lastCompletionDate) }
