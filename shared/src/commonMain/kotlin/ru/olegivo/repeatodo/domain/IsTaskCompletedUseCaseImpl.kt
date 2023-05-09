@@ -17,20 +17,24 @@
 
 package ru.olegivo.repeatodo.domain
 
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.Instant
+import ru.olegivo.repeatodo.extensions.atStartOfDayIn
 import kotlin.time.Duration.Companion.days
 
 class IsTaskCompletedUseCaseImpl(
     private val dateTimeProvider: DateTimeProvider
 ): IsTaskCompletedUseCase {
     override operator fun invoke(
-        lastCompletionDate: LocalDateTime?,
+        lastCompletionDate: Instant?,
         daysPeriodicity: Int
     ) =
-        with(dateTimeProvider.getCurrentTimeZone()) {
-            lastCompletionDate?.toInstant()?.let { lastCompletion ->
-                val current = dateTimeProvider.getCurrentInstant()
-                lastCompletion > current - daysPeriodicity.days
-            } ?: false
-        }
+        lastCompletionDate?.let { lastCompletion ->
+            val currentDayStart = dateTimeProvider.getCurrentStartOfDayInstant()
+
+            val completionDayStart = lastCompletion.atStartOfDayIn(
+                dateTimeProvider.getCurrentTimeZone()
+            )
+
+            completionDayStart > currentDayStart - daysPeriodicity.days
+        } ?: false
 }

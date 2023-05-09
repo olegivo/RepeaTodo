@@ -15,25 +15,13 @@
  * RepeaTodo.
  */
 
-package ru.olegivo.repeatodo.db
+package ru.olegivo.repeatodo.extensions
 
-import com.squareup.sqldelight.ColumnAdapter
 import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDateTime
-import ru.olegivo.repeatodo.domain.DateTimeProvider
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.toLocalDateTime
 
-class LocalDateTimeLongAdapter(
-    private val dateTimeProvider: DateTimeProvider
-): ColumnAdapter<LocalDateTime, Long> {
 
-    override fun decode(databaseValue: Long): LocalDateTime =
-        with(dateTimeProvider.getCurrentTimeZone()) {
-            Instant.fromEpochMilliseconds(databaseValue)
-                .toLocalDateTime()
-        }
-
-    override fun encode(value: LocalDateTime): Long =
-        with(dateTimeProvider.getCurrentTimeZone()) {
-            value.toInstant().toEpochMilliseconds()
-        }
-}
+fun Instant.atStartOfDayIn(timeZone: TimeZone) =
+    toLocalDateTime(timeZone).date.atStartOfDayIn(timeZone)

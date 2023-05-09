@@ -38,7 +38,7 @@ class CompleteTaskUseCaseImplTest: FreeSpec() {
             localTasksDataSource.completedTasks.shouldContainExactly(
                 FakeLocalTasksDataSource.TaskCompletionInvocation(
                     taskUuid = taskUuid,
-                    completionDate = dateTimeProvider.getCurrentLocalDateTime()
+                    completionDate = dateTimeProvider.getCurrentInstant()
                 )
             )
         }

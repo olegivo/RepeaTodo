@@ -17,13 +17,13 @@
 
 package ru.olegivo.repeatodo.domain.models
 
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.Instant
 
 data class Task(
     val uuid: String,
     val title: String,
     val daysPeriodicity: Int,
-    val lastCompletionDate: LocalDateTime? = null,
+    val lastCompletionDate: Instant? = null,
 ) {
     companion object {
         const val DEFAULT_DAYS_PERIODICITY: Int = 1
