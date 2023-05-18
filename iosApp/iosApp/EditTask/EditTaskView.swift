@@ -15,6 +15,7 @@ struct EditTaskView: View {
 
     @StateObject
     private var viewModel: EditTaskViewModelObservableObject
+    @State private var showActionSheet = false
 
     var body: some View {
         NavigationView {
@@ -23,42 +24,21 @@ struct EditTaskView: View {
                     ProgressView()
                 } else {
                     Section {
-                        TextField(
-                            "Enter A Title Here",
-                            text: Binding(
-                                get: {
-                                    viewModel.title
-                                },
-                                set: { v in
-                                    viewModel.onTitleChanged(v)
-                                }
-                            )
-                        )
+                        titleEditor()
                     }
                     
                     Section {
-                        Button(action: {
-                            viewModel.onSaveClicked()
-                        }) {
-                            if viewModel.isSaving {
-                                ProgressView()
-                            } else {
-                                Text("Save")
-                            }
-                        }
-                        .disabled(!viewModel.canSave)
+                        saveButton()
                     }
                 }
             }
+            .actionSheet(isPresented: $showActionSheet) {
+                deleteConfirmation()
+            }
             .navigationBarTitle("Edit Todo", displayMode: .inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(action: {
-                        viewModel.onCancelClicked()
-                    }) {
-                        Image(systemName: "xmark")
-                    }
-                }
+                toolbarItemClose()
+                toolbarItemDelete()
             }
             .handleNavigation(navigator)
             .alert(
@@ -66,7 +46,7 @@ struct EditTaskView: View {
                 isPresented: $viewModel.isLoadingError,
                 actions: {
                     Button("OK") {
-                        viewModel.onCancelClicked()
+                        viewModel.wrapped.onCancelClicked()
                     }
                 }
             )
@@ -77,7 +57,65 @@ struct EditTaskView: View {
             )
         }
     }
+
+    fileprivate func titleEditor() -> TextField<Text> {
+        return TextField(
+            "Enter A Title Here",
+            text: Binding(
+                get: {
+                    viewModel.title
+                },
+                set: { v in
+                    viewModel.onTitleChanged(v)
+                }
+            )
+        )
+    }
+
+    fileprivate func saveButton() -> some View {
+        return Button(action: {
+            viewModel.wrapped.onSaveClicked()
+        }) {
+            if viewModel.isSaving {
+                ProgressView()
+            } else {
+                Text("Save")
+            }
+        }
+        .disabled(!viewModel.canSave)
+    }
     
+    fileprivate func deleteConfirmation() -> ActionSheet {
+        return ActionSheet(
+            title: Text("Deletion"),
+            message: Text("Do you want to delete the '\(viewModel.title)'?"),
+            buttons: [
+                .cancel { print(self.showActionSheet) },
+                .destructive(Text("Delete")) { viewModel.wrapped.onDeleteClicked() }
+            ]
+        )
+    }
+    
+    fileprivate func toolbarItemClose() -> ToolbarItem<(), Button<Image>> {
+        return ToolbarItem(placement: .cancellationAction) {
+            Button(action: {
+                viewModel.wrapped.onCancelClicked()
+            }) {
+                Image(systemName: "xmark")
+            }
+        }
+    }
+    
+    fileprivate func toolbarItemDelete() -> ToolbarItem<(), Button<Image>> {
+        return ToolbarItem(placement: .destructiveAction) {
+            Button(action: {
+                self.showActionSheet = true
+            }) {
+                Image(systemName: "trash")
+            }
+        }
+    }
+
     static func factory(uuid: String, isPreview: Bool = false) -> EditTaskView {
         let viewModel = isPreview ? FakeEditTaskViewModel() : EditTaskComponent().editTaskViewModel(uuid: uuid)
         return EditTaskView(viewModel: viewModel.asObservableObject())
