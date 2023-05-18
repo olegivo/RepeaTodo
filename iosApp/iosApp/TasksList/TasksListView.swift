@@ -27,6 +27,7 @@ struct TasksListView: View {
                         onTaskEditClicked: { viewModel.onTaskEditClicked(task: $0) },
                         onCompleteTaskClicked: { viewModel.onTaskCompletionClicked(task: $0) }
                     )
+                    Divider()
                 }
             }
             .cornerRadius(CGFloat(12))
@@ -45,7 +46,7 @@ private func TasksListItemView(
     onTaskEditClicked: @escaping (TaskUi) -> Void,
     onCompleteTaskClicked: @escaping (TaskUi) -> Void
 ) -> some View {
-    HStack(alignment: .center) {
+    HStack(alignment: .top) {
         Button (
             action: { onCompleteTaskClicked(task) },
             label: {
@@ -61,9 +62,18 @@ private func TasksListItemView(
         VStack(alignment: .leading, spacing: CGFloat(0)) {
             Text(task.title)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding()
+            if let lastCompletionDate = task.lastCompletionDate {
+                Text(lastCompletionDate)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
+            Spacer()
         }
+        .frame(alignment: .topLeading)
+        .padding()
+        
         Spacer()
+        
         Button (
             action: { onTaskEditClicked(task) },
             label: {
@@ -78,6 +88,7 @@ private func TasksListItemView(
             }
         )
     }
+    .frame(height: CGFloat(80))
 }
 
 extension TaskUi: Identifiable {
@@ -113,7 +124,8 @@ struct TasksListItemView_Previews: PreviewProvider {
                 task: TaskUi(
                     uuid: "The UUID",
                     title: "Task 1",
-                    isCompleted: false
+                    isCompleted: false,
+                    lastCompletionDate: nil
                 ),
                 onTaskEditClicked: {_ in },
                 onCompleteTaskClicked: {_ in }
@@ -130,7 +142,8 @@ struct TasksListItemView_CompletedPreviews: PreviewProvider {
                 task: TaskUi(
                     uuid: "The UUID",
                     title: "Task 1",
-                    isCompleted: true
+                    isCompleted: true,
+                    lastCompletionDate: "several seconds ago"
                 ),
                 onTaskEditClicked: {_ in },
                 onCompleteTaskClicked: {_ in }

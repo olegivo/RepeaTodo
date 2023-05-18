@@ -17,6 +17,7 @@
 
 package ru.olegivo.repeatodo.kotest
 
+import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.FreeSpec
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -28,7 +29,7 @@ import kotlin.time.Duration
 import app.cash.turbine.testIn as turbineTestIn
 
 abstract class FreeSpec(
-    lifecycleMode: LifecycleMode = LifecycleMode.Test,
+    lifecycleMode: LifecycleMode = LifecycleMode.Root,
     body: FreeSpec.() -> Unit = {}
 ): FreeSpec(body) {
 
@@ -47,6 +48,8 @@ abstract class FreeSpec(
 
     override fun listeners() =
         super.listeners() + listOf(coroutineListener)
+
+    override fun isolationMode() = IsolationMode.InstancePerLeaf
 
     protected fun advanceTimeBy(delayTimeMillis: Long) {
         coroutineListener.scope.advanceTimeBy(delayTimeMillis)

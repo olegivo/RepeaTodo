@@ -20,7 +20,7 @@ package ru.olegivo.repeatodo.domain
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 
-class FakeDateTimeProvider(): DateTimeProvider {
+class FakeDateTimeProvider: DateTimeProvider {
     var timeZone = TimeZone.currentSystemDefault()
     var instant = Clock.System.now().roundNanoseconds()
 

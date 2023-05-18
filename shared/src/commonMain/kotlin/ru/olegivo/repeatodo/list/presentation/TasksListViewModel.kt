@@ -41,12 +41,20 @@ class TasksListViewModel(
     private val completeTask: CompleteTaskUseCase,
     private val cancelTaskCompletion: CancelTaskCompletionUseCase,
     private val editTaskNavigator: EditTaskNavigator,
-    private val isTaskCompleted: IsTaskCompletedUseCase
+    private val isTaskCompleted: IsTaskCompletedUseCase,
+    private val relativeDateFormatter: RelativeDateFormatter
 ): BaseViewModel() {
 
     val state = getTasks()
         .map { tasks ->
-            TasksListUiState(tasks.map { it.toUi(isTaskCompleted) })
+            TasksListUiState(
+                tasks.map {
+                    it.toUi(
+                        isTaskCompleted = isTaskCompleted,
+                        relativeDateFormatter = relativeDateFormatter
+                    )
+                }
+            )
         }
         .stateIn(
             viewModelScope,
@@ -85,6 +93,7 @@ fun PreviewEnvironment.taskListFakes() {
     register<CompleteTaskUseCase> { FakeCompleteTaskUseCase() }
     register<CancelTaskCompletionUseCase> { FakeCancelTaskCompletionUseCase() }
     register<IsTaskCompletedUseCase> { FakeIsTaskCompletedUseCase(false) }
+    register<RelativeDateFormatter> { FakeRelativeDateFormatter() }
     register<EditTaskNavigator> { FakeMainNavigator() }
-    register { TasksListViewModel(get(), get(), get(), get(), get()) }
+    register { TasksListViewModel(get(), get(), get(), get(), get(), get()) }
 }

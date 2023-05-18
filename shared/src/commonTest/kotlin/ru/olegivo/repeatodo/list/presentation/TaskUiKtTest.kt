@@ -19,18 +19,41 @@ package ru.olegivo.repeatodo.list.presentation
 
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
+import kotlinx.datetime.LocalDateTime
+import ru.olegivo.repeatodo.booleans
+import ru.olegivo.repeatodo.combinator
 import ru.olegivo.repeatodo.domain.models.randomTask
+import ru.olegivo.repeatodo.randomString
 
 class TaskUiKtTest: FreeSpec({
-    listOf(true, false).forEach { isCompleted ->
-        "toUi WHEN IsTaskCompletedUseCase return $isCompleted" {
-            val task = randomTask()
+    combinator(
+        booleans,
+        listOf(null, LocalDateTime.parse("2023-02-28T23:30:59.123"))
+    ) { (isCompleted, lastCompletionDate) ->
+        "toUi WHEN IsTaskCompletedUseCase return $isCompleted, lastCompletionDate is $lastCompletionDate" - {
+            val task = randomTask().copy(lastCompletionDate = lastCompletionDate)
+            val formattedLastCompletionDate = randomString()
+            val relativeDateFormatter = FakeRelativeDateFormatter(formattedLastCompletionDate)
 
-            val taskUi = task.toUi(isTaskCompleted = FakeIsTaskCompletedUseCase(isCompleted))
+            val taskUi = task.toUi(
+                isTaskCompleted = FakeIsTaskCompletedUseCase(isCompleted),
+                relativeDateFormatter = relativeDateFormatter
+            )
 
-            taskUi.uuid shouldBe task.uuid
-            taskUi.title shouldBe task.title
-            taskUi.isCompleted shouldBe isCompleted
+            "map fields as is" {
+                taskUi.uuid shouldBe task.uuid
+                taskUi.title shouldBe task.title
+            }
+
+            "isCompleted should be from IsTaskCompletedUseCase" {
+                taskUi.isCompleted shouldBe isCompleted
+            }
+
+            "lastCompletionDate should use relative date formatter" {
+                taskUi.lastCompletionDate shouldBe lastCompletionDate?.let {
+                    formattedLastCompletionDate
+                }
+            }
         }
     }
 })
