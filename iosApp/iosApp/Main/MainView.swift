@@ -23,6 +23,7 @@ struct MainView: View {
                 Spacer()
                 Divider()
                 TasksListView.factory(isPreview: isPreview)
+                    .environmentObject(navigator)
                 Divider()
                 AddTaskInlinedView.factory(isPreview: isPreview)
                     .padding()

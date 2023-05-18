@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import shared
 
 struct EditTaskView: View {
     @Environment(\.isPreview) var isPreview
@@ -17,21 +18,35 @@ struct EditTaskView: View {
     var body: some View {
         NavigationView {
             Form {
-                Section {
-                    TextField("Enter A Title Here", text: $viewModel.title)
-                }
-                
-                Section {
-                    Button(action: {
-                        viewModel.onSaveClicked()
-                    }) {
-                        if viewModel.isLoading {
-                            ProgressView()
-                        } else {
-                            Text("Save")
-                        }
+                if viewModel.isLoading {
+                    ProgressView()
+                } else {
+                    Section {
+                        TextField(
+                            "Enter A Title Here",
+                            text: Binding(
+                                get: {
+                                    viewModel.title
+                                },
+                                set: { v in
+                                    viewModel.onTitleChanged(v)
+                                }
+                            )
+                        )
                     }
-                    .disabled(!viewModel.canSave)
+                    
+                    Section {
+                        Button(action: {
+                            viewModel.onSaveClicked()
+                        }) {
+                            if viewModel.isSaving {
+                                ProgressView()
+                            } else {
+                                Text("Save")
+                            }
+                        }
+                        .disabled(!viewModel.canSave)
+                    }
                 }
             }
             .navigationBarTitle("Edit Todo", displayMode: .inline)
@@ -45,17 +60,32 @@ struct EditTaskView: View {
                 }
             }
             .handleNavigation($viewModel.navigationDirection)
+            .alert(
+                "Can't load Task",
+                isPresented: $viewModel.isLoadingError,
+                actions: {
+                    Button("OK") {
+                        viewModel.onCancelClicked()
+                    }
+                }
+            )
+            .alert(
+                "Save error",
+                isPresented: $viewModel.isSaveError,
+                actions: { }
+            )
         }
     }
     
-    static func factory(isPreview: Bool = false) -> EditTaskView {
-        return EditTaskView(viewModel: EditTaskViewModelObservableObject())
+    static func factory(uuid: String, isPreview: Bool = false) -> EditTaskView {
+        let viewModel = isPreview ? FakeEditTaskViewModel() : EditTaskComponent().editTaskViewModel(uuid: uuid)
+        return EditTaskView(viewModel: viewModel.asObservableObject())
     }
 
 }
 
 struct EditTaskView_Previews: PreviewProvider {
     static var previews: some View {
-        EditTaskView.factory(isPreview: true)
+        EditTaskView.factory(uuid: "The UUID", isPreview: true)
     }
 }

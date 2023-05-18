@@ -27,13 +27,7 @@ class TasksRepositoryImpl(private val localTasksDataSource: LocalTasksDataSource
 
     override fun getTask(uuid: String) = localTasksDataSource.getTask(uuid)
 
-    override fun add(task: Task) {
-        localTasksDataSource.add(task)
-    }
-
-    override suspend fun update(task: Task) {
-        if (!localTasksDataSource.update(task)) {
-            localTasksDataSource.add(task)
-        }
+    override suspend fun save(task: Task) {
+        localTasksDataSource.save(task)
     }
 }

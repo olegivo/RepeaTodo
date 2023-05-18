@@ -62,7 +62,7 @@ struct NavigationHandler: ViewModifier {
     @ViewBuilder
     private func buildDestination(_ destination: NavigationDestination?) -> some View {
         if let destination = destination {
-            viewFactory.makeView(destination)
+            viewFactory.makeView(NavigationDestinationKs(destination))
         } else {
             EmptyView()
         }

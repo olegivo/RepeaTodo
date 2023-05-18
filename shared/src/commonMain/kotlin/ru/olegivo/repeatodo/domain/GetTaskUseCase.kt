@@ -22,5 +22,5 @@ import ru.olegivo.repeatodo.domain.models.Task
 
 interface GetTaskUseCase {
 
-    operator fun invoke(uuid: String): Flow<Task?>
+    operator fun invoke(uuid: String): Flow<WorkState<Task>>
 }
