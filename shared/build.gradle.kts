@@ -85,11 +85,16 @@ kotlin {
                 implementation(libs.turbine)
             }
         }
+        val jvmMain by getting {
+            dependencies {
+                dependsOn(commonMain)
+                implementation(libs.sqlDelight.driver.sqlite)
+            }
+        }
         val jvmTest by getting {
             dependencies {
-                dependsOn(commonTest)
+                dependsOn(jvmMain)
                 implementation(libs.kotest.runner.junit5.jvm)
-                implementation(libs.sqlDelight.driver.sqlite)
             }
         }
         val androidMain by getting {
@@ -142,7 +147,7 @@ kswift {
 sqldelight {
     database("RepeaTodoDb") {
         packageName = "ru.olegivo.repeatodo.db"
-        schemaOutputDirectory = file("build/dbs")
+        schemaOutputDirectory = file("src/commonMain/sqldelight/databases")
         verifyMigrations = true
     }
 }
