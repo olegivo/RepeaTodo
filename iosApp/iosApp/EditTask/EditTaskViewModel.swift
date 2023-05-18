@@ -52,7 +52,7 @@ public class EditTaskViewModelObservableObject : ObservableObject {
             .receive(on: RunLoop.main)
             .assign(to: &$canSave)
         
-        (wrapped.onSaved.asPublisher() as AnyPublisher<KotlinUnit, Never>)
+        (wrapped.onSaved.asPublisher() as AnyPublisher<Void, Never>)
             .receive(on: RunLoop.main)
             .sink(receiveValue: { [weak self] _ in
                 self?.navigationDirection = .back

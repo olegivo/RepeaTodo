@@ -7,20 +7,16 @@
 //
 
 import SwiftUI
-import shared
 
 class ViewFactory {
     
     @ViewBuilder
-    func makeView(_ destination: NavigationDestination) -> some View {
-        let d: NavigationDestination = .AddTask.shared
+    func makeView(_ destination: NavigationDestinationKs) -> some View {
         switch destination {
-        case .AddTask.shared:
+        case .addTask:
             AddTaskView.factory()
-        case .EditTask(let taskUuid):
-            EditTaskView.factory()
-        default:
-            EmptyView()
+        case .editTask(let value):
+            EditTaskView.factory(uuid: value.uuid)
         }
     }
 }

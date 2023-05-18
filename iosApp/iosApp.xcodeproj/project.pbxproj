@@ -10,6 +10,7 @@
 		058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557BA273AAA24004C7B11 /* Assets.xcassets */; };
 		058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
+		5168799D29D8CFA30067450C /* RepeaTodo_shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5168799B29D8CFA30067450C /* RepeaTodo_shared.swift */; };
 		552A5B4F285B60EE0059083D /* NavigationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552A5B4E285B60EE0059083D /* NavigationHandler.swift */; };
 		552A5B53285B619C0059083D /* NavigationDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552A5B52285B619C0059083D /* NavigationDirection.swift */; };
 		552A5B55285B61E50059083D /* ViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552A5B54285B61E50059083D /* ViewFactory.swift */; };
@@ -44,6 +45,7 @@
 		058557BA273AAA24004C7B11 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		2152FB032600AC8F00CF470E /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
+		5168799B29D8CFA30067450C /* RepeaTodo_shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RepeaTodo_shared.swift; path = ../shared/build/bin/iosSimulatorArm64/debugFramework/sharedSwift/RepeaTodo_shared.swift; sourceTree = "<group>"; };
 		552A5B4E285B60EE0059083D /* NavigationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationHandler.swift; sourceTree = "<group>"; };
 		552A5B52285B619C0059083D /* NavigationDirection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationDirection.swift; sourceTree = "<group>"; };
 		552A5B54285B61E50059083D /* ViewFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewFactory.swift; sourceTree = "<group>"; };
@@ -138,6 +140,7 @@
 		7555FF72242A565900829871 = {
 			isa = PBXGroup;
 			children = (
+				5168799B29D8CFA30067450C /* RepeaTodo_shared.swift */,
 				7555FF7D242A565900829871 /* iosApp */,
 				7555FF7C242A565900829871 /* Products */,
 				7555FFB0242A642200829871 /* Frameworks */,
@@ -285,6 +288,7 @@
 				5570ECFD28620C640062D58D /* EditTaskView.swift in Sources */,
 				5570ECEE285DC2740062D58D /* MainViewModel.swift in Sources */,
 				555A7D0F285A266F00AAD493 /* AddTaskView.swift in Sources */,
+				5168799D29D8CFA30067450C /* RepeaTodo_shared.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				552A5B55285B61E50059083D /* ViewFactory.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,
