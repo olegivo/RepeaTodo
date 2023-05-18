@@ -69,6 +69,7 @@ kotlin {
             dependencies {
                 implementation(libs.koin.core)
                 implementation(libs.kotlinx.coroutines.core)
+                api(libs.kotlinx.datetime)
                 api(libs.moko.mvvm)
                 api(libs.moko.mvvm.flow)
                 implementation(libs.sqlDelight.extensions.coroutines)

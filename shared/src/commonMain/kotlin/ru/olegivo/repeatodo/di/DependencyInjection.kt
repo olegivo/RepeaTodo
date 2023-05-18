@@ -27,10 +27,13 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import ru.olegivo.repeatodo.data.LocalTasksDataSource
 import ru.olegivo.repeatodo.data.TasksRepositoryImpl
+import ru.olegivo.repeatodo.db.LocalDateTimeLongAdapter
 import ru.olegivo.repeatodo.db.LocalTasksDataSourceImpl
 import ru.olegivo.repeatodo.db.createDatabase
 import ru.olegivo.repeatodo.domain.AddTaskUseCase
 import ru.olegivo.repeatodo.domain.AddTaskUseCaseImpl
+import ru.olegivo.repeatodo.domain.DateTimeProvider
+import ru.olegivo.repeatodo.domain.DateTimeProviderImpl
 import ru.olegivo.repeatodo.domain.DeleteTaskUseCase
 import ru.olegivo.repeatodo.domain.DeleteTaskUseCaseImpl
 import ru.olegivo.repeatodo.domain.GetTaskUseCase
@@ -66,6 +69,8 @@ object DependencyInjection {
         singleOf(::TasksRepositoryImpl).bind<TasksRepository>()
         singleOf(::LocalTasksDataSourceImpl).bind<LocalTasksDataSource>()
         singleOf(::createDatabase)
+        factoryOf(::LocalDateTimeLongAdapter)
+        factoryOf(::DateTimeProviderImpl).bind<DateTimeProvider>()
         factoryOf(::AddTaskUseCaseImpl).bind<AddTaskUseCase>()
         factoryOf(::GetTasksListUseCaseImpl).bind<GetTasksListUseCase>()
         factoryOf(::GetTaskUseCaseImpl).bind<GetTaskUseCase>()

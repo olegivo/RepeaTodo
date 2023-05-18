@@ -25,9 +25,13 @@ expect class DriverFactory {
 
 private const val DbName: String = "repeatodo.db"
 
-fun createDatabase(driverFactory: DriverFactory): RepeaTodoDb {
+fun createDatabase(
+    driverFactory: DriverFactory,
+    localDateTimeLongAdapter: LocalDateTimeLongAdapter
+): RepeaTodoDb {
+
     val driver = driverFactory.createDriver(dbName = DbName)
-    val database = RepeaTodoDb(driver)
+    val database = RepeaTodoDb(driver, TaskCompletion.Adapter(localDateTimeLongAdapter))
 
     // Do more work with the database (see below).
     return database

@@ -164,7 +164,8 @@ fun PreviewEnvironment.editTaskViewModelWithFakes(
         Task(
             uuid = uuid,
             title = "Task 1",
-            daysPeriodicity = 1
+            daysPeriodicity = 1,
+            lastCompletionDate = null,
         )
     )
 ) {
@@ -173,7 +174,8 @@ fun PreviewEnvironment.editTaskViewModelWithFakes(
             Task(
                 uuid = uuid,
                 title = "Task 1",
-                daysPeriodicity = 1
+                daysPeriodicity = 1,
+                lastCompletionDate = null,
             )
         )): GetTaskUseCase {
             override fun invoke(uuid: String): Flow<WorkState<Task>> = flowOf(this.loadResult)

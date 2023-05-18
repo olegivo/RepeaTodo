@@ -112,7 +112,14 @@ private fun TasksListPreview() {
 private fun TaskItemPreview() {
     MaterialTheme {
         Surface(color = MaterialTheme.colorScheme.primary) {
-            TaskItem(task = Task(newUuid(), "Todo 1", 1))
+            TaskItem(
+                task = Task(
+                    uuid = newUuid(),
+                    title = "Todo 1",
+                    daysPeriodicity = 1,
+                    lastCompletionDate = null
+                )
+            )
         }
     }
 }

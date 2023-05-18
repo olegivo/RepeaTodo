@@ -6,16 +6,44 @@ CREATE TABLE Task (
 
 CREATE INDEX task_uuid ON Task(uuid);
 
+CREATE VIEW taskView AS
+SELECT
+    T.uuid,
+    T.title,
+    T.daysPeriodicity,
+    TC.lastCompletionDateUtc
+FROM
+    Task T
+    LEFT JOIN (
+        SELECT
+            TC.taskUuid,
+            MAX(TC.completionDateUtc) AS lastCompletionDateUtc
+        FROM TaskCompletion TC
+    ) TC ON T.uuid = TC.taskUuid;
+
 getTasks:
-SELECT * FROM Task;
+SELECT
+    uuid,
+    title,
+    daysPeriodicity,
+    lastCompletionDateUtc
+FROM
+    taskView;
 
 saveTask:
 INSERT OR REPLACE INTO Task
 VALUES ?;
 
 getTask:
-SELECT * FROM Task
-WHERE uuid = :uuid;
+SELECT
+    uuid,
+    title,
+    daysPeriodicity,
+    lastCompletionDateUtc
+FROM
+    taskView
+WHERE
+    uuid = :uuid;
 
 deleteTask:
 DELETE FROM Task
