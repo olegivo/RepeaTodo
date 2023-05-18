@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Oleg Ivashchenko <olegivo@gmail.com>
+ * Copyright (C) 2023 Oleg Ivashchenko <olegivo@gmail.com>
  *
  * This file is part of RepeaTodo.
  *
@@ -15,8 +15,13 @@
  * RepeaTodo.
  */
 
-package ru.olegivo.repeatodo.utils
+package ru.olegivo.repeatodo.main
 
-import java.util.UUID
+import ru.olegivo.repeatodo.add.presentation.addTaskViewModelWithFakes
+import ru.olegivo.repeatodo.list.presentation.taskListFakes
+import ru.olegivo.repeatodo.utils.PreviewEnvironment
 
-actual fun newUuid(): String = UUID.randomUUID().toString()
+fun PreviewEnvironment.mainScreenFakes() {
+    taskListFakes()
+    addTaskViewModelWithFakes()
+}

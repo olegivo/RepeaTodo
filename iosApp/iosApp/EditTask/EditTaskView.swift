@@ -13,14 +13,13 @@ struct EditTaskView: View {
     @Environment(\.isPreview) var isPreview
     @Environment(\.navigator) var navigator: MainNavigatorObservableObject
 
-    @StateObject
-    private var viewModel: EditTaskViewModelObservableObject
+    @ObservedObject private var viewModel: EditTaskViewModel
     @State private var showActionSheet = false
 
     var body: some View {
         NavigationView {
             Form {
-                if viewModel.isLoading {
+                if viewModel.state(\.isLoading) {
                     ProgressView()
                 } else {
                     Section(header: Text("Title")) {
@@ -46,16 +45,22 @@ struct EditTaskView: View {
             .handleNavigation(navigator)
             .alert(
                 "Can't load Task",
-                isPresented: $viewModel.isLoadingError,
+                isPresented: Binding(
+                    get: { viewModel.state(\.isLoadingError) },
+                    set: {_,_ in }
+                ),
                 actions: {
                     Button("OK") {
-                        viewModel.wrapped.onCancelClicked()
+                        viewModel.onCancelClicked()
                     }
                 }
             )
             .alert(
                 "Save error",
-                isPresented: $viewModel.isSaveError,
+                isPresented: Binding(
+                    get: { viewModel.state(\.isSaveError) },
+                    set: {_,_ in }
+                ),
                 actions: { }
             )
         }
@@ -64,52 +69,38 @@ struct EditTaskView: View {
     fileprivate func titleEditor() -> TextField<Text> {
         return TextField(
             "Enter a title here",
-            text: Binding(
-                get: {
-                    viewModel.title
-                },
-                set: { v in
-                    viewModel.onTitleChanged(v)
-                }
-            )
+            text: viewModel.binding(\.title)
         )
     }
 
     fileprivate func daysPeriodicityEditor() -> some View {
         TextField(
             "Enter a days periodicity here",
-            text: Binding(
-                get: {
-                    viewModel.daysPeriodicity
-                },
-                set: { v in
-                    viewModel.onDaysPeriodicityChanged(v)
-                }
-            )
+            text: viewModel.binding(\.daysPeriodicity)
         )
         .keyboardType(.numberPad)
     }
 
     fileprivate func saveButton() -> some View {
         return Button(action: {
-            viewModel.wrapped.onSaveClicked()
+            viewModel.onSaveClicked()
         }) {
-            if viewModel.isSaving {
+            if viewModel.state(\.isSaving) {
                 ProgressView()
             } else {
                 Text("Save")
             }
         }
-        .disabled(!viewModel.canSave)
+        .disabled(!viewModel.state(\.canSave))
     }
     
     fileprivate func deleteConfirmation() -> ActionSheet {
         return ActionSheet(
             title: Text("Deletion"),
-            message: Text("Do you want to delete the '\(viewModel.title)'?"),
+            message: Text("Do you want to delete the '\(viewModel.titleBinding.wrappedValue)'?"),
             buttons: [
                 .cancel { print(self.showActionSheet) },
-                .destructive(Text("Delete")) { viewModel.wrapped.onDeleteClicked() }
+                .destructive(Text("Delete")) { viewModel.onDeleteClicked() }
             ]
         )
     }
@@ -117,7 +108,7 @@ struct EditTaskView: View {
     fileprivate func toolbarItemClose() -> ToolbarItem<(), Button<Image>> {
         return ToolbarItem(placement: .cancellationAction) {
             Button(action: {
-                viewModel.wrapped.onCancelClicked()
+                viewModel.onCancelClicked()
             }) {
                 Image(systemName: "xmark")
             }
@@ -134,15 +125,22 @@ struct EditTaskView: View {
         }
     }
 
-    static func factory(uuid: String, isPreview: Bool = false) -> EditTaskView {
-        let viewModel = isPreview ? FakeEditTaskViewModel() : EditTaskComponent().editTaskViewModel(uuid: uuid)
-        return EditTaskView(viewModel: viewModel.asObservableObject())
+    static func factory(uuid: String, _ previewEnvironment: PreviewEnvironment? = nil) -> EditTaskView {
+        let viewModel: EditTaskViewModel = previewEnvironment?.get() ?? EditTaskComponent().editTaskViewModel(uuid: uuid)
+        return EditTaskView(viewModel: viewModel)
     }
+}
 
+extension EditTaskViewModel {
+    var titleBinding: Binding<String> {
+        get {
+            return self.binding(\.title)
+        }
+    }
 }
 
 struct EditTaskView_Previews: PreviewProvider {
     static var previews: some View {
-        EditTaskView.factory(uuid: "The UUID", isPreview: true)
+        EditTaskView.factory(uuid: "The UUID", preview{ $0.editTaskViewModelWithFakes() })
     }
 }

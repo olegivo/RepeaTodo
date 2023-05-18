@@ -17,29 +17,34 @@
 
 package ru.olegivo.repeatodo.main.navigation
 
+import dev.icerock.moko.mvvm.flow.cFlow
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 
-class MainNavigatorImpl : MainNavigator {
-    override val navigationDestination = MutableSharedFlow<NavigationDestination?>(
+class MainNavigatorImpl: MainNavigator {
+    private val _navigationDestination = MutableSharedFlow<NavigationDestination?>(
         extraBufferCapacity = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
 
-    override val navigationBack = MutableSharedFlow<Unit>(
+    private val _navigationBack = MutableSharedFlow<Unit>(
         extraBufferCapacity = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
+
+    override val navigationDestination = _navigationDestination.cFlow()
+
+    override val navigationBack = _navigationBack.cFlow()
 
     override fun back() {
-        navigationBack.tryEmit(Unit)
+        _navigationBack.tryEmit(Unit)
     }
 
     override fun addTask() {
-        navigationDestination.tryEmit(NavigationDestination.AddTask)
+        _navigationDestination.tryEmit(NavigationDestination.AddTask)
     }
 
     override fun editTask(uuid: String) {
-        navigationDestination.tryEmit(NavigationDestination.EditTask(uuid))
+        _navigationDestination.tryEmit(NavigationDestination.EditTask(uuid))
     }
 }

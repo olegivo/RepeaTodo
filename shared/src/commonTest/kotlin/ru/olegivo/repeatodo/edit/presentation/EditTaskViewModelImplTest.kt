@@ -22,15 +22,11 @@ import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldBeEmpty
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.update
 import ru.olegivo.repeatodo.assertItem
-import ru.olegivo.repeatodo.domain.DeleteTaskUseCase
-import ru.olegivo.repeatodo.domain.GetTaskUseCase
-import ru.olegivo.repeatodo.domain.SaveTaskUseCase
-import ru.olegivo.repeatodo.domain.WorkState
+import ru.olegivo.repeatodo.domain.FakeDeleteTaskUseCase
+import ru.olegivo.repeatodo.domain.FakeGetTaskUseCase
+import ru.olegivo.repeatodo.domain.FakeSaveTaskUseCase
 import ru.olegivo.repeatodo.domain.models.Task
 import ru.olegivo.repeatodo.domain.models.randomTask
 import ru.olegivo.repeatodo.kotest.FreeSpec
@@ -50,7 +46,7 @@ internal class EditTaskViewModelImplTest : FreeSpec(LifecycleMode.Root) {
             val deleteTaskUseCase = FakeDeleteTaskUseCase()
             val mainNavigator = FakeMainNavigator()
 
-            val viewModel: EditTaskViewModel = EditTaskViewModelImpl(
+            val viewModel = EditTaskViewModel(
                 uuid = initialTask.uuid,
                 getTask = getTaskUseCase,
                 saveTask = saveTaskUseCase,
@@ -249,60 +245,6 @@ internal class EditTaskViewModelImplTest : FreeSpec(LifecycleMode.Root) {
                     }
                 }
             }
-        }
-    }
-
-    class FakeGetTaskUseCase : GetTaskUseCase {
-
-        private val workState = MutableStateFlow<WorkState<Task>?>(null)
-
-        override operator fun invoke(uuid: String): Flow<WorkState<Task>> {
-            workState.update { WorkState.InProgress() }
-            return workState.filterNotNull()
-        }
-
-        fun setResultCompleted(task: Task) {
-            workState.update { WorkState.Completed(task) }
-        }
-
-        fun setResultError() {
-            workState.update { WorkState.Error() }
-        }
-    }
-
-    class FakeSaveTaskUseCase : SaveTaskUseCase {
-
-        private val workState = MutableStateFlow<WorkState<Unit>?>(null)
-
-        override suspend operator fun invoke(task: Task): Flow<WorkState<Unit>> {
-            workState.update { WorkState.InProgress() }
-            return workState.filterNotNull()
-        }
-
-        fun setResultCompleted() {
-            workState.update { WorkState.Completed(Unit) }
-        }
-
-        fun setResultError() {
-            workState.update { WorkState.Error() }
-        }
-    }
-
-    class FakeDeleteTaskUseCase : DeleteTaskUseCase {
-
-        private val workState = MutableStateFlow<WorkState<Unit>?>(null)
-
-        override suspend operator fun invoke(task: Task): Flow<WorkState<Unit>> {
-            workState.update { WorkState.InProgress() }
-            return workState.filterNotNull()
-        }
-
-        fun setResultCompleted() {
-            workState.update { WorkState.Completed(Unit) }
-        }
-
-        fun setResultError() {
-            workState.update { WorkState.Error() }
         }
     }
 }

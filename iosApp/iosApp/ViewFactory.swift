@@ -15,7 +15,7 @@ class ViewFactory {
     func makeView(_ destination: NavigationDestination) -> some View {
         switch NavigationDestinationKs(destination) {
         case .addTask:
-            AddTaskView.factory()
+            fatalError("Not implemented")
         case .editTask(let value):
             EditTaskView.factory(uuid: value.uuid)
         }

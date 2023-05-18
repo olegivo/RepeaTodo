@@ -17,6 +17,6 @@
 
 package ru.olegivo.repeatodo.utils
 
-actual fun newUuid(): String {
-    TODO("Not yet implemented")
-}
+import java.util.UUID
+
+actual fun newUuid(): String = UUID.randomUUID().toString()

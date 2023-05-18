@@ -12,19 +12,19 @@ import shared
 struct MainView: View {
     @Environment(\.isPreview) var isPreview
     @Environment(\.navigator) var navigator: MainNavigatorObservableObject
+    @Environment(\.previewEnvironment) var previewEnvironment: PreviewEnvironment?
 
-    @StateObject
-    private var viewModel: MainViewModelObservableObject
+//    @StateObject private var viewModel: MainViewModelObservableObject
 
     var body: some View {
         NavigationView {
             VStack() {
                 Spacer()
                 Divider()
-                TasksListView.factory(isPreview: isPreview)
+                TasksListView.factory(previewEnvironment)
                     .environmentObject(navigator)
                 Divider()
-                AddTaskInlinedView.factory(isPreview: isPreview)
+                AddTaskInlinedView.factory(previewEnvironment)
                     .padding()
             }
         }
@@ -32,17 +32,19 @@ struct MainView: View {
         .handleNavigation(navigator)
     }
     
-    static func factory(isPreview: Bool = false) -> some View {
+    static func factory(_ previewEnvironment: PreviewEnvironment? = nil) -> some View {
         let di = MainComponent()
-        let navigator = (isPreview ? FakeMainNavigator() : di.mainNavigator()).asObservableObject()
+        let navigator = (previewEnvironment?.get() ?? di.mainNavigator()).asObservableObject()
         return MainView(
-            viewModel: (isPreview ? FakeMainViewModel() : di.mainViewModel()).asObservableObject()
-        ).navigator(navigator)
+            //viewModel: (isPreview ? FakeMainViewModel() : di.mainViewModel()).asObservableObject()
+        )
+        .navigator(navigator)
+//        .previewEnvironment(preview{ $0.mainScreenFakes() })
     }
 }
 
 struct MainView_Previews: PreviewProvider {
     static var previews: some View {
-        MainView.factory(isPreview: true)
+        MainView.factory(preview{ $0.mainScreenFakes() })
     }
 }

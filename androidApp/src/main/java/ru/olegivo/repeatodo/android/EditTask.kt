@@ -61,17 +61,20 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
+import ru.olegivo.repeatodo.domain.WorkState
 import ru.olegivo.repeatodo.edit.presentation.EditTaskViewModel
-import ru.olegivo.repeatodo.edit.presentation.FakeEditTaskViewModel
+import ru.olegivo.repeatodo.edit.presentation.editTaskViewModelWithFakes
+import ru.olegivo.repeatodo.preview.fakeOrInjectKoin
+import ru.olegivo.repeatodo.utils.PreviewEnvironment
 
 @Composable
 internal fun EditTask(
     modifier: Modifier = Modifier,
     uuid: String? = null,
-    viewModel: EditTaskViewModel = koinInject { parametersOf(uuid) }
+    previewEnvironment: PreviewEnvironment? = null,
 ) {
+    val viewModel: EditTaskViewModel = fakeOrInjectKoin(previewEnvironment) { parametersOf(uuid) }
     val showAlertDialog = remember { mutableStateOf(false) }
     Scaffold(
         modifier = modifier,
@@ -268,7 +271,9 @@ private fun EditTaskPreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.primary
         ) {
-            EditTask(viewModel = FakeEditTaskViewModel())
+            EditTask(
+                previewEnvironment = PreviewEnvironment { editTaskViewModelWithFakes() }
+            )
         }
     }
 }
@@ -281,9 +286,13 @@ private fun EditTaskPreviewLoading() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.primary
         ) {
-            EditTask(viewModel = FakeEditTaskViewModel().also {
-                it.isLoading.value = true
-            })
+            EditTask(
+                previewEnvironment = PreviewEnvironment {
+                    editTaskViewModelWithFakes(
+                        WorkState.InProgress()
+                    )
+                }
+            )
         }
     }
 }
