@@ -17,8 +17,8 @@
 
 package ru.olegivo.repeatodo.list.presentation
 
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.Instant
 
 class FakeRelativeDateFormatter(var result: String? = null): RelativeDateFormatter {
-    override fun format(value: LocalDateTime) = result ?: value.toString()
+    override fun format(value: Instant) = result ?: value.toString()
 }

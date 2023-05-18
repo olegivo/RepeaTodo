@@ -23,7 +23,7 @@ import com.squareup.sqldelight.runtime.coroutines.mapToOneOrNull
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.Instant
 import ru.olegivo.repeatodo.DispatchersProvider
 import ru.olegivo.repeatodo.data.LocalTasksDataSource
 import ru.olegivo.repeatodo.domain.models.Task
@@ -31,7 +31,7 @@ import ru.olegivo.repeatodo.utils.newUuid
 
 class LocalTasksDataSourceImpl(
     private val db: RepeaTodoDb,
-    private val localDateTimeLongAdapter: LocalDateTimeLongAdapter,
+    private val instantLongAdapter: InstantLongAdapter,
     private val dispatchersProvider: DispatchersProvider
 ): LocalTasksDataSource {
     override fun getTasks(): Flow<List<Task>> =
@@ -60,7 +60,7 @@ class LocalTasksDataSourceImpl(
         }
     }
 
-    override suspend fun addTaskCompletion(taskUuid: String, completionDate: LocalDateTime) {
+    override suspend fun addTaskCompletion(taskUuid: String, completionDate: Instant) {
         withContext(dispatchersProvider.io) {
             db.taskCompletionQueries.addCompletion(
                 TaskCompletion(
@@ -87,8 +87,8 @@ class LocalTasksDataSourceImpl(
         uuid = uuid,
         title = title,
         daysPeriodicity = daysPeriodicity,
-        lastCompletionDate = lastCompletionDate?.toLocalDateTime()
+        lastCompletionDate = lastCompletionDate?.toInstant()
     )
 
-    private fun Long.toLocalDateTime() = localDateTimeLongAdapter.decode(this)
+    private fun Long.toInstant() = instantLongAdapter.decode(this)
 }

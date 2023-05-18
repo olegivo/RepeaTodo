@@ -26,7 +26,7 @@ class CompleteTaskUseCaseImpl(
     override suspend fun invoke(taskUuid: String) {
         localTasksDataSource.addTaskCompletion(
             taskUuid = taskUuid,
-            completionDate = dateTimeProvider.getCurrentLocalDateTime()
+            completionDate = dateTimeProvider.getCurrentInstant()
         )
     }
 }

@@ -17,11 +17,11 @@
 
 package ru.olegivo.repeatodo.domain
 
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.Instant
 
 interface IsTaskCompletedUseCase {
     operator fun invoke(
-        lastCompletionDate: LocalDateTime?,
+        lastCompletionDate: Instant?,
         daysPeriodicity: Int
     ): Boolean
 }

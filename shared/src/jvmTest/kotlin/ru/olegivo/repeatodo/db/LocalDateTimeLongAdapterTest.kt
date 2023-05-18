@@ -20,24 +20,21 @@ package ru.olegivo.repeatodo.db
 import io.kotest.matchers.shouldBe
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import ru.olegivo.repeatodo.domain.DateTimeProviderImpl
 import ru.olegivo.repeatodo.domain.roundNanoseconds
 import ru.olegivo.repeatodo.kotest.FreeSpec
-import ru.olegivo.repeatodo.randomLocalDateTime
-import kotlin.time.Duration.Companion.nanoseconds
+import ru.olegivo.repeatodo.randomInstant
 
 class LocalDateTimeLongAdapterTest: FreeSpec() {
     init {
-        val dateTimeProvider = DateTimeProviderImpl()
-        val localDateTimeLongAdapter = LocalDateTimeLongAdapter(dateTimeProvider)
+        val instantLongAdapter = InstantLongAdapter()
 
         "decode(encode(value)) should be value" {
-            val localDateTime = randomLocalDateTime()
+            val instant = randomInstant()
 
-            val dbValue = localDateTimeLongAdapter.encode(localDateTime)
-            val decoded = localDateTimeLongAdapter.decode(dbValue)
+            val dbValue = instantLongAdapter.encode(instant)
+            val decoded = instantLongAdapter.decode(dbValue)
 
-            decoded shouldBe localDateTime
+            decoded shouldBe instant
         }
 
         "https://github.com/Kotlin/kotlinx-datetime/issues/270" {

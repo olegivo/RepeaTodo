@@ -31,46 +31,44 @@ class IsTaskCompletedUseCaseImplTest: FreeSpec() {
             val useCase: IsTaskCompletedUseCase = IsTaskCompletedUseCaseImpl(
                 dateTimeProvider = dateTimeProvider
             )
-            with(dateTimeProvider.getCurrentTimeZone()) {
-                val current = dateTimeProvider.getCurrentInstant()
-                val daysPeriodicity = 1
-                val daysPeriod = daysPeriodicity.days
+            val current = dateTimeProvider.getCurrentInstant()
+            val daysPeriodicity = 1
+            val daysPeriod = daysPeriodicity.days
 
-                "should return false WHEN has no completion date" {
-                    useCase.invoke(lastCompletionDate = null, daysPeriodicity = daysPeriodicity)
-                        .shouldBeFalse()
-                }
+            "should return false WHEN has no completion date" {
+                useCase.invoke(lastCompletionDate = null, daysPeriodicity = daysPeriodicity)
+                    .shouldBeFalse()
+            }
 
-                val passedADaysBefore = current - daysPeriod
-                val passedADaysWithMomentBefore = passedADaysBefore - 1.milliseconds
-                val passedADaysWithLessThanMomentBefore = passedADaysBefore + 1.milliseconds
+            val passedADaysBefore = current - daysPeriod
+            val passedADaysWithMomentBefore = passedADaysBefore - 1.milliseconds
+            val passedADaysWithLessThanMomentBefore = passedADaysBefore + 1.milliseconds
 
-                "should return false WHEN completion date passed a days period and a moment before" {
-                    useCase
-                        .invoke(
-                            lastCompletionDate = passedADaysWithMomentBefore.toLocalDateTime(),
-                            daysPeriodicity = daysPeriodicity
-                        )
-                        .shouldBeFalse()
-                }
+            "should return false WHEN completion date passed a days period and a moment before" {
+                useCase
+                    .invoke(
+                        lastCompletionDate = passedADaysWithMomentBefore,
+                        daysPeriodicity = daysPeriodicity
+                    )
+                    .shouldBeFalse()
+            }
 
-                "should return false WHEN completion date passed a days period before" {
-                    useCase
-                        .invoke(
-                            lastCompletionDate = passedADaysBefore.toLocalDateTime(),
-                            daysPeriodicity = daysPeriodicity
-                        )
-                        .shouldBeFalse()
-                }
+            "should return false WHEN completion date passed a days period before" {
+                useCase
+                    .invoke(
+                        lastCompletionDate = passedADaysBefore,
+                        daysPeriodicity = daysPeriodicity
+                    )
+                    .shouldBeFalse()
+            }
 
-                "should return false WHEN completion date passed a days period and less than a moment before" {
-                    useCase
-                        .invoke(
-                            lastCompletionDate = passedADaysWithLessThanMomentBefore.toLocalDateTime(),
-                            daysPeriodicity = daysPeriodicity
-                        )
-                        .shouldBeTrue()
-                }
+            "should return false WHEN completion date passed a days period and less than a moment before" {
+                useCase
+                    .invoke(
+                        lastCompletionDate = passedADaysWithLessThanMomentBefore,
+                        daysPeriodicity = daysPeriodicity
+                    )
+                    .shouldBeTrue()
             }
         }
     }
