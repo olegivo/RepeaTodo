@@ -18,6 +18,7 @@
 		51E119B829F3FAF200E4D780 /* ViewModelObservable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E119B229F3FAF200E4D780 /* ViewModelObservable.swift */; };
 		51E119B929F3FAF200E4D780 /* ViewModelState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E119B329F3FAF200E4D780 /* ViewModelState.swift */; };
 		51E119BA29F3FAF200E4D780 /* ViewModelBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E119B429F3FAF200E4D780 /* ViewModelBinding.swift */; };
+		51E119BC29F4392D00E4D780 /* PreviewEnvironmentExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E119BB29F4392D00E4D780 /* PreviewEnvironmentExt.swift */; };
 		552A5B4F285B60EE0059083D /* NavigationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552A5B4E285B60EE0059083D /* NavigationHandler.swift */; };
 		552A5B53285B619C0059083D /* NavigationDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552A5B52285B619C0059083D /* NavigationDirection.swift */; };
 		552A5B55285B61E50059083D /* ViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552A5B54285B61E50059083D /* ViewFactory.swift */; };
@@ -62,6 +63,7 @@
 		51E119B329F3FAF200E4D780 /* ViewModelState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModelState.swift; sourceTree = "<group>"; };
 		51E119B429F3FAF200E4D780 /* ViewModelBinding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModelBinding.swift; sourceTree = "<group>"; };
 		51E119B529F3FAF200E4D780 /* mokoMvvmFlowSwiftUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mokoMvvmFlowSwiftUI.h; sourceTree = "<group>"; };
+		51E119BB29F4392D00E4D780 /* PreviewEnvironmentExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewEnvironmentExt.swift; sourceTree = "<group>"; };
 		53F3EB61A669B189A1488218 /* Pods-iosApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.debug.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.debug.xcconfig"; sourceTree = "<group>"; };
 		552A5B4E285B60EE0059083D /* NavigationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationHandler.swift; sourceTree = "<group>"; };
 		552A5B52285B619C0059083D /* NavigationDirection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationDirection.swift; sourceTree = "<group>"; };
@@ -114,6 +116,7 @@
 		5131CA6429EC47CE00BFC251 /* Environment */ = {
 			isa = PBXGroup;
 			children = (
+				51E119BB29F4392D00E4D780 /* PreviewEnvironmentExt.swift */,
 			);
 			path = Environment;
 			sourceTree = "<group>";
@@ -387,6 +390,7 @@
 				51E119B629F3FAF200E4D780 /* ViewModelStateNullable.swift in Sources */,
 				5168799D29D8CFA30067450C /* RepeaTodo_shared.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
+				51E119BC29F4392D00E4D780 /* PreviewEnvironmentExt.swift in Sources */,
 				552A5B55285B61E50059083D /* ViewFactory.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,
 				51E119B929F3FAF200E4D780 /* ViewModelState.swift in Sources */,
