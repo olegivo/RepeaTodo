@@ -32,7 +32,7 @@ class EditTaskViewModelImpl(
     private val saveTask: SaveTaskUseCase,
 ) : BaseViewModel(), EditTaskViewModel {
 
-    private val loadingState = MutableSharedFlow<WorkState<Task>>(
+    private val loadingState: MutableSharedFlow<WorkState<Task>> = MutableSharedFlow(
         replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
@@ -42,11 +42,11 @@ class EditTaskViewModelImpl(
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
 
-    private val loadedTask = loadingState.filterCompleted()
+    private val loadedTask: Flow<Task> = loadingState.filterCompleted()
 
-    override val title = MutableStateFlow("")
+    override val title: MutableStateFlow<String> = MutableStateFlow("")
 
-    private val actualTask = combine(
+    private val actualTask: Flow<Task> = combine(
         loadedTask,
         title
     ) { task, title ->
@@ -55,24 +55,24 @@ class EditTaskViewModelImpl(
         )
     }
 
-    override val isLoading = loadingState.map { it is WorkState.InProgress }
+    override val isLoading: StateFlow<Boolean> = loadingState.map { it is WorkState.InProgress }
         .asState(false)
 
-    override val isLoadingError = loadingState.map { it is WorkState.Error }
+    override val isLoadingError: StateFlow<Boolean> = loadingState.map { it is WorkState.Error }
         .asState(false)
 
-    override val canSave =
+    override val canSave: StateFlow<Boolean> =
         combine(actualTask, loadedTask) { actual, origin ->
             actual.isValid() && actual != origin
         }.asState(false)
 
-    override val isSaving = savingState.map { it is WorkState.InProgress }
+    override val isSaving: StateFlow<Boolean> = savingState.map { it is WorkState.InProgress }
         .asState(false)
 
-    override val isSaveError = savingState.map { it is WorkState.Error }
+    override val isSaveError: StateFlow<Boolean> = savingState.map { it is WorkState.Error }
         .asState(false)
 
-    override val onSaved = savingState.filter { it is WorkState.Completed }.map { }
+    override val onSaved: Flow<Unit> = savingState.filter { it is WorkState.Completed }.map { Unit }
 
     init {
         loadTask()
