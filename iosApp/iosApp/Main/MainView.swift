@@ -11,11 +11,10 @@ import shared
 
 struct MainView: View {
     @Environment(\.isPreview) var isPreview
-    
+    @Environment(\.navigator) var navigator: MainNavigatorObservableObject
+
     @StateObject
     private var viewModel: MainViewModelObservableObject
-    @StateObject
-    private var navigator: MainNavigatorObservableObject
 
     var body: some View {
         NavigationView {
@@ -30,15 +29,15 @@ struct MainView: View {
             }
         }
         .navigationTitle("Todos")
-        .handleNavigation($navigator.navigationDirection)
+        .handleNavigation(navigator)
     }
     
-    static func factory(isPreview: Bool = false) -> MainView {
+    static func factory(isPreview: Bool = false) -> some View {
         let di = MainComponent()
+        let navigator = (isPreview ? FakeMainNavigator() : di.mainNavigator()).asObservableObject()
         return MainView(
-            viewModel: (isPreview ? FakeMainViewModel() : di.mainViewModel()).asObservableObject(),
-            navigator: (isPreview ? FakeMainNavigator() : di.mainNavigator()).asObservableObject()
-        )
+            viewModel: (isPreview ? FakeMainViewModel() : di.mainViewModel()).asObservableObject()
+        ).navigator(navigator)
     }
 }
 

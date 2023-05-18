@@ -12,6 +12,8 @@ import shared
 
 struct AddTaskView: View {
     
+    @Environment(\.navigator) var navigator: MainNavigatorObservableObject
+    
     @StateObject
     private var viewModel: AddTaskViewModelObservableObject
     
@@ -45,7 +47,7 @@ struct AddTaskView: View {
                     }
                 }
             }
-            .handleNavigation($viewModel.navigationDirection)
+            .handleNavigation(navigator)
         }
     }
     

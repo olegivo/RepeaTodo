@@ -29,7 +29,7 @@ struct TasksListView: View {
                         Spacer()
                         Button (
                             action: {
-                                navigator.navigationDirection = .forward(destination: .EditTask(uuid: task.uuid), style: .present)
+                                viewModel.wrapped.onTaskEditClicked(task: task)
                             },
                             label: {
                                 Image(systemName: "pencil")
