@@ -23,5 +23,6 @@ import ru.olegivo.repeatodo.domain.models.Task as TaskDomain
 internal fun TaskDomain.toDb() =
     TaskDb(
         uuid = uuid,
-        title = title
+        title = title,
+        daysPeriodicity = daysPeriodicity,
     )

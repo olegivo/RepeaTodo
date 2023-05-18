@@ -26,6 +26,9 @@ public class EditTaskViewModelObservableObject : ObservableObject {
     var title: String
     
     @Published
+    var daysPeriodicity: String
+    
+    @Published
     var isLoading:Bool
     
     @Published
@@ -43,6 +46,7 @@ public class EditTaskViewModelObservableObject : ObservableObject {
     init(wrapped: EditTaskViewModel) {
         self.wrapped = wrapped
         self.title = wrapped.title.value as! String
+        self.daysPeriodicity = wrapped.daysPeriodicity.value as! String
         self.isLoading = true // TODO: self.isLoading = wrapped.isLoading.value as! Bool
         self.isLoadingError = wrapped.isLoadingError.value as! Bool
         self.canSave = wrapped.canSave.value as! Bool
@@ -52,6 +56,10 @@ public class EditTaskViewModelObservableObject : ObservableObject {
         wrapped.title.asPublisher()
             .receive(on: RunLoop.main)
             .assign(to: &$title)
+        
+        wrapped.daysPeriodicity.asPublisher()
+            .receive(on: RunLoop.main)
+            .assign(to: &$daysPeriodicity)
         
         wrapped.isLoading.asPublisher()
             .receive(on: RunLoop.main)
@@ -74,7 +82,11 @@ public class EditTaskViewModelObservableObject : ObservableObject {
             .assign(to: &$canSave)        
     }
     
-    func onTitleChanged(_ title: String) {
-        wrapped.title.setValue(title)
+    func onTitleChanged(_ value: String) {
+        wrapped.title.setValue(value)
+    }
+    
+    func onDaysPeriodicityChanged(_ value: String) {
+        wrapped.daysPeriodicity.setValue(value)
     }
 }

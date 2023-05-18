@@ -32,6 +32,7 @@ import ru.olegivo.repeatodo.domain.GetTaskUseCase
 import ru.olegivo.repeatodo.domain.SaveTaskUseCase
 import ru.olegivo.repeatodo.domain.WorkState
 import ru.olegivo.repeatodo.domain.models.Task
+import ru.olegivo.repeatodo.domain.models.randomTask
 import ru.olegivo.repeatodo.kotest.FreeSpec
 import ru.olegivo.repeatodo.kotest.LifecycleMode
 import ru.olegivo.repeatodo.main.navigation.FakeMainNavigator
@@ -43,10 +44,7 @@ internal class EditTaskViewModelImplTest : FreeSpec(LifecycleMode.Root) {
 
     init {
         "viewModel" - {
-            val initialTask = Task(
-                uuid = randomString(),
-                title = randomString()
-            )
+            val initialTask = randomTask()
             val getTaskUseCase = FakeGetTaskUseCase()
             val saveTaskUseCase = FakeSaveTaskUseCase()
             val deleteTaskUseCase = FakeDeleteTaskUseCase()
@@ -69,6 +67,7 @@ internal class EditTaskViewModelImplTest : FreeSpec(LifecycleMode.Root) {
                 viewModel.isDeleting.assertItem { shouldBeFalse() }
                 viewModel.isDeleteError.assertItem { shouldBeFalse() }
                 viewModel.title.assertItem { shouldBeEmpty() }
+                viewModel.daysPeriodicity.assertItem { shouldBeEmpty() }
 
                 "onCancelClicked should navigate back" {
                     viewModel.onCancelClicked()
@@ -87,6 +86,7 @@ internal class EditTaskViewModelImplTest : FreeSpec(LifecycleMode.Root) {
                     viewModel.isDeleting.assertItem { shouldBeFalse() }
                     viewModel.isDeleteError.assertItem { shouldBeFalse() }
                     viewModel.title.assertItem { shouldBeEmpty() }
+                    viewModel.daysPeriodicity.assertItem { shouldBeEmpty() }
                 }
 
                 "load request complete successfully" - {
@@ -99,6 +99,7 @@ internal class EditTaskViewModelImplTest : FreeSpec(LifecycleMode.Root) {
                     viewModel.isDeleting.assertItem { shouldBeFalse() }
                     viewModel.isDeleteError.assertItem { shouldBeFalse() }
                     viewModel.title.assertItem { shouldBe(initialTask.title) }
+                    viewModel.daysPeriodicity.assertItem { shouldBe(initialTask.daysPeriodicity.toString()) }
 
                     "should not navigate" {
                         mainNavigator.invocations shouldBe FakeMainNavigator.Invocations.None
@@ -113,6 +114,45 @@ internal class EditTaskViewModelImplTest : FreeSpec(LifecycleMode.Root) {
 
                         "canSave should be false WHEN the state is invalid" {
                             viewModel.canSave.assertItem { shouldBeFalse() }
+                        }
+                    }
+
+                    "clear daysPeriodicity" - {
+                        viewModel.daysPeriodicity.update { "" }
+
+                        "canSave should be false WHEN the state is invalid" {
+                            viewModel.canSave.assertItem { shouldBeFalse() }
+                        }
+                    }
+
+                    "set daysPeriodicity less than minimum" - {
+                        viewModel.daysPeriodicity.update { (Task.MIN_DAYS_PERIODICITY - 1).toString() }
+
+                        "canSave should be false WHEN the state is invalid" {
+                            viewModel.canSave.assertItem { shouldBeFalse() }
+                        }
+                    }
+
+                    "set daysPeriodicity greater than maximum" - {
+                        viewModel.daysPeriodicity.update { (Task.MAX_DAYS_PERIODICITY + 1).toString() }
+
+                        "canSave should be false WHEN the state is invalid" {
+                            viewModel.canSave.assertItem { shouldBeFalse() }
+                        }
+                    }
+
+                    "change daysPeriodicity to other in range" - {
+                        viewModel.daysPeriodicity.update {
+                            val value = it.toInt()
+                            if (value == Task.MIN_DAYS_PERIODICITY) {
+                                value + 1
+                            } else {
+                                value - 1
+                            }.toString()
+                        }
+
+                        "canSave should be true" {
+                            viewModel.canSave.assertItem { shouldBeTrue() }
                         }
                     }
 
