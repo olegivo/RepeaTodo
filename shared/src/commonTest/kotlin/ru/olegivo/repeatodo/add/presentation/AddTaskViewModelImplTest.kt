@@ -45,7 +45,7 @@ internal class AddTaskViewModelImplTest : FreeSpec({
 
     class FakeAddTaskUseCase : AddTaskUseCase {
 
-        override fun invoke(task: Task) {
+        override suspend fun invoke(task: Task) {
             TODO("Not yet implemented")
         }
     }

@@ -25,7 +25,7 @@ class SaveTaskUseCaseImpl(private val tasksRepository: TasksRepository) : SaveTa
     override suspend fun invoke(task: Task) = flow {
         try {
             emit(WorkState.InProgress())
-            tasksRepository.update(task)
+            tasksRepository.save(task)
             emit(WorkState.Completed(Unit))
         } catch (e: Throwable) {
             emit(WorkState.Error())
