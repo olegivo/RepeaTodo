@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runCurrent
+import ru.olegivo.repeatodo.DispatchersProvider
 import kotlin.time.Duration
 import app.cash.turbine.testIn as turbineTestIn
 
@@ -35,6 +36,12 @@ abstract class FreeSpec(
         lifecycleMode = lifecycleMode,
 //        beforeCleanupTestCoroutines = ::beforeCleanupTestCoroutines
     )
+
+    protected val dispatchersProvider = object: DispatchersProvider {
+        override val io get() = coroutineListener.dispatcher
+        override val default get() = coroutineListener.dispatcher
+        override val main get() = coroutineListener.dispatcher
+    }
 
     protected val testCoroutineScope = coroutineListener.scope
 

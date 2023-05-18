@@ -87,6 +87,7 @@ kotlin {
         }
         val jvmTest by getting {
             dependencies {
+                dependsOn(commonTest)
                 implementation(libs.kotest.runner.junit5.jvm)
                 implementation(libs.sqlDelight.driver.sqlite)
             }

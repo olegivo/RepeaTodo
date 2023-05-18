@@ -27,6 +27,7 @@ import org.koin.dsl.module
 import ru.olegivo.repeatodo.DispatchersProvider
 import ru.olegivo.repeatodo.add.presentation.AddTaskViewModel
 import ru.olegivo.repeatodo.db.DriverFactory
+import ru.olegivo.repeatodo.db.DriverFactoryImpl
 import ru.olegivo.repeatodo.edit.presentation.EditTaskViewModel
 import ru.olegivo.repeatodo.list.presentation.TasksListViewModel
 import ru.olegivo.repeatodo.main.navigation.MainNavigator
@@ -36,7 +37,7 @@ import ru.olegivo.repeatodo.platform.DispatchersProviderImpl
 
 actual fun platformModule() = module {
     singleOf(::DispatchersProviderImpl).bind<DispatchersProvider>()
-    single { DriverFactory() }
+    singleOf(::DriverFactoryImpl).bind<DriverFactory>()
     factoryOf(::MainViewModelImpl).bind<MainViewModel>()
     factoryOf(::AddTaskViewModel)
     factoryOf(::EditTaskViewModel)

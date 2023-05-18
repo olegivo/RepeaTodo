@@ -17,12 +17,10 @@
 
 package ru.olegivo.repeatodo.db
 
-import android.content.Context
-import com.squareup.sqldelight.android.AndroidSqliteDriver
 import com.squareup.sqldelight.db.SqlDriver
+import com.squareup.sqldelight.drivers.native.NativeSqliteDriver
 
-actual class DriverFactory(private val context: Context) {
-    actual fun createDriver(dbName: String): SqlDriver {
-        return AndroidSqliteDriver(RepeaTodoDb.Schema, context, dbName)
-    }
+actual class DriverFactoryImpl: DriverFactory {
+    actual override fun createDriver(dbName: String): SqlDriver =
+        NativeSqliteDriver(RepeaTodoDb.Schema, dbName)
 }
