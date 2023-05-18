@@ -17,9 +17,17 @@
 
 package ru.olegivo.repeatodo.add.presentation
 
+import dev.icerock.moko.mvvm.flow.cFlow
+import dev.icerock.moko.mvvm.flow.cMutableStateFlow
+import dev.icerock.moko.mvvm.flow.cStateFlow
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.olegivo.repeatodo.domain.AddTaskUseCase
 import ru.olegivo.repeatodo.domain.models.Task
@@ -27,24 +35,27 @@ import ru.olegivo.repeatodo.utils.newUuid
 
 class AddTaskViewModelImpl(private val addTask: AddTaskUseCase) : ViewModel(), AddTaskViewModel {
 
-    override val title = MutableStateFlow("")
-    override val isLoading = MutableStateFlow(false)
-    override val canAdd = combine(title, isLoading) { title, isLoading ->
-        title.isNotBlank() && !isLoading
-    }.stateIn(viewModelScope, SharingStarted.Lazily, false)
-
-    override val onAdded = MutableSharedFlow<Unit>(
+    private val _onAdded = MutableSharedFlow<Unit>(
         extraBufferCapacity = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
 
+    override val title = MutableStateFlow("").cMutableStateFlow()
+    private val _isLoading = MutableStateFlow(false)
+
+    override val isLoading = _isLoading.cStateFlow()
+    override val canAdd = combine(title, isLoading) { title, isLoading ->
+        title.isNotBlank() && !isLoading
+    }.stateIn(viewModelScope, SharingStarted.Lazily, false).cStateFlow()
+    override val onAdded = _onAdded.cFlow()
+
     override fun onAddClicked() {
         viewModelScope.launch {
-            isLoading.update { true }
+            _isLoading.update { true }
             addTask(Task(uuid = newUuid(), title = title.value))
-            onAdded.emit(Unit)
+            _onAdded.emit(Unit)
             title.update { "" }
-            isLoading.update { false }
+            _isLoading.update { false }
         }
     }
 }

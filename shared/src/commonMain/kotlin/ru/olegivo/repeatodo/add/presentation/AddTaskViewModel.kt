@@ -17,16 +17,16 @@
 
 package ru.olegivo.repeatodo.add.presentation
 
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
+import dev.icerock.moko.mvvm.flow.CFlow
+import dev.icerock.moko.mvvm.flow.CMutableStateFlow
+import dev.icerock.moko.mvvm.flow.CStateFlow
 
 interface AddTaskViewModel {
 
-    val title: MutableStateFlow<String>
-    val isLoading: StateFlow<Boolean>
-    val canAdd: StateFlow<Boolean>
-    val onAdded: SharedFlow<Unit>
+    val title: CMutableStateFlow<String>
+    val isLoading: CStateFlow<Boolean>
+    val canAdd: CStateFlow<Boolean>
+    val onAdded: CFlow<Unit>
     fun onAddClicked()
     fun onCleared()
 }

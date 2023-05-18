@@ -15,7 +15,6 @@
  * RepeaTodo.
  */package ru.olegivo.repeatodo.edit.presentation
 
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class FakeEditTaskViewModel : EditTaskViewModel {
@@ -26,9 +25,12 @@ class FakeEditTaskViewModel : EditTaskViewModel {
     override val canSave = MutableStateFlow(false)
     override val isSaving = MutableStateFlow(false)
     override val isSaveError = MutableStateFlow(false)
-    override val onSaved = MutableSharedFlow<Unit>()
 
     override fun onSaveClicked() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onCancelClicked() {
         TODO("Not yet implemented")
     }
 

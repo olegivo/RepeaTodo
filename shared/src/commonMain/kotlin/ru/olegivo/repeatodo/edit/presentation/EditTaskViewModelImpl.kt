@@ -17,7 +17,15 @@
 package ru.olegivo.repeatodo.edit.presentation
 
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.olegivo.repeatodo.BaseViewModel
 import ru.olegivo.repeatodo.domain.GetTaskUseCase
@@ -25,11 +33,13 @@ import ru.olegivo.repeatodo.domain.SaveTaskUseCase
 import ru.olegivo.repeatodo.domain.WorkState
 import ru.olegivo.repeatodo.domain.filterCompleted
 import ru.olegivo.repeatodo.domain.models.Task
+import ru.olegivo.repeatodo.main.navigation.MainNavigator
 
 class EditTaskViewModelImpl(
     private val uuid: String,
     private val getTask: GetTaskUseCase,
     private val saveTask: SaveTaskUseCase,
+    private val mainNavigator: MainNavigator,
 ) : BaseViewModel(), EditTaskViewModel {
 
     private val loadingState: MutableSharedFlow<WorkState<Task>> = MutableSharedFlow(
@@ -72,8 +82,6 @@ class EditTaskViewModelImpl(
     override val isSaveError: StateFlow<Boolean> = savingState.map { it is WorkState.Error }
         .asState(false)
 
-    override val onSaved: Flow<Unit> = savingState.filter { it is WorkState.Completed }.map { Unit }
-
     init {
         loadTask()
     }
@@ -87,6 +95,13 @@ class EditTaskViewModelImpl(
         viewModelScope.launch {
             loadingState.collect {
                 //
+            }
+        }
+        viewModelScope.launch {
+            savingState.collect {
+                if (it is WorkState.Completed) {
+                    mainNavigator.back()
+                }
             }
         }
         viewModelScope.launch {
@@ -108,6 +123,10 @@ class EditTaskViewModelImpl(
         viewModelScope.launch {
             savingState.emitAll(saveTask(actualTask.first()))
         }
+    }
+
+    override fun onCancelClicked() {
+        mainNavigator.back()
     }
 
     private fun Task.isValid() = title.isNotBlank()

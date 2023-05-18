@@ -19,10 +19,7 @@ package ru.olegivo.repeatodo.edit.presentation
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import ru.olegivo.repeatodo.domain.WorkState
-import ru.olegivo.repeatodo.domain.models.Task
 
 interface EditTaskViewModel {
 
@@ -32,7 +29,7 @@ interface EditTaskViewModel {
     val canSave: StateFlow<Boolean>
     val isSaving: StateFlow<Boolean>
     val isSaveError: StateFlow<Boolean>
-    val onSaved: Flow<Unit>
     fun onSaveClicked()
+    fun onCancelClicked()
     fun onCleared()
 }

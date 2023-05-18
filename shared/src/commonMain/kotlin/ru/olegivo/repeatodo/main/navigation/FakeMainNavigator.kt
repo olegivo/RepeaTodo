@@ -22,7 +22,14 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 class FakeMainNavigator : MainNavigator {
 
     override val navigationDestination = MutableSharedFlow<NavigationDestination?>()
+    override val navigationBack = MutableSharedFlow<Unit>()
+
+    override fun back() {
+    }
 
     override fun addTask() {
+    }
+
+    override fun editTask(uuid: String) {
     }
 }

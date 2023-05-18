@@ -22,8 +22,13 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import ru.olegivo.repeatodo.domain.GetTasksListUseCase
+import ru.olegivo.repeatodo.domain.models.Task
+import ru.olegivo.repeatodo.edit.navigation.EditTaskNavigator
 
-class TasksListViewModelImpl(getTasks: GetTasksListUseCase) :
+class TasksListViewModelImpl(
+    getTasks: GetTasksListUseCase,
+    private val editTaskNavigator: EditTaskNavigator
+) :
     ViewModel(),
     TasksListViewModel {
 
@@ -36,4 +41,8 @@ class TasksListViewModelImpl(getTasks: GetTasksListUseCase) :
             started = SharingStarted.Lazily,
             initialValue = TasksListUiState(emptyList())
         )
+
+    override fun onTaskEditClicked(task: Task) {
+        editTaskNavigator.editTask(task.uuid)
+    }
 }

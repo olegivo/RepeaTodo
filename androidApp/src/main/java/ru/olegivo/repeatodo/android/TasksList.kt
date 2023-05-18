@@ -18,21 +18,23 @@
 package ru.olegivo.repeatodo.android
 
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -40,38 +42,53 @@ import org.koin.compose.koinInject
 import ru.olegivo.repeatodo.domain.models.Task
 import ru.olegivo.repeatodo.list.presentation.FakeTasksListViewModel
 import ru.olegivo.repeatodo.list.presentation.TasksListViewModel
+import ru.olegivo.repeatodo.utils.newUuid
 
 @Composable
 internal fun TasksList(
     modifier: Modifier = Modifier,
     isPreview: Boolean = false,
-    viewModel: TasksListViewModel = if (isPreview) FakeTasksListViewModel() else koinInject()
+    viewModel: TasksListViewModel = if (isPreview) FakeTasksListViewModel(5) else koinInject()
 ) {
     val tasks = viewModel.state.collectAsState().value.tasks
-    LazyColumn(
-        modifier
-//            .verticalScroll(rememberScrollState())
-//            .background(MaterialTheme.colorScheme.primaryContainer),
-    ) {
+    LazyColumn(modifier) {
         itemsIndexed(
             items = tasks,
             key = { _, task -> task.uuid }
-        ) { _, task ->
-            Row {
-                TaskItem(task = task)
+        ) { index, task ->
+            TaskItem(
+                Modifier.fillMaxWidth(),
+                task = task,
+                onTaskEditClicked = { viewModel.onTaskEditClicked(task) }
+            )
+            if (index != tasks.lastIndex) {
+                Divider()
             }
         }
     }
 }
 
 @Composable
-private fun TaskItem(modifier: Modifier = Modifier, task: Task) {
-    Text(
-        task.title,
-        modifier
+private fun TaskItem(
+    modifier: Modifier = Modifier,
+    task: Task,
+    onTaskEditClicked: (Task) -> Unit = {}
+) {
+    Row(
+        modifier = modifier
             .padding(16.dp)
-            .height(32.dp)
-    )
+            .height(48.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = task.title,
+            modifier = Modifier
+                .weight(1f)
+        )
+        Button(onClick = { onTaskEditClicked(task) }) {
+            Icon(Icons.Rounded.Edit, "Edit")
+        }
+    }
 }
 
 @Preview
@@ -79,19 +96,20 @@ private fun TaskItem(modifier: Modifier = Modifier, task: Task) {
 private fun TasksListPreview() {
     MaterialTheme {
         Surface(
-            modifier = Modifier
-                .fillMaxSize()
-                .windowInsetsPadding(
-                    WindowInsets.navigationBars.only(
-                        WindowInsetsSides.Start +
-                                WindowInsetsSides.End +
-                                WindowInsetsSides.Top +
-                                WindowInsetsSides.Bottom
-                    )
-                ),
+            modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.primary
         ) {
             TasksList(isPreview = true)
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun TaskItemPreview() {
+    MaterialTheme {
+        Surface(color = MaterialTheme.colorScheme.primary) {
+            TaskItem(task = Task(newUuid(), "Todo 1"))
         }
     }
 }
