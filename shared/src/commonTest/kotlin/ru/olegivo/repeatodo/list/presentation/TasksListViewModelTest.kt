@@ -55,7 +55,10 @@ internal class TasksListViewModelTest: FreeSpec() {
                 editTaskNavigator = editTaskNavigator,
                 isTaskCompleted = isTaskCompletedUseCase,
                 relativeDateFormatter = relativeDateFormatter,
-                tasksSorterByCompletion = TasksSorterByCompletion(FakeDateTimeProvider()),
+                tasksSorterByCompletion = TasksSorterByCompletion(
+                    dateTimeProvider = FakeDateTimeProvider(),
+                    isTaskCompleted = isTaskCompletedUseCase
+                ),
             )
             val state = viewModel.state.testIn(name = "state")
             val isShowCompleted = viewModel.isShowCompleted.testIn(name = "isShowCompletedTasks")

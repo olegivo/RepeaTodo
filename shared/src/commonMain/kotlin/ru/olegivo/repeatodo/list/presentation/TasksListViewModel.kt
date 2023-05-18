@@ -113,7 +113,7 @@ fun PreviewEnvironment.taskListFakes() {
     register<RelativeDateFormatter> { FakeRelativeDateFormatter() }
     register<EditTaskNavigator> { FakeMainNavigator() }
     register<DateTimeProvider> { FakeDateTimeProvider() }
-    register { TasksSorterByCompletion(get()) }
+    register { TasksSorterByCompletion(get(), get()) }
     register {
         TasksListViewModel(get(), get(), get(), get(), get(), get(), get()).also {
             it.isShowCompleted.value = true
