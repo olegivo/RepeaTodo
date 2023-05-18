@@ -31,8 +31,8 @@ import kotlinx.coroutines.test.setMain
 import ru.olegivo.repeatodo.domain.GetTasksListUseCase
 import ru.olegivo.repeatodo.domain.models.Task
 import ru.olegivo.repeatodo.domain.models.createTask
+import ru.olegivo.repeatodo.main.navigation.FakeMainNavigator
 import ru.olegivo.repeatodo.randomList
-import ru.olegivo.repeatodo.randomString
 
 internal class TasksListViewModelImplTest : FreeSpec({
     val mainThreadSurrogate = newSingleThreadContext("UI thread")
@@ -47,7 +47,8 @@ internal class TasksListViewModelImplTest : FreeSpec({
         val list = randomList { createTask() }
         val getTasksListUseCase = FakeGetTasksListUseCase()
 
-        val viewModel: TasksListViewModel = TasksListViewModelImpl(getTasksListUseCase)
+        val viewModel: TasksListViewModel =
+            TasksListViewModelImpl(getTasksListUseCase, FakeMainNavigator())
 
         viewModel.state.test {
             awaitItem().tasks.shouldBeEmpty()
