@@ -51,7 +51,7 @@ internal fun AddTaskInlined(
         verticalAlignment = Alignment.CenterVertically
     ) {
         val title = viewModel.title.collectAsState()
-        val enabled = viewModel.canAdd.collectAsState()
+        val enabled = viewModel.canAdd.collectAsState(false)
         TextField(
             value = title.value,
             onValueChange = { viewModel.title.value = it },
