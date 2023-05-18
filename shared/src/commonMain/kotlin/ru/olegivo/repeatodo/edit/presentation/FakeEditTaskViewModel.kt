@@ -25,8 +25,15 @@ class FakeEditTaskViewModel : EditTaskViewModel {
     override val canSave = MutableStateFlow(false)
     override val isSaving = MutableStateFlow(false)
     override val isSaveError = MutableStateFlow(false)
+    override val canDelete = MutableStateFlow(false)
+    override val isDeleting = MutableStateFlow(false)
+    override val isDeleteError = MutableStateFlow(false)
 
     override fun onSaveClicked() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onDeleteClicked() {
         TODO("Not yet implemented")
     }
 

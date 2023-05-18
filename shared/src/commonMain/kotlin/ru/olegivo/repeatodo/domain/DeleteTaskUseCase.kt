@@ -15,23 +15,11 @@
  * RepeaTodo.
  */
 
-package ru.olegivo.repeatodo.data
+package ru.olegivo.repeatodo.domain
 
-import ru.olegivo.repeatodo.domain.TasksRepository
+import kotlinx.coroutines.flow.Flow
 import ru.olegivo.repeatodo.domain.models.Task
 
-class TasksRepositoryImpl(private val localTasksDataSource: LocalTasksDataSource) :
-    TasksRepository {
-
-    override fun getTasks() = localTasksDataSource.getTasks()
-
-    override fun getTask(uuid: String) = localTasksDataSource.getTask(uuid)
-
-    override suspend fun save(task: Task) {
-        localTasksDataSource.save(task)
-    }
-
-    override suspend fun delete(uuid: String) {
-        localTasksDataSource.delete(uuid)
-    }
+interface DeleteTaskUseCase {
+    suspend operator fun invoke(task: Task): Flow<WorkState<Unit>>
 }

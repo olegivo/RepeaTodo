@@ -22,12 +22,17 @@ import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runCurrent
 
-abstract class FreeSpec(private val lifecycleMode: LifecycleMode = LifecycleMode.Test,body: FreeSpec.() -> Unit = {}) : FreeSpec(body) {
+abstract class FreeSpec(
+    lifecycleMode: LifecycleMode = LifecycleMode.Test,
+    body: FreeSpec.() -> Unit = {}
+) : FreeSpec(body) {
 
     private val coroutineListener = CoroutineTestListener(
         lifecycleMode = lifecycleMode,
 //        beforeCleanupTestCoroutines = ::beforeCleanupTestCoroutines
     )
+
+    protected val testCoroutineScope = coroutineListener.scope
 
     override fun listeners() =
         super.listeners() + listOf(coroutineListener)

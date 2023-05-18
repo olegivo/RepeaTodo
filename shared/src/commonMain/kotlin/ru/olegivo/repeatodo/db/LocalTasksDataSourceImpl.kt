@@ -40,4 +40,8 @@ class LocalTasksDataSourceImpl(private val db: RepeaTodoDb) : LocalTasksDataSour
     override fun save(task: Task) {
         db.taskQueries.saveTask(task.toDb())
     }
+
+    override fun delete(uuid: String) {
+        db.taskQueries.deleteTask(uuid)
+    }
 }

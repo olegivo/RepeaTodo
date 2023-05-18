@@ -15,3 +15,7 @@ VALUES ?;
 getTask:
 SELECT * FROM Task
 WHERE uuid = :uuid;
+
+deleteTask:
+DELETE FROM Task
+WHERE uuid = :uuid;

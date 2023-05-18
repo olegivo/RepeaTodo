@@ -21,8 +21,8 @@ import kotlinx.coroutines.flow.Flow
 import ru.olegivo.repeatodo.domain.models.Task
 
 interface LocalTasksDataSource {
-
     fun getTasks(): Flow<List<Task>>
-    fun save(task: Task)
     fun getTask(uuid: String): Flow<Task?>
+    fun save(task: Task)
+    fun delete(uuid: String)
 }
