@@ -84,7 +84,7 @@ kotlin {
                 implementation(libs.sqlDelight.driver.android)
             }
         }
-        val androidTest by getting
+        val androidUnitTest by getting
         val iosX64Main by getting
         val iosArm64Main by getting
         val iosSimulatorArm64Main by getting
@@ -111,11 +111,10 @@ kotlin {
 }
 
 android {
-    compileSdk = 32
-    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+    compileSdk = 33
     defaultConfig {
         minSdk = 26
-        targetSdk = 32
+        targetSdk = 33
     }
     namespace = "ru.olegivo.repeatodo"
 }
