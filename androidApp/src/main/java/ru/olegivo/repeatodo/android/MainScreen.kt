@@ -27,14 +27,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import ru.olegivo.repeatodo.main.mainScreenFakes
 import ru.olegivo.repeatodo.utils.PreviewEnvironment
 
@@ -43,7 +43,7 @@ internal fun MainScreen(
     modifier: Modifier = Modifier,
     previewEnvironment: PreviewEnvironment? = null
 ) {
-    Surface(
+    Scaffold(
         modifier = modifier
             .fillMaxSize()
             .windowInsetsPadding(
@@ -54,32 +54,35 @@ internal fun MainScreen(
                         WindowInsetsSides.Bottom
                 )
             ),
-        color = MaterialTheme.colorScheme.primary
-    ) {
-        ConstraintLayout {
-            val (list, add) = createRefs()
-            TasksList(
-                Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth()
-                    .wrapContentHeight(align = Alignment.Top)
-                    .constrainAs(list) {
-                        height = Dimension.fillToConstraints
-                        top.linkTo(parent.top)
-                        bottom.linkTo(add.top)
-                    },
-                previewEnvironment = previewEnvironment
-            )
+        topBar = {
+            AppBar()
+        },
+        bottomBar = {
             AddTaskInlined(
                 Modifier
-                    .fillMaxWidth()
-                    .constrainAs(add) {
-                        bottom.linkTo(parent.bottom)
-                    },
+                    .fillMaxWidth(),
+                previewEnvironment = previewEnvironment
+            )
+        }
+    ) { contentPadding ->
+        Surface(
+            modifier = Modifier
+                .padding(contentPadding)
+        ) {
+            TasksList(
+                Modifier
+                    .wrapContentHeight(align = Alignment.Top),
                 previewEnvironment = previewEnvironment
             )
         }
     }
+}
+
+@Composable
+private fun AppBar() {
+    TopAppBar(
+        title = { Text("RepeaTodo") },
+    )
 }
 
 @Preview
