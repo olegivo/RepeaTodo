@@ -17,23 +17,33 @@
 
 package ru.olegivo.repeatodo.list.presentation
 
-import kotlinx.datetime.toInstant
 import ru.olegivo.repeatodo.domain.DateTimeProvider
+import ru.olegivo.repeatodo.domain.IsTaskCompletedUseCase
 import ru.olegivo.repeatodo.domain.models.Task
+import ru.olegivo.repeatodo.extensions.atStartOfDayIn
 
-class TasksSorterByCompletion(private val dateTimeProvider: DateTimeProvider): TasksSorter {
+class TasksSorterByCompletion(
+    private val dateTimeProvider: DateTimeProvider,
+    private val isTaskCompleted: IsTaskCompletedUseCase
+): TasksSorter {
+    private val byNotCompletedFirst = compareBy<Task> {
+        isTaskCompleted(
+            lastCompletionDate = it.lastCompletionDate,
+            daysPeriodicity = it.daysPeriodicity
+        )
+    }
     private val byNeverCompletedFirst = compareByDescending<Task> {
         it.lastCompletionDate == null
     }
 
     override fun sort(tasks: List<Task>): List<Task> {
-        val current = dateTimeProvider.getCurrentInstant()
-        val currentMs = current.toEpochMilliseconds()
+        val currentDayStartMs =
+            dateTimeProvider.getCurrentStartOfDayInstant().toEpochMilliseconds()
         val byOldestLastCompletion = compareByDescending<Task> { task ->
             task.lastCompletionDate
-                ?.toInstant(dateTimeProvider.getCurrentTimeZone())
+                ?.atStartOfDayIn(dateTimeProvider.getCurrentTimeZone())
                 ?.toEpochMilliseconds()
-                ?.let { completionMs -> currentMs - completionMs }
+                ?.let { completionDayStartMs -> currentDayStartMs - completionDayStartMs }
         }
         val byShortestDaysPeriodicity = compareBy<Task> { task ->
             task.daysPeriodicity
@@ -43,7 +53,8 @@ class TasksSorterByCompletion(private val dateTimeProvider: DateTimeProvider): T
         }
 
         return tasks.sortedWith(
-            byNeverCompletedFirst
+            byNotCompletedFirst
+                .then(byNeverCompletedFirst)
                 .then(byOldestLastCompletion)
                 .then(byShortestDaysPeriodicity)
                 .then(byTitle)

@@ -24,5 +24,6 @@ import kotlinx.datetime.TimeZone
 interface DateTimeProvider {
     fun getCurrentTimeZone(): TimeZone
     fun getCurrentInstant(): Instant
+    fun getCurrentStartOfDayInstant(): Instant
     fun getCurrentLocalDateTime(): LocalDateTime
 }

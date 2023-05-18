@@ -15,10 +15,16 @@
  * RepeaTodo.
  */
 
-package ru.olegivo.repeatodo.list.presentation
+package ru.olegivo.repeatodo.db
 
+import com.squareup.sqldelight.ColumnAdapter
 import kotlinx.datetime.Instant
 
-class FakeRelativeDateFormatter(var result: String? = null): RelativeDateFormatter {
-    override fun format(value: Instant) = result ?: value.toString()
+class InstantLongAdapter: ColumnAdapter<Instant, Long> {
+
+    override fun decode(databaseValue: Long): Instant =
+        Instant.fromEpochMilliseconds(databaseValue)
+
+    override fun encode(value: Instant): Long =
+        value.toEpochMilliseconds()
 }

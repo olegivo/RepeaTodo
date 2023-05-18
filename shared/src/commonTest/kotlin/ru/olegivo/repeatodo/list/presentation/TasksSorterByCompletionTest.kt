@@ -19,7 +19,6 @@ package ru.olegivo.repeatodo.list.presentation
 
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
-import kotlinx.datetime.toLocalDateTime
 import ru.olegivo.repeatodo.domain.FakeDateTimeProvider
 import ru.olegivo.repeatodo.domain.models.randomTask
 import ru.olegivo.repeatodo.kotest.FreeSpec
@@ -32,13 +31,29 @@ class TasksSorterByCompletionTest: FreeSpec() {
 
     init {
         "instance" - {
-            val tasksSorter: TasksSorter = TasksSorterByCompletion(dateTimeProvider)
+            val isTaskCompleted = FakeIsTaskCompletedUseCase()
+            val tasksSorter: TasksSorter = TasksSorterByCompletion(
+                dateTimeProvider = dateTimeProvider,
+                isTaskCompleted = isTaskCompleted
+            )
 
             "empty -> empty" {
                 tasksSorter.sort(emptyList()).shouldBeEmpty()
             }
 
-            "never completed, then completed" - {
+            "not completed, then completed" {
+                val thresholdMinutes = randomInt(from = 10, until = 30)
+                val threshold = dateTimeProvider.getCurrentInstant() - thresholdMinutes.minutes
+                isTaskCompleted.considerAsCompletedAfter = threshold
+                val completed = createTask(minutesAgo = thresholdMinutes - 1)
+                val notCompleted = completed.copy(lastCompletionDate = getInstant(minutesAgo = thresholdMinutes))
+                val tasks = listOf(completed, notCompleted)
+
+                tasksSorter.sort(tasks)
+                    .shouldContainExactly(notCompleted, completed)
+            }
+
+            "never completed, then completed" {
                 val completed = createTask(minutesAgo = randomInt())
                 val neverCompleted = completed.copy(lastCompletionDate = null)
                 val tasks = listOf(completed, neverCompleted)
@@ -131,12 +146,11 @@ class TasksSorterByCompletionTest: FreeSpec() {
         daysPeriodicity: Int = randomInt(),
         title: String = randomString()
     ) = randomTask().copy(
-        lastCompletionDate = minutesAgo?.let { getDateTime(it) },
+        lastCompletionDate = minutesAgo?.let { getInstant(it) },
         daysPeriodicity = daysPeriodicity,
         title = title
     )
 
-    private fun getDateTime(minutesAgo: Int) =
-        (dateTimeProvider.getCurrentInstant() - minutesAgo.minutes)
-            .toLocalDateTime(dateTimeProvider.getCurrentTimeZone())
+    private fun getInstant(minutesAgo: Int) =
+        dateTimeProvider.getCurrentInstant() - minutesAgo.minutes
 }

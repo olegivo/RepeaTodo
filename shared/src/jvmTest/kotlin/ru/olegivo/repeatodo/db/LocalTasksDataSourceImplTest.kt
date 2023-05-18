@@ -37,7 +37,7 @@ class LocalTasksDataSourceImplTest: FreeSpec() {
     init {
         "instance" - {
             val dateTimeProvider = FakeDateTimeProvider()
-            val localDateTimeLongAdapter = LocalDateTimeLongAdapter(dateTimeProvider)
+            val instantLongAdapter = InstantLongAdapter()
             val properties = Properties().apply {
                 setProperty(
                     /*SQLiteConfig.Pragma.FOREIGN_KEYS*/ "foreign_keys",
@@ -49,12 +49,12 @@ class LocalTasksDataSourceImplTest: FreeSpec() {
                 override fun createDriver(dbName: String, foreignKeyConstraints: Boolean) =
                     driver
             }
-            val database = createDatabase(driverFactory, localDateTimeLongAdapter)
+            val database = createDatabase(driverFactory, instantLongAdapter)
             RepeaTodoDb.Schema.create(driver)
 
             val localTasksDataSource: LocalTasksDataSource = LocalTasksDataSourceImpl(
                 db = database,
-                localDateTimeLongAdapter = localDateTimeLongAdapter,
+                instantLongAdapter = instantLongAdapter,
                 dispatchersProvider = dispatchersProvider
             )
 
@@ -144,8 +144,8 @@ class LocalTasksDataSourceImplTest: FreeSpec() {
                     localTasksDataSource.expectSelect(task1, task2)
 
                     val (d1, d2) = with(dateTimeProvider.getCurrentTimeZone()) {
-                        (dateTimeProvider.getCurrentInstant() - 1.hours).toLocalDateTime() to
-                            (dateTimeProvider.getCurrentInstant() - 2.hours).toLocalDateTime()
+                        (dateTimeProvider.getCurrentInstant() - 1.hours) to
+                            (dateTimeProvider.getCurrentInstant() - 2.hours)
                     }
 
                     localTasksDataSource.addTaskCompletion(task1.uuid, d1)
@@ -188,8 +188,8 @@ class LocalTasksDataSourceImplTest: FreeSpec() {
                     localTasksDataSource.expectSelect(task1, task2)
 
                     val (d1, d2) = with(dateTimeProvider.getCurrentTimeZone()) {
-                        (dateTimeProvider.getCurrentInstant() - 1.hours).toLocalDateTime() to
-                            (dateTimeProvider.getCurrentInstant() - 2.hours).toLocalDateTime()
+                        (dateTimeProvider.getCurrentInstant() - 1.hours) to
+                            (dateTimeProvider.getCurrentInstant() - 2.hours)
                     }
 
                     localTasksDataSource.addTaskCompletion(task1.uuid, d1)

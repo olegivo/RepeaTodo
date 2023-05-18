@@ -17,24 +17,21 @@
 
 package ru.olegivo.repeatodo.list.presentation
 
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.Instant
 import kotlinx.datetime.periodUntil
 import ru.olegivo.repeatodo.domain.DateTimeProvider
 
 class RelativeDateFormatterImpl(private val dateTimeProvider: DateTimeProvider):
     RelativeDateFormatter {
-    override fun format(value: LocalDateTime): String {
+    override fun format(value: Instant): String {
         val current = dateTimeProvider.getCurrentInstant()
         val currentTimeZone = dateTimeProvider.getCurrentTimeZone()
-        val instant = with(currentTimeZone) {
-            value.toInstant()
-        }
-        val isPast = instant <= current
+        val isPast = value <= current
         val periodUntil =
             if (isPast) {
-                instant.periodUntil(current, currentTimeZone)
+                value.periodUntil(current, currentTimeZone)
             } else {
-                current.periodUntil(instant, currentTimeZone)
+                current.periodUntil(value, currentTimeZone)
             }
 
         return when {
