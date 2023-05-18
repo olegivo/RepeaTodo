@@ -19,6 +19,7 @@ package ru.olegivo.repeatodo.db
 
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
+import com.squareup.sqldelight.runtime.coroutines.mapToOneOrNull
 import kotlinx.coroutines.flow.Flow
 import ru.olegivo.repeatodo.data.LocalTasksDataSource
 import ru.olegivo.repeatodo.domain.models.Task
@@ -26,15 +27,15 @@ import ru.olegivo.repeatodo.domain.models.Task
 class LocalTasksDataSourceImpl(private val db: RepeaTodoDb) : LocalTasksDataSource {
     override fun getTasks(): Flow<List<Task>> =
         db.taskQueries
-            .getTasks { uuid: String, title: String ->
-                Task(uuid = uuid, title = title)
-            }
+            .getTasks(::Task)
             .asFlow()
             .mapToList()
 
-    override fun getTask(uuid: String): Flow<Task?> {
-        TODO("Not yet implemented")
-    }
+    override fun getTask(uuid: String): Flow<Task?> =
+        db.taskQueries
+            .getTask(uuid, ::Task)
+            .asFlow()
+            .mapToOneOrNull()
 
     override fun add(task: Task) {
         db.taskQueries.addTask(task.doDb())
