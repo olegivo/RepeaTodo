@@ -23,26 +23,26 @@ import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.shouldBe
 import ru.olegivo.repeatodo.assertItem
-import ru.olegivo.repeatodo.data.FakeTasksRepository
+import ru.olegivo.repeatodo.data.FakeLocalTasksDataSource
 import ru.olegivo.repeatodo.domain.models.randomTask
 
-internal class DeleteTaskUseCaseImplTest : FreeSpec() {
+internal class DeleteTaskUseCaseImplTest: FreeSpec() {
     init {
-        "should delete only exist task from repository" {
-            val tasksRepository = FakeTasksRepository()
+        "should delete only exist task from localTasksDataSource" {
+            val localTasksDataSource = FakeLocalTasksDataSource()
             val deleteTaskUseCase: DeleteTaskUseCase = DeleteTaskUseCaseImpl(
-                tasksRepository = tasksRepository
+                localTasksDataSource = localTasksDataSource
             )
             val origin = randomTask()
-            tasksRepository.save(origin)
+            localTasksDataSource.save(origin)
             val task2 = randomTask()
-            tasksRepository.save(task2)
+            localTasksDataSource.save(task2)
 
             deleteTaskUseCase(origin).test {
                 expectMostRecentItem() shouldBe WorkState.Completed(Unit)
             }
 
-            tasksRepository.getTasks().assertItem {
+            localTasksDataSource.getTasks().assertItem {
                 shouldNotContain(origin)
                 shouldContain(task2)
             }

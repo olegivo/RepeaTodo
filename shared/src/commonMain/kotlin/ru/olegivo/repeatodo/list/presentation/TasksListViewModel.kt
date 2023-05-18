@@ -19,11 +19,17 @@ package ru.olegivo.repeatodo.list.presentation
 
 import dev.icerock.moko.mvvm.flow.cStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import ru.olegivo.repeatodo.BaseViewModel
+import ru.olegivo.repeatodo.domain.CancelTaskCompletionUseCase
+import ru.olegivo.repeatodo.domain.CompleteTaskUseCase
+import ru.olegivo.repeatodo.domain.FakeCancelTaskCompletionUseCase
+import ru.olegivo.repeatodo.domain.FakeCompleteTaskUseCase
+import ru.olegivo.repeatodo.domain.FakeGetTasksListUseCase
 import ru.olegivo.repeatodo.domain.GetTasksListUseCase
+import ru.olegivo.repeatodo.domain.IsTaskCompletedUseCase
 import ru.olegivo.repeatodo.domain.models.Task
 import ru.olegivo.repeatodo.edit.navigation.EditTaskNavigator
 import ru.olegivo.repeatodo.main.navigation.FakeMainNavigator
@@ -32,12 +38,15 @@ import ru.olegivo.repeatodo.utils.newUuid
 
 class TasksListViewModel(
     getTasks: GetTasksListUseCase,
-    private val editTaskNavigator: EditTaskNavigator
+    private val completeTask: CompleteTaskUseCase,
+    private val cancelTaskCompletion: CancelTaskCompletionUseCase,
+    private val editTaskNavigator: EditTaskNavigator,
+    private val isTaskCompleted: IsTaskCompletedUseCase
 ): BaseViewModel() {
 
     val state = getTasks()
-        .map {
-            TasksListUiState(it)
+        .map { tasks ->
+            TasksListUiState(tasks.map { it.toUi(isTaskCompleted) })
         }
         .stateIn(
             viewModelScope,
@@ -45,25 +54,37 @@ class TasksListViewModel(
             initialValue = TasksListUiState(emptyList())
         ).cStateFlow()
 
-    fun onTaskEditClicked(task: Task) {
+    fun onTaskEditClicked(task: TaskUi) {
         editTaskNavigator.editTask(task.uuid)
+    }
+
+    fun onTaskCompletionClicked(task: TaskUi) {
+        viewModelScope.launch {
+            if (task.isCompleted) {
+                cancelTaskCompletion(task.uuid)
+            } else {
+                completeTask(task.uuid)
+            }
+        }
     }
 }
 
 fun PreviewEnvironment.taskListFakes() {
     register<GetTasksListUseCase> {
-        object: GetTasksListUseCase {
-            override fun invoke() = flowOf(
-                (1..5).map {
-                    Task(
-                        uuid = newUuid(),
-                        title = "Task $it",
-                        daysPeriodicity = it
-                    )
-                }
-            )
+        FakeGetTasksListUseCase().also { instance ->
+            instance.list.value = (1..5).map {
+                Task(
+                    uuid = newUuid(),
+                    title = "Task $it",
+                    daysPeriodicity = it,
+                    lastCompletionDate = null,
+                )
+            }
         }
     }
+    register<CompleteTaskUseCase> { FakeCompleteTaskUseCase() }
+    register<CancelTaskCompletionUseCase> { FakeCancelTaskCompletionUseCase() }
+    register<IsTaskCompletedUseCase> { FakeIsTaskCompletedUseCase(false) }
     register<EditTaskNavigator> { FakeMainNavigator() }
-    register { TasksListViewModel(get(), get()) }
+    register { TasksListViewModel(get(), get(), get(), get(), get()) }
 }

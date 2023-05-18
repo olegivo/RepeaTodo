@@ -18,21 +18,23 @@
 package ru.olegivo.repeatodo.domain
 
 import io.kotest.core.spec.style.FreeSpec
-import ru.olegivo.repeatodo.data.FakeTasksRepository
+import io.kotest.matchers.collections.shouldContainExactly
+import ru.olegivo.repeatodo.assertItem
+import ru.olegivo.repeatodo.data.FakeLocalTasksDataSource
 import ru.olegivo.repeatodo.domain.models.randomTask
-import kotlin.test.assertEquals
 
-class AddTaskUseCaseImplTest : FreeSpec({
+class AddTaskUseCaseImplTest: FreeSpec({
     "AddTaskUseCaseImpl created" - {
-        val tasksRepository = FakeTasksRepository()
-        val useCase: AddTaskUseCase = AddTaskUseCaseImpl(tasksRepository = tasksRepository)
+        val localTasksDataSource = FakeLocalTasksDataSource()
+        val useCase: AddTaskUseCase =
+            AddTaskUseCaseImpl(localTasksDataSource = localTasksDataSource)
 
-        "invoke should add task to repository" {
+        "invoke should add task to localTasksDataSource" {
             val task = randomTask()
 
             useCase.invoke(task)
 
-            assertEquals(task, tasksRepository.lastAddedTask)
+            localTasksDataSource.getTasks().assertItem { shouldContainExactly(task) }
         }
     }
 })

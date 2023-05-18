@@ -18,19 +18,30 @@
 package ru.olegivo.repeatodo.kotest
 
 import io.kotest.core.spec.style.FreeSpec
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runCurrent
+import ru.olegivo.repeatodo.DispatchersProvider
+import kotlin.time.Duration
+import app.cash.turbine.testIn as turbineTestIn
 
 abstract class FreeSpec(
     lifecycleMode: LifecycleMode = LifecycleMode.Test,
     body: FreeSpec.() -> Unit = {}
-) : FreeSpec(body) {
+): FreeSpec(body) {
 
     private val coroutineListener = CoroutineTestListener(
         lifecycleMode = lifecycleMode,
 //        beforeCleanupTestCoroutines = ::beforeCleanupTestCoroutines
     )
+
+    protected val dispatchersProvider = object: DispatchersProvider {
+        override val io get() = coroutineListener.dispatcher
+        override val default get() = coroutineListener.dispatcher
+        override val main get() = coroutineListener.dispatcher
+    }
 
     protected val testCoroutineScope = coroutineListener.scope
 
@@ -49,6 +60,17 @@ abstract class FreeSpec(
     protected fun advanceUntilIdle() {
         coroutineListener.scope.advanceUntilIdle()
     }
+
+    protected fun <T> Flow<T>.testIn(
+        scope: CoroutineScope = testCoroutineScope,
+        timeout: Duration? = null,
+        name: String? = null
+    ) =
+        turbineTestIn(
+            scope = scope,
+            timeout = timeout,
+            name = name
+        )
 }
 
 enum class LifecycleMode {

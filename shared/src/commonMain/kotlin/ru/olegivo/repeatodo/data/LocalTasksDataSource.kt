@@ -18,11 +18,14 @@
 package ru.olegivo.repeatodo.data
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.datetime.LocalDateTime
 import ru.olegivo.repeatodo.domain.models.Task
 
 interface LocalTasksDataSource {
     fun getTasks(): Flow<List<Task>>
     fun getTask(uuid: String): Flow<Task?>
-    fun save(task: Task)
-    fun delete(uuid: String)
+    suspend fun save(task: Task)
+    suspend fun delete(uuid: String)
+    suspend fun addTaskCompletion(taskUuid: String, completionDate: LocalDateTime)
+    suspend fun deleteLatestTaskCompletion(taskUuid: String)
 }

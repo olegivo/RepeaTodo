@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Oleg Ivashchenko <olegivo@gmail.com>
+ * Copyright (C) 2023 Oleg Ivashchenko <olegivo@gmail.com>
  *
  * This file is part of RepeaTodo.
  *
@@ -15,14 +15,14 @@
  * RepeaTodo.
  */
 
-package ru.olegivo.repeatodo.db
+package ru.olegivo.repeatodo.platform
 
-import android.content.Context
-import com.squareup.sqldelight.android.AndroidSqliteDriver
-import com.squareup.sqldelight.db.SqlDriver
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import ru.olegivo.repeatodo.DispatchersProvider
 
-actual class DriverFactory(private val context: Context) {
-    actual fun createDriver(dbName: String): SqlDriver {
-        return AndroidSqliteDriver(RepeaTodoDb.Schema, context, dbName)
-    }
+actual class DispatchersProviderImpl: DispatchersProvider {
+    actual override val io get() = Dispatchers.Default
+    actual override val default get() = Dispatchers.Default
+    actual override val main: CoroutineDispatcher get() = Dispatchers.Main
 }

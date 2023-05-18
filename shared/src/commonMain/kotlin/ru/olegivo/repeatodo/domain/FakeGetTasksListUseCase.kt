@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Oleg Ivashchenko <olegivo@gmail.com>
+ * Copyright (C) 2023 Oleg Ivashchenko <olegivo@gmail.com>
  *
  * This file is part of RepeaTodo.
  *
@@ -15,13 +15,15 @@
  * RepeaTodo.
  */
 
-package ru.olegivo.repeatodo.db
+package ru.olegivo.repeatodo.domain
 
-import com.squareup.sqldelight.db.SqlDriver
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import ru.olegivo.repeatodo.domain.models.Task
 
-actual class DriverFactory {
+class FakeGetTasksListUseCase: GetTasksListUseCase {
 
-    actual fun createDriver(dbName: String): SqlDriver {
-        TODO("Not yet implemented")
-    }
+    val list = MutableStateFlow<List<Task>>(emptyList())
+
+    override fun invoke(): Flow<List<Task>> = list
 }
