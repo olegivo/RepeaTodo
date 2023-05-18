@@ -114,5 +114,9 @@ fun PreviewEnvironment.taskListFakes() {
     register<EditTaskNavigator> { FakeMainNavigator() }
     register<DateTimeProvider> { FakeDateTimeProvider() }
     register { TasksSorterByCompletion(get()) }
-    register { TasksListViewModel(get(), get(), get(), get(), get(), get(), get()) }
+    register {
+        TasksListViewModel(get(), get(), get(), get(), get(), get(), get()).also {
+            it.isShowCompleted.value = true
+        }
+    }
 }
