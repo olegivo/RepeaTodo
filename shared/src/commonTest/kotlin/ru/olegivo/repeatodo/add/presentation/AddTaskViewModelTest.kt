@@ -30,12 +30,9 @@ import ru.olegivo.repeatodo.assertItem
 import ru.olegivo.repeatodo.domain.FakeSaveTaskUseCase
 import ru.olegivo.repeatodo.domain.models.Task
 import ru.olegivo.repeatodo.kotest.FreeSpec
-import ru.olegivo.repeatodo.kotest.LifecycleMode
 import ru.olegivo.repeatodo.randomString
 
-internal class AddTaskViewModelTest: FreeSpec(LifecycleMode.Root) {
-
-    override fun isolationMode() = IsolationMode.InstancePerLeaf
+internal class AddTaskViewModelTest: FreeSpec() {
 
     init {
         "viewModel" - {
