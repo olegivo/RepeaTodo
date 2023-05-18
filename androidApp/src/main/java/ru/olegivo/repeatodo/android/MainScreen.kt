@@ -23,13 +23,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 
 @Composable
 internal fun MainScreen(
@@ -50,7 +54,19 @@ internal fun MainScreen(
         color = MaterialTheme.colorScheme.primary
     ) {
         ConstraintLayout {
-            val (add) = createRefs()
+            val (list, add) = createRefs()
+            TasksList(
+                Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .constrainAs(list) {
+                        height = Dimension.fillToConstraints
+                        top.linkTo(parent.top)
+                        bottom.linkTo(add.top)
+                    },
+                isPreview = isPreview
+            )
             AddTaskInlined(
                 Modifier
                     .fillMaxWidth()

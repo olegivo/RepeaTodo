@@ -25,16 +25,12 @@ class FakeTasksListViewModel : TasksListViewModel {
 
     override val state = MutableStateFlow(
         TasksListUiState(
-            listOf(
+            (1..20).map {
                 Task(
                     uuid = newUuid(),
-                    title = "Task 1"
-                ),
-                Task(
-                    uuid = newUuid(),
-                    title = "Task 2"
-                ),
-            )
+                    title = "Task $it"
+                )
+            }
         )
     )
 
