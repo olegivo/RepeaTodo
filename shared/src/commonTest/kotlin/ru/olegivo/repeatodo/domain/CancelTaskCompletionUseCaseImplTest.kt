@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Oleg Ivashchenko <olegivo@gmail.com>
+ * Copyright (C) 2023 Oleg Ivashchenko <olegivo@gmail.com>
  *
  * This file is part of RepeaTodo.
  *
@@ -17,24 +17,25 @@
 
 package ru.olegivo.repeatodo.domain
 
-import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldContainExactly
-import ru.olegivo.repeatodo.assertItem
 import ru.olegivo.repeatodo.data.FakeLocalTasksDataSource
-import ru.olegivo.repeatodo.domain.models.randomTask
+import ru.olegivo.repeatodo.kotest.FreeSpec
+import ru.olegivo.repeatodo.randomString
 
-class AddTaskUseCaseImplTest: FreeSpec({
-    "AddTaskUseCaseImpl created" - {
-        val localTasksDataSource = FakeLocalTasksDataSource()
-        val useCase: AddTaskUseCase =
-            AddTaskUseCaseImpl(localTasksDataSource = localTasksDataSource)
+class CancelTaskCompletionUseCaseImplTest: FreeSpec() {
+    init {
+        "should delete task completion from localTasksDataSource" {
+            val localTasksDataSource = FakeLocalTasksDataSource()
+            val useCase: CancelTaskCompletionUseCase = CancelTaskCompletionUseCaseImpl(
+                localTasksDataSource = localTasksDataSource,
+            )
+            val taskUuid = randomString()
 
-        "invoke should add task to localTasksDataSource" {
-            val task = randomTask()
+            useCase.invoke(taskUuid)
 
-            useCase.invoke(task)
-
-            localTasksDataSource.getTasks().assertItem { shouldContainExactly(task) }
+            localTasksDataSource.deletedTaskCompletionsUuids.shouldContainExactly(
+                taskUuid
+            )
         }
     }
-})
+}

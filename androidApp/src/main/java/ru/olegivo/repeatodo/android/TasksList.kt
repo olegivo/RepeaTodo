@@ -17,6 +17,7 @@
 
 package ru.olegivo.repeatodo.android
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,6 +28,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -38,7 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import ru.olegivo.repeatodo.domain.models.Task
+import ru.olegivo.repeatodo.list.presentation.TaskUi
 import ru.olegivo.repeatodo.list.presentation.TasksListViewModel
 import ru.olegivo.repeatodo.list.presentation.taskListFakes
 import ru.olegivo.repeatodo.preview.fakeOrInjectKoin
@@ -60,7 +62,8 @@ internal fun TasksList(
             TaskItem(
                 Modifier.fillMaxWidth(),
                 task = task,
-                onTaskEditClicked = { viewModel.onTaskEditClicked(task) }
+                onTaskEditClicked = { viewModel.onTaskEditClicked(task) },
+                onCompleteTaskClicked = { viewModel.onTaskCompletionClicked(task) },
             )
             if (index != tasks.lastIndex) {
                 Divider()
@@ -72,8 +75,9 @@ internal fun TasksList(
 @Composable
 private fun TaskItem(
     modifier: Modifier = Modifier,
-    task: Task,
-    onTaskEditClicked: (Task) -> Unit = {}
+    task: TaskUi,
+    onTaskEditClicked: (TaskUi) -> Unit = {},
+    onCompleteTaskClicked: (TaskUi) -> Unit = {},
 ) {
     Row(
         modifier = modifier
@@ -81,11 +85,17 @@ private fun TaskItem(
             .height(48.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = task.title,
-            modifier = Modifier
-                .weight(1f)
+        Checkbox(
+            checked = task.isCompleted,
+            onCheckedChange = { onCompleteTaskClicked(task) }
         )
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .weight(1f)
+        ) {
+            Text(text = task.title)
+        }
         Button(onClick = { onTaskEditClicked(task) }) {
             Icon(Icons.Rounded.Edit, "Edit")
         }
@@ -109,15 +119,30 @@ private fun TasksListPreview() {
 
 @Preview
 @Composable
-private fun TaskItemPreview() {
+private fun TaskItemUncompletedPreview() {
     MaterialTheme {
         Surface(color = MaterialTheme.colorScheme.primary) {
             TaskItem(
-                task = Task(
+                task = TaskUi(
                     uuid = newUuid(),
                     title = "Todo 1",
-                    daysPeriodicity = 1,
-                    lastCompletionDate = null
+                    isCompleted = false,
+                )
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun TaskItemCompletedPreview() {
+    MaterialTheme {
+        Surface(color = MaterialTheme.colorScheme.primary) {
+            TaskItem(
+                task = TaskUi(
+                    uuid = newUuid(),
+                    title = "Todo 1",
+                    isCompleted = true,
                 )
             )
         }

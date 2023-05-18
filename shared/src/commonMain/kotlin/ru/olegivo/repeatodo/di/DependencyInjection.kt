@@ -26,12 +26,15 @@ import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import ru.olegivo.repeatodo.data.LocalTasksDataSource
-import ru.olegivo.repeatodo.data.TasksRepositoryImpl
 import ru.olegivo.repeatodo.db.LocalDateTimeLongAdapter
 import ru.olegivo.repeatodo.db.LocalTasksDataSourceImpl
 import ru.olegivo.repeatodo.db.createDatabase
 import ru.olegivo.repeatodo.domain.AddTaskUseCase
 import ru.olegivo.repeatodo.domain.AddTaskUseCaseImpl
+import ru.olegivo.repeatodo.domain.CancelTaskCompletionUseCase
+import ru.olegivo.repeatodo.domain.CancelTaskCompletionUseCaseImpl
+import ru.olegivo.repeatodo.domain.CompleteTaskUseCase
+import ru.olegivo.repeatodo.domain.CompleteTaskUseCaseImpl
 import ru.olegivo.repeatodo.domain.DateTimeProvider
 import ru.olegivo.repeatodo.domain.DateTimeProviderImpl
 import ru.olegivo.repeatodo.domain.DeleteTaskUseCase
@@ -40,9 +43,10 @@ import ru.olegivo.repeatodo.domain.GetTaskUseCase
 import ru.olegivo.repeatodo.domain.GetTaskUseCaseImpl
 import ru.olegivo.repeatodo.domain.GetTasksListUseCase
 import ru.olegivo.repeatodo.domain.GetTasksListUseCaseImpl
+import ru.olegivo.repeatodo.domain.IsTaskCompletedUseCase
+import ru.olegivo.repeatodo.domain.IsTaskCompletedUseCaseImpl
 import ru.olegivo.repeatodo.domain.SaveTaskUseCase
 import ru.olegivo.repeatodo.domain.SaveTaskUseCaseImpl
-import ru.olegivo.repeatodo.domain.TasksRepository
 import ru.olegivo.repeatodo.edit.navigation.EditTaskNavigator
 import ru.olegivo.repeatodo.main.navigation.MainNavigator
 import ru.olegivo.repeatodo.main.navigation.MainNavigatorImpl
@@ -66,7 +70,6 @@ object DependencyInjection {
         singleOf(::MainNavigatorImpl)
             .bind<MainNavigator>()
             .bind<EditTaskNavigator>()
-        singleOf(::TasksRepositoryImpl).bind<TasksRepository>()
         singleOf(::LocalTasksDataSourceImpl).bind<LocalTasksDataSource>()
         singleOf(::createDatabase)
         factoryOf(::LocalDateTimeLongAdapter)
@@ -76,6 +79,9 @@ object DependencyInjection {
         factoryOf(::GetTaskUseCaseImpl).bind<GetTaskUseCase>()
         factoryOf(::SaveTaskUseCaseImpl).bind<SaveTaskUseCase>()
         factoryOf(::DeleteTaskUseCaseImpl).bind<DeleteTaskUseCase>()
+        factoryOf(::CompleteTaskUseCaseImpl).bind<CompleteTaskUseCase>()
+        factoryOf(::CancelTaskCompletionUseCaseImpl).bind<CancelTaskCompletionUseCase>()
+        factoryOf(::IsTaskCompletedUseCaseImpl).bind<IsTaskCompletedUseCase>()
     }
 }
 

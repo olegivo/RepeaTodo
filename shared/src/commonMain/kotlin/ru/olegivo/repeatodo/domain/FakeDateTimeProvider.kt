@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Oleg Ivashchenko <olegivo@gmail.com>
+ * Copyright (C) 2023 Oleg Ivashchenko <olegivo@gmail.com>
  *
  * This file is part of RepeaTodo.
  *
@@ -17,13 +17,19 @@
 
 package ru.olegivo.repeatodo.domain
 
-import ru.olegivo.repeatodo.data.LocalTasksDataSource
-import ru.olegivo.repeatodo.domain.models.Task
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
 
-internal class AddTaskUseCaseImpl(
-    private val localTasksDataSource: LocalTasksDataSource
-): AddTaskUseCase {
-    override suspend fun invoke(task: Task) {
-        localTasksDataSource.save(task)
-    }
+class FakeDateTimeProvider(): DateTimeProvider {
+    var timeZone = TimeZone.currentSystemDefault()
+    var instant = Clock.System.now()
+
+    override fun getCurrentTimeZone() = timeZone
+
+    override fun getCurrentInstant() = instant
+
+    override fun getCurrentLocalDateTime() =
+        with(getCurrentTimeZone()) {
+            instant.toLocalDateTime()
+        }
 }

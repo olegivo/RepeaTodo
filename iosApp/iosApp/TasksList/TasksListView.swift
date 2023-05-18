@@ -22,27 +22,11 @@ struct TasksListView: View {
         ScrollView {
             LazyVStack(alignment: .leading) {
                 ForEach(viewModel.tasks) { task in
-                    HStack {
-                        Text(task.title)
-                            .padding()
-                        Spacer()
-                        Button (
-                            action: {
-                                viewModel.onTaskEditClicked(task: task)
-                            },
-                            label: {
-                                Image(systemName: "pencil")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .foregroundColor(.gray)
-                                    .frame(width: 32, height: 32)
-                                    .padding()
-                                //                                .background(Color.accentColor)
-                                    .cornerRadius(12)
-                                
-                            }
-                        )
-                    }
+                    TasksListItemView(
+                        task: task,
+                        onTaskEditClicked: { viewModel.onTaskEditClicked(task: $0) },
+                        onCompleteTaskClicked: { viewModel.onTaskCompletionClicked(task: $0) }
+                    )
                 }
             }
             .cornerRadius(CGFloat(12))
@@ -56,12 +40,52 @@ struct TasksListView: View {
     }
 }
 
-extension Task: Identifiable {
-    public var id: String { title }
+private func TasksListItemView(
+    task: TaskUi,
+    onTaskEditClicked: @escaping (TaskUi) -> Void,
+    onCompleteTaskClicked: @escaping (TaskUi) -> Void
+) -> some View {
+    HStack(alignment: .center) {
+        Button (
+            action: { onCompleteTaskClicked(task) },
+            label: {
+                Image(systemName: task.isCompleted ? "checkmark.square" : "square")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .foregroundColor(.gray)
+                    .frame(width: 32, height: 32)
+                    .padding()
+                    .cornerRadius(12)
+            }
+        )
+        VStack(alignment: .leading, spacing: CGFloat(0)) {
+            Text(task.title)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding()
+        }
+        Spacer()
+        Button (
+            action: { onTaskEditClicked(task) },
+            label: {
+                Image(systemName: "pencil")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .foregroundColor(.gray)
+                    .frame(width: 32, height: 32)
+                    .padding()
+                    .cornerRadius(12)
+                
+            }
+        )
+    }
+}
+
+extension TaskUi: Identifiable {
+    public var id: String { uuid }
 }
 
 extension TasksListViewModel {
-    var tasks: [Task] {
+    var tasks: [TaskUi] {
         get {
             return self.state(
                 \.state,
@@ -78,7 +102,40 @@ struct TasksListView_Previews: PreviewProvider {
             TasksListView.factory(preview{ $0.taskListFakes() })
                 .environmentObject(FakeMainNavigator().asObservableObject())
         }
-        .background(Color.gray)
+        .cornerRadius(CGFloat(12))
+    }
+}
+
+struct TasksListItemView_Previews: PreviewProvider {
+    static var previews: some View {
+        VStack {
+            TasksListItemView(
+                task: TaskUi(
+                    uuid: "The UUID",
+                    title: "Task 1",
+                    isCompleted: false
+                ),
+                onTaskEditClicked: {_ in },
+                onCompleteTaskClicked: {_ in }
+            )
+        }
+        .cornerRadius(CGFloat(12))
+    }
+}
+
+struct TasksListItemView_CompletedPreviews: PreviewProvider {
+    static var previews: some View {
+        VStack {
+            TasksListItemView(
+                task: TaskUi(
+                    uuid: "The UUID",
+                    title: "Task 1",
+                    isCompleted: true
+                ),
+                onTaskEditClicked: {_ in },
+                onCompleteTaskClicked: {_ in }
+            )
+        }
         .cornerRadius(CGFloat(12))
     }
 }

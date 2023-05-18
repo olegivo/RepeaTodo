@@ -18,13 +18,16 @@
 package ru.olegivo.repeatodo.domain
 
 import kotlinx.coroutines.flow.flow
+import ru.olegivo.repeatodo.data.LocalTasksDataSource
 import ru.olegivo.repeatodo.domain.models.Task
 
-class DeleteTaskUseCaseImpl(private val tasksRepository: TasksRepository) : DeleteTaskUseCase {
+class DeleteTaskUseCaseImpl(
+    private val localTasksDataSource: LocalTasksDataSource
+): DeleteTaskUseCase {
     override suspend fun invoke(task: Task) = flow {
         try {
             emit(WorkState.InProgress())
-            tasksRepository.delete(task.uuid)
+            localTasksDataSource.delete(task.uuid)
             emit(WorkState.Completed(Unit))
         } catch (e: Throwable) {
             emit(WorkState.Error())

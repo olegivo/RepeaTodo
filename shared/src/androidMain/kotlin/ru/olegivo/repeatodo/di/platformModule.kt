@@ -18,15 +18,19 @@
 package ru.olegivo.repeatodo.di
 
 import org.koin.androidx.viewmodel.dsl.viewModelOf
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
+import ru.olegivo.repeatodo.DispatchersProvider
 import ru.olegivo.repeatodo.add.presentation.AddTaskViewModel
 import ru.olegivo.repeatodo.edit.presentation.EditTaskViewModel
 import ru.olegivo.repeatodo.list.presentation.TasksListViewModel
 import ru.olegivo.repeatodo.main.presentation.MainViewModel
 import ru.olegivo.repeatodo.main.presentation.MainViewModelImpl
+import ru.olegivo.repeatodo.platform.DispatchersProviderImpl
 
 actual fun platformModule() = module {
+    singleOf(::DispatchersProviderImpl).bind<DispatchersProvider>()
     viewModelOf(::MainViewModelImpl).bind<MainViewModel>()
     viewModelOf(::AddTaskViewModel)
     viewModelOf(::TasksListViewModel)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Oleg Ivashchenko <olegivo@gmail.com>
+ * Copyright (C) 2023 Oleg Ivashchenko <olegivo@gmail.com>
  *
  * This file is part of RepeaTodo.
  *
@@ -17,12 +17,10 @@
 
 package ru.olegivo.repeatodo.domain
 
-import kotlinx.coroutines.flow.Flow
-import ru.olegivo.repeatodo.domain.models.Task
+class FakeCancelTaskCompletionUseCase: CancelTaskCompletionUseCase {
+    val invocations = mutableListOf<String>()
 
-interface TasksRepository {
-    fun getTasks(): Flow<List<Task>>
-    fun getTask(uuid: String): Flow<Task?>
-    suspend fun save(task: Task)
-    suspend fun delete(uuid: String)
+    override suspend operator fun invoke(taskUuid: String) {
+        invocations += taskUuid
+    }
 }
