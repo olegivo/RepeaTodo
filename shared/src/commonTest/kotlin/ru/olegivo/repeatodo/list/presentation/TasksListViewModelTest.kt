@@ -23,6 +23,7 @@ import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.flow.update
 import ru.olegivo.repeatodo.domain.FakeCancelTaskCompletionUseCase
 import ru.olegivo.repeatodo.domain.FakeCompleteTaskUseCase
+import ru.olegivo.repeatodo.domain.FakeDateTimeProvider
 import ru.olegivo.repeatodo.domain.FakeGetTasksListUseCase
 import ru.olegivo.repeatodo.domain.models.randomTask
 import ru.olegivo.repeatodo.kotest.FreeSpec
@@ -49,6 +50,7 @@ internal class TasksListViewModelTest: FreeSpec() {
                 editTaskNavigator = editTaskNavigator,
                 isTaskCompleted = isTaskCompletedUseCase,
                 relativeDateFormatter = relativeDateFormatter,
+                tasksSorterByCompletion = TasksSorterByCompletion(FakeDateTimeProvider()),
             )
             val state = viewModel.state.testIn(name = "state")
 

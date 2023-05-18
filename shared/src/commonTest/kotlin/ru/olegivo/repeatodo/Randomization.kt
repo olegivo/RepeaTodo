@@ -59,3 +59,5 @@ fun randomLocalDateTime(): LocalDateTime =
     randomInstant().toLocalDateTime(TimeZone.currentSystemDefault())
 
 fun randomBoolean() = Random.nextBoolean()
+
+fun <T> T.randomNull() = takeIf { randomBoolean() }
