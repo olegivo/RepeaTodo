@@ -17,50 +17,55 @@
 
 package ru.olegivo.repeatodo.list.presentation
 
-import app.cash.turbine.test
-import io.kotest.core.spec.style.FreeSpec
+import io.kotest.core.spec.IsolationMode
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.newSingleThreadContext
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.setMain
 import ru.olegivo.repeatodo.domain.GetTasksListUseCase
 import ru.olegivo.repeatodo.domain.models.Task
 import ru.olegivo.repeatodo.domain.models.randomTask
+import ru.olegivo.repeatodo.kotest.FreeSpec
+import ru.olegivo.repeatodo.kotest.LifecycleMode
 import ru.olegivo.repeatodo.main.navigation.FakeMainNavigator
+import ru.olegivo.repeatodo.main.navigation.NavigationDestination
 import ru.olegivo.repeatodo.randomList
 
-internal class TasksListViewModelImplTest: FreeSpec({
-    val mainThreadSurrogate = newSingleThreadContext("UI thread")
-    beforeTest {
-        Dispatchers.setMain(mainThreadSurrogate)
-    }
-    afterTest {
-        Dispatchers.resetMain()
-        mainThreadSurrogate.close()
-    }
-    "initial state" - {
-        val list = randomList { randomTask() }
-        val getTasksListUseCase = FakeGetTasksListUseCase()
+internal class TasksListViewModelTest: FreeSpec(LifecycleMode.Root) {
+    override fun isolationMode() = IsolationMode.InstancePerLeaf
 
-        val viewModel =
-            TasksListViewModel(getTasksListUseCase, FakeMainNavigator())
+    init {
+        "instance" - {
+            val getTasksListUseCase = FakeGetTasksListUseCase()
+            val editTaskNavigator = FakeMainNavigator()
 
-        viewModel.state.test {
-            awaitItem().tasks.shouldBeEmpty()
+            val viewModel = TasksListViewModel(getTasksListUseCase, editTaskNavigator)
+            val state = viewModel.state.testIn(name = "state")
 
-            "actual state after loading" {
-                getTasksListUseCase.list.update { list }
+            "initial state" - {
+                state.awaitItem().tasks.shouldBeEmpty()
 
-                awaitItem().tasks shouldBe list
+                "actual state after loading" {
+                    val list = randomList { randomTask() }
+
+                    getTasksListUseCase.list.update { list }
+
+                    state.awaitItem().tasks shouldBe list
+                }
+
+                "onTaskEditClicked should navigate to edit" {
+                    val task = randomTask()
+
+                    viewModel.onTaskEditClicked(task = task)
+
+                    editTaskNavigator.invocations shouldBe FakeMainNavigator.Invocations.To(
+                        NavigationDestination.EditTask(task.uuid)
+                    )
+                }
             }
         }
     }
-}) {
 
     class FakeGetTasksListUseCase: GetTasksListUseCase {
 
