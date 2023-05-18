@@ -17,8 +17,11 @@
 
 package ru.olegivo.repeatodo.list.presentation
 
+import dev.icerock.moko.mvvm.flow.cMutableStateFlow
 import dev.icerock.moko.mvvm.flow.cStateFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -48,23 +51,33 @@ class TasksListViewModel(
     private val tasksSorterByCompletion: TasksSorterByCompletion
 ): BaseViewModel() {
 
-    val state = getTasks()
-        .map { tasks ->
-            TasksListUiState(
-                tasksSorterByCompletion.sort(tasks)
-                    .map {
-                        it.toUi(
-                            isTaskCompleted = isTaskCompleted,
-                            relativeDateFormatter = relativeDateFormatter
-                        )
-                    }
-            )
-        }
+    val isShowCompleted = MutableStateFlow(false).cMutableStateFlow()
+    val state = combine(
+        getTasks().map { tasks ->
+            tasksSorterByCompletion.sort(tasks)
+                .map {
+                    it.toUi(
+                        isTaskCompleted = isTaskCompleted,
+                        relativeDateFormatter = relativeDateFormatter
+                    )
+                }
+        },
+        isShowCompleted
+    ) { tasks, showCompleted ->
+        TasksListUiState(
+            if (showCompleted) {
+                tasks
+            } else {
+                tasks.filter { !it.isCompleted }
+            }
+        )
+    }
         .stateIn(
             viewModelScope,
             started = SharingStarted.Lazily,
             initialValue = TasksListUiState(emptyList())
-        ).cStateFlow()
+        )
+        .cStateFlow()
 
     fun onTaskEditClicked(task: TaskUi) {
         editTaskNavigator.editTask(task.uuid)
@@ -96,7 +109,7 @@ fun PreviewEnvironment.taskListFakes() {
     }
     register<CompleteTaskUseCase> { FakeCompleteTaskUseCase() }
     register<CancelTaskCompletionUseCase> { FakeCancelTaskCompletionUseCase() }
-    register<IsTaskCompletedUseCase> { FakeIsTaskCompletedUseCase(false) }
+    register<IsTaskCompletedUseCase> { FakeIsTaskCompletedUseCase() }
     register<RelativeDateFormatter> { FakeRelativeDateFormatter() }
     register<EditTaskNavigator> { FakeMainNavigator() }
     register<DateTimeProvider> { FakeDateTimeProvider() }
