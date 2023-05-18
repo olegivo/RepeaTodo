@@ -35,11 +35,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import ru.olegivo.repeatodo.main.mainScreenFakes
+import ru.olegivo.repeatodo.utils.PreviewEnvironment
 
 @Composable
 internal fun MainScreen(
     modifier: Modifier = Modifier,
-    isPreview: Boolean = false
+    previewEnvironment: PreviewEnvironment? = null
 ) {
     Surface(
         modifier = modifier
@@ -47,9 +49,9 @@ internal fun MainScreen(
             .windowInsetsPadding(
                 WindowInsets.navigationBars.only(
                     WindowInsetsSides.Start +
-                            WindowInsetsSides.End +
-                            WindowInsetsSides.Top +
-                            WindowInsetsSides.Bottom
+                        WindowInsetsSides.End +
+                        WindowInsetsSides.Top +
+                        WindowInsetsSides.Bottom
                 )
             ),
         color = MaterialTheme.colorScheme.primary
@@ -66,7 +68,7 @@ internal fun MainScreen(
                         top.linkTo(parent.top)
                         bottom.linkTo(add.top)
                     },
-                isPreview = isPreview
+                previewEnvironment = previewEnvironment
             )
             AddTaskInlined(
                 Modifier
@@ -74,7 +76,7 @@ internal fun MainScreen(
                     .constrainAs(add) {
                         bottom.linkTo(parent.bottom)
                     },
-                isPreview = isPreview
+                previewEnvironment = previewEnvironment
             )
         }
     }
@@ -84,6 +86,8 @@ internal fun MainScreen(
 @Composable
 private fun MainScreenPreview() {
     MaterialTheme {
-        MainScreen(isPreview = true)
+        MainScreen(
+            previewEnvironment = PreviewEnvironment { mainScreenFakes() }
+        )
     }
 }
