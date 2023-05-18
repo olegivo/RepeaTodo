@@ -24,14 +24,19 @@ import kotlinx.coroutines.flow.StateFlow
 interface EditTaskViewModel {
 
     val title: MutableStateFlow<String>
+    val daysPeriodicity: MutableStateFlow<String>
+
     val isLoading: Flow<Boolean>
     val isLoadingError: StateFlow<Boolean>
+
     val canSave: StateFlow<Boolean>
     val isSaving: StateFlow<Boolean>
     val isSaveError: StateFlow<Boolean>
+
     val canDelete: StateFlow<Boolean>
     val isDeleting: StateFlow<Boolean>
     val isDeleteError: StateFlow<Boolean>
+
     fun onSaveClicked()
     fun onCancelClicked()
     fun onDeleteClicked()

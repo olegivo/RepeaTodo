@@ -58,6 +58,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.koin.compose.koinInject
@@ -103,6 +104,7 @@ internal fun EditTask(
                         onConfirm = { viewModel.onDeleteClicked() }
                     )
                     TitleEditor(title, viewModel)
+                    DaysPeriodicityEditor(viewModel)
                     Spacer(
                         modifier =
                         Modifier
@@ -135,9 +137,29 @@ private fun TitleEditor(
         modifier = Modifier
             .padding(16.dp)
             .focusRequester(oneTimeFocusRequester()),
-        placeholder = { Text("Enter A Title Here") },
+        placeholder = { Text("Enter a title here") },
         label = { Text("Title") },
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+        keyboardActions = KeyboardActions(onDone = { viewModel.onSaveClicked() })
+    )
+}
+
+@Composable
+private fun DaysPeriodicityEditor(
+    viewModel: EditTaskViewModel
+) {
+    val daysPeriodicity = viewModel.daysPeriodicity.collectAsState()
+    TextField(
+        value = daysPeriodicity.value,
+        onValueChange = { viewModel.daysPeriodicity.value = it },
+        modifier = Modifier
+            .padding(16.dp),
+        placeholder = { Text("Enter a days periodicity here") },
+        label = { Text("Days periodicity") },
+        keyboardOptions = KeyboardOptions.Default.copy(
+            keyboardType = KeyboardType.Number,
+            imeAction = ImeAction.Done
+        ),
         keyboardActions = KeyboardActions(onDone = { viewModel.onSaveClicked() })
     )
 }

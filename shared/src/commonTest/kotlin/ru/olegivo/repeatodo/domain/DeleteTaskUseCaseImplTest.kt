@@ -24,7 +24,7 @@ import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.shouldBe
 import ru.olegivo.repeatodo.assertItem
 import ru.olegivo.repeatodo.data.FakeTasksRepository
-import ru.olegivo.repeatodo.domain.models.createTask
+import ru.olegivo.repeatodo.domain.models.randomTask
 
 internal class DeleteTaskUseCaseImplTest : FreeSpec() {
     init {
@@ -33,9 +33,9 @@ internal class DeleteTaskUseCaseImplTest : FreeSpec() {
             val deleteTaskUseCase: DeleteTaskUseCase = DeleteTaskUseCaseImpl(
                 tasksRepository = tasksRepository
             )
-            val origin = createTask()
+            val origin = randomTask()
             tasksRepository.save(origin)
-            val task2 = createTask()
+            val task2 = randomTask()
             tasksRepository.save(task2)
 
             deleteTaskUseCase(origin).test {
