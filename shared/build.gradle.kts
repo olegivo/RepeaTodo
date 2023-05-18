@@ -15,6 +15,8 @@
  * RepeaTodo.
  */
 
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
+
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     kotlin("multiplatform")
@@ -36,13 +38,22 @@ kotlin {
     }
     android()
 
+    val xcf = XCFramework("shared")
+
     listOf(
         iosX64(),
         iosArm64(),
         iosSimulatorArm64()
-    ).forEach {
-        it.binaries.framework {
+    ).forEach { target ->
+        target.binaries.framework {
             baseName = "shared"
+
+            xcf.add(this)
+
+            listOf(
+                libs.moko.mvvm,
+                libs.moko.mvvm.flow
+            ).forEach { export(it) }
         }
     }
 
