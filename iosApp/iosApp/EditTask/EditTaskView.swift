@@ -141,6 +141,20 @@ extension EditTaskViewModel {
 
 struct EditTaskView_Previews: PreviewProvider {
     static var previews: some View {
-        EditTaskView.factory(uuid: "The UUID", preview{ $0.editTaskViewModelWithFakes() })
+        EditTaskView.factory(
+            uuid: "The UUID",
+            preview{
+                $0.editTaskViewModelWithFakes(
+                    loadResult: WorkStateCompleted(
+                        result: Task(
+                            uuid: "The UUID",
+                            title: "Task 1",
+                            daysPeriodicity: 1,
+                            lastCompletionDate: nil
+                        )
+                    )
+                )
+            }
+        )
     }
 }
