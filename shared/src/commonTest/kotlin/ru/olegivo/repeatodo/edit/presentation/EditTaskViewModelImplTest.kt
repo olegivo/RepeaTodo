@@ -28,8 +28,8 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.update
 import ru.olegivo.repeatodo.assertItem
 import ru.olegivo.repeatodo.domain.DeleteTaskUseCase
+import ru.olegivo.repeatodo.domain.FakeSaveTaskUseCase
 import ru.olegivo.repeatodo.domain.GetTaskUseCase
-import ru.olegivo.repeatodo.domain.SaveTaskUseCase
 import ru.olegivo.repeatodo.domain.WorkState
 import ru.olegivo.repeatodo.domain.models.Task
 import ru.olegivo.repeatodo.domain.models.randomTask
@@ -263,24 +263,6 @@ internal class EditTaskViewModelImplTest : FreeSpec(LifecycleMode.Root) {
 
         fun setResultCompleted(task: Task) {
             workState.update { WorkState.Completed(task) }
-        }
-
-        fun setResultError() {
-            workState.update { WorkState.Error() }
-        }
-    }
-
-    class FakeSaveTaskUseCase : SaveTaskUseCase {
-
-        private val workState = MutableStateFlow<WorkState<Unit>?>(null)
-
-        override suspend operator fun invoke(task: Task): Flow<WorkState<Unit>> {
-            workState.update { WorkState.InProgress() }
-            return workState.filterNotNull()
-        }
-
-        fun setResultCompleted() {
-            workState.update { WorkState.Completed(Unit) }
         }
 
         fun setResultError() {
