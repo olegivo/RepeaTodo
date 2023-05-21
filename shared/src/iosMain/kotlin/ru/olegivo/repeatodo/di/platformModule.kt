@@ -34,7 +34,7 @@ import ru.olegivo.repeatodo.main.navigation.MainNavigator
 import ru.olegivo.repeatodo.main.presentation.MainViewModel
 import ru.olegivo.repeatodo.platform.DispatchersProviderImpl
 
-actual fun platformModule() = module {
+actual val platformModule = module {
     singleOf(::DispatchersProviderImpl).bind<DispatchersProvider>()
     singleOf(::DriverFactoryImpl).bind<DriverFactory>()
     factoryOf(::MainViewModel)

@@ -25,13 +25,22 @@ import ru.olegivo.repeatodo.DispatchersProvider
 import ru.olegivo.repeatodo.add.presentation.AddTaskViewModel
 import ru.olegivo.repeatodo.edit.presentation.EditTaskViewModel
 import ru.olegivo.repeatodo.list.presentation.TasksListViewModel
+import ru.olegivo.repeatodo.main.presentation.AddToDoListViewModel
+import ru.olegivo.repeatodo.main.presentation.AddToDoListViewModelImpl
+import ru.olegivo.repeatodo.main.presentation.DrawerToDoListsCustomItemViewModel
+import ru.olegivo.repeatodo.main.presentation.DrawerToDoListsCustomItemViewModelImpl
+import ru.olegivo.repeatodo.main.presentation.DrawerToDoListsViewModel
+import ru.olegivo.repeatodo.main.presentation.DrawerToDoListsViewModelImpl
 import ru.olegivo.repeatodo.main.presentation.MainViewModel
 import ru.olegivo.repeatodo.platform.DispatchersProviderImpl
 
-actual fun platformModule() = module {
+actual val platformModule = module {
     singleOf(::DispatchersProviderImpl).bind<DispatchersProvider>()
     viewModelOf(::MainViewModel)
     viewModelOf(::AddTaskViewModel)
     viewModelOf(::TasksListViewModel)
     viewModelOf(::EditTaskViewModel)
+    viewModelOf(::DrawerToDoListsViewModelImpl).bind<DrawerToDoListsViewModel>()
+    viewModelOf(::DrawerToDoListsCustomItemViewModelImpl).bind<DrawerToDoListsCustomItemViewModel>()
+    viewModelOf(::AddToDoListViewModelImpl).bind<AddToDoListViewModel>()
 }
