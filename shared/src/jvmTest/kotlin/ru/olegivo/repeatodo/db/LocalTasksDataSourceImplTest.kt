@@ -38,6 +38,7 @@ class LocalTasksDataSourceImplTest: FreeSpec() {
         "instance" - {
             val dateTimeProvider = FakeDateTimeProvider()
             val instantLongAdapter = InstantLongAdapter()
+            val priorityAdapter = PriorityLongAdapter()
             val properties = Properties().apply {
                 setProperty(
                     /*SQLiteConfig.Pragma.FOREIGN_KEYS*/ "foreign_keys",
@@ -49,7 +50,11 @@ class LocalTasksDataSourceImplTest: FreeSpec() {
                 override fun createDriver(dbName: String, foreignKeyConstraints: Boolean) =
                     driver
             }
-            val database = createDatabase(driverFactory, instantLongAdapter)
+            val database = createDatabase(
+                driverFactory = driverFactory,
+                instantLongAdapter = instantLongAdapter,
+                priorityAdapter = priorityAdapter
+            )
             RepeaTodoDb.Schema.create(driver)
 
             val localTasksDataSource: LocalTasksDataSource = LocalTasksDataSourceImpl(
@@ -58,7 +63,7 @@ class LocalTasksDataSourceImplTest: FreeSpec() {
                 dispatchersProvider = dispatchersProvider
             )
 
-            val task1 = randomTask()
+            val task1 = randomTask(lastCompletionDate = null)
 
             "empty data source" - {
 
@@ -79,7 +84,7 @@ class LocalTasksDataSourceImplTest: FreeSpec() {
                 }
 
                 "save" - {
-                    val task2 = randomTask()
+                    val task2 = randomTask(lastCompletionDate = null)
                     localTasksDataSource.save(task1)
 
                     "tasks should contain added tasks" {
@@ -119,7 +124,7 @@ class LocalTasksDataSourceImplTest: FreeSpec() {
                         localTasksDataSource.save(task2) // one more
                         localTasksDataSource.expectSelect(task1, task2)
 
-                        val newVersion = randomTask().copy(uuid = task1.uuid)
+                        val newVersion = randomTask(lastCompletionDate = null).copy(uuid = task1.uuid)
                         localTasksDataSource.save(newVersion)
 
                         localTasksDataSource.expectSelect(newVersion, task2)
@@ -131,12 +136,14 @@ class LocalTasksDataSourceImplTest: FreeSpec() {
                         uuid = randomString(),
                         title = randomString(),
                         daysPeriodicity = 1,
+                        priority = null,
                         lastCompletionDate = null
                     )
                     val task2 = Task(
                         uuid = randomString(),
                         title = randomString(),
                         daysPeriodicity = 1,
+                        priority = null,
                         lastCompletionDate = null
                     )
                     localTasksDataSource.save(task1)
@@ -175,12 +182,14 @@ class LocalTasksDataSourceImplTest: FreeSpec() {
                         uuid = randomString(),
                         title = randomString(),
                         daysPeriodicity = 1,
+                        priority = null,
                         lastCompletionDate = null
                     )
                     val task2 = Task(
                         uuid = randomString(),
                         title = randomString(),
                         daysPeriodicity = 1,
+                        priority = null,
                         lastCompletionDate = null
                     )
                     localTasksDataSource.save(task1)

@@ -22,16 +22,21 @@ import io.kotest.matchers.shouldBe
 import kotlinx.datetime.Instant
 import ru.olegivo.repeatodo.booleans
 import ru.olegivo.repeatodo.combinator
+import ru.olegivo.repeatodo.domain.Priority
 import ru.olegivo.repeatodo.domain.models.randomTask
 import ru.olegivo.repeatodo.randomString
 
 class TaskUiKtTest: FreeSpec({
     combinator(
         booleans,
-        listOf(null, Instant.parse("2023-02-28T23:30:59.123Z"))
-    ) { (isCompleted, lastCompletionDate) ->
-        "toUi WHEN IsTaskCompletedUseCase return $isCompleted, lastCompletionDate is $lastCompletionDate" - {
-            val task = randomTask().copy(lastCompletionDate = lastCompletionDate)
+        listOf(null, Instant.parse("2023-02-28T23:30:59.123Z")),
+        Priority.values().toList() + null
+    ) { (isCompleted, lastCompletionDate, priority) ->
+        "toUi WHEN IsTaskCompletedUseCase return $isCompleted, lastCompletionDate is $lastCompletionDate, priority = $priority" - {
+            val task = randomTask(
+                lastCompletionDate = lastCompletionDate,
+                priority = priority,
+            )
             val formattedLastCompletionDate = randomString()
             val relativeDateFormatter = FakeRelativeDateFormatter(formattedLastCompletionDate)
 
@@ -53,6 +58,16 @@ class TaskUiKtTest: FreeSpec({
                 taskUi.lastCompletionDate shouldBe lastCompletionDate?.let {
                     formattedLastCompletionDate
                 }
+            }
+
+            val expectedPriority = when (priority) {
+                Priority.LOW -> PriorityInList.LOW
+                Priority.MEDIUM -> PriorityInList.MEDIUM
+                Priority.HIGH -> PriorityInList.HIGH
+                null -> null
+            }
+            "priority should be $expectedPriority" {
+                taskUi.priority shouldBe expectedPriority
             }
         }
     }

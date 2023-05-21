@@ -20,7 +20,6 @@ package ru.olegivo.repeatodo.android
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -37,12 +36,16 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import ru.olegivo.repeatodo.android.preview.PreviewsDayNight
 import ru.olegivo.repeatodo.android.ui.theme.AppTheme
+import ru.olegivo.repeatodo.list.presentation.PriorityInList
 import ru.olegivo.repeatodo.list.presentation.TaskUi
 import ru.olegivo.repeatodo.list.presentation.TasksListViewModel
 import ru.olegivo.repeatodo.list.presentation.taskListFakes
@@ -112,36 +115,67 @@ private fun TaskItem(
     onTaskEditClicked: (TaskUi) -> Unit = {},
     onCompleteTaskClicked: (TaskUi) -> Unit = {},
 ) {
-    Row(
+    ConstraintLayout(
         modifier = modifier
             .height(92.dp)
             .clickable { onTaskEditClicked(task) },
-        verticalAlignment = Alignment.Top
     ) {
+        val (
+            isCompleted,
+            priorityView,
+            title,
+            lastCompletionDate,
+        ) = createRefs()
+
         Checkbox(
+            modifier = Modifier.constrainAs(isCompleted) {
+                top.linkTo(parent.top)
+                start.linkTo(parent.start)
+            },
             checked = task.isCompleted,
             onCheckedChange = { onCompleteTaskClicked(task) }
         )
-        Column(
-            modifier = Modifier
-                .padding(horizontal = 4.dp)
-                .padding(top = 12.dp)
-                .align(Alignment.Top)
-                .weight(1f)
-        ) {
+
+        task.priority?.let { priority ->
             Text(
-                text = task.title,
+                modifier = Modifier.constrainAs(priorityView) {
+                    width = Dimension.fillToConstraints
+                    top.linkTo(isCompleted.bottom)
+                    start.linkTo(parent.start, 22.dp)
+                    end.linkTo(isCompleted.end)
+                    bottom.linkTo(parent.bottom, 8.dp)
+                },
+                text = priority.title,
+                color = Color(android.graphics.Color.parseColor(priority.color)),
                 style = MaterialTheme.typography.titleMedium,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            task.lastCompletionDate?.let {
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.bodySmall
-                )
-            }
+        }
+
+        Text(
+            modifier = Modifier.constrainAs(title) {
+                width = Dimension.fillToConstraints
+                top.linkTo(parent.top, 12.dp)
+                start.linkTo(isCompleted.end, 4.dp)
+                end.linkTo(parent.end, 4.dp)
+            },
+            text = task.title,
+            style = MaterialTheme.typography.titleMedium,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
+        )
+
+        task.lastCompletionDate?.let {
+            Text(
+                modifier = Modifier.constrainAs(lastCompletionDate) {
+                    top.linkTo(title.bottom, 8.dp)
+                    start.linkTo(title.start)
+                    end.linkTo(title.end)
+                },
+                text = it,
+                style = MaterialTheme.typography.bodySmall
+            )
         }
     }
 }
@@ -173,6 +207,7 @@ private fun TaskItemUncompletedPreview(
                     title = title,
                     isCompleted = false,
                     lastCompletionDate = null,
+                    priority = null,
                 )
             )
         }
@@ -181,7 +216,7 @@ private fun TaskItemUncompletedPreview(
 
 @PreviewsDayNight
 @Composable
-private fun TaskItemCompletedNightPreview(
+private fun TaskItemCompletedPreview(
     @PreviewParameter(LoremIpsum::class) title: String
 ) {
     AppTheme {
@@ -192,6 +227,27 @@ private fun TaskItemCompletedNightPreview(
                     title = title,
                     isCompleted = true,
                     lastCompletionDate = "several seconds ago",
+                    priority = null,
+                )
+            )
+        }
+    }
+}
+
+@PreviewsDayNight
+@Composable
+private fun TaskItemPriorityHighPreview(
+    @PreviewParameter(LoremIpsum::class) title: String
+) {
+    AppTheme {
+        Surface {
+            TaskItem(
+                task = TaskUi(
+                    uuid = newUuid(),
+                    title = title,
+                    isCompleted = true,
+                    lastCompletionDate = "several seconds ago",
+                    priority = PriorityInList.HIGH,
                 )
             )
         }

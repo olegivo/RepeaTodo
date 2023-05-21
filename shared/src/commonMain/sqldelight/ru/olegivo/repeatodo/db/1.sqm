@@ -1,0 +1,21 @@
+ALTER TABLE Task ADD COLUMN priority INTEGER;
+
+DROP VIEW taskView;
+
+CREATE VIEW taskView AS
+SELECT
+    T.uuid,
+    T.title,
+    T.daysPeriodicity,
+    T.priority,
+    TC.lastCompletionDateUtc
+FROM
+    Task T
+    LEFT JOIN (
+        SELECT
+            TC.taskUuid,
+            MAX(TC.completionDateUtc) AS lastCompletionDateUtc
+        FROM TaskCompletion TC
+        GROUP BY
+            TC.taskUuid
+    ) TC ON T.uuid = TC.taskUuid;

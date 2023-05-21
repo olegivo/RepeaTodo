@@ -15,23 +15,16 @@
  * RepeaTodo.
  */
 
-package ru.olegivo.repeatodo.domain.models
+package ru.olegivo.repeatodo.db
 
-import kotlinx.datetime.Instant
+import com.squareup.sqldelight.ColumnAdapter
 import ru.olegivo.repeatodo.domain.Priority
-import ru.olegivo.repeatodo.randomEnum
-import ru.olegivo.repeatodo.randomInstant
-import ru.olegivo.repeatodo.randomInt
-import ru.olegivo.repeatodo.randomNull
-import ru.olegivo.repeatodo.randomString
 
-fun randomTask(
-    priority: Priority? = randomEnum<Priority>().randomNull(),
-    lastCompletionDate: Instant? = randomInstant().randomNull()
-) = Task(
-    uuid = randomString(),
-    title = randomString(),
-    daysPeriodicity = randomInt(),
-    lastCompletionDate = lastCompletionDate,
-    priority = priority,
-)
+class PriorityLongAdapter: ColumnAdapter<Priority, Long> {
+
+    override fun decode(databaseValue: Long): Priority =
+        Priority.values().single { it.value.toLong() == databaseValue }
+
+    override fun encode(value: Priority): Long =
+        value.value.toLong()
+}

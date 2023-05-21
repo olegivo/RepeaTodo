@@ -26,6 +26,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
 import ru.olegivo.repeatodo.DispatchersProvider
 import ru.olegivo.repeatodo.data.LocalTasksDataSource
+import ru.olegivo.repeatodo.domain.Priority
 import ru.olegivo.repeatodo.domain.models.Task
 import ru.olegivo.repeatodo.utils.newUuid
 
@@ -82,11 +83,13 @@ class LocalTasksDataSourceImpl(
         uuid: String,
         title: String,
         daysPeriodicity: Int,
+        priority: Priority?,
         lastCompletionDate: Long?
     ) = Task(
         uuid = uuid,
         title = title,
         daysPeriodicity = daysPeriodicity,
+        priority = priority,
         lastCompletionDate = lastCompletionDate?.toInstant()
     )
 

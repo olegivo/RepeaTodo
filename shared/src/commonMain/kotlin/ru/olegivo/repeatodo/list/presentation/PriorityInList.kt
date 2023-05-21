@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2023 Oleg Ivashchenko <olegivo@gmail.com>
- *
+ *  
  * This file is part of RepeaTodo.
  *
  * RepeaTodo is free software: you can redistribute it and/or modify
@@ -15,23 +15,12 @@
  * RepeaTodo.
  */
 
-package ru.olegivo.repeatodo.domain.models
+package ru.olegivo.repeatodo.list.presentation
 
-import kotlinx.datetime.Instant
-import ru.olegivo.repeatodo.domain.Priority
-import ru.olegivo.repeatodo.randomEnum
-import ru.olegivo.repeatodo.randomInstant
-import ru.olegivo.repeatodo.randomInt
-import ru.olegivo.repeatodo.randomNull
-import ru.olegivo.repeatodo.randomString
+enum class PriorityInList(val color: String) {
+    LOW("#FF4CAF50"),
+    MEDIUM("#FFFFC107"),
+    HIGH("#FFF44336");
 
-fun randomTask(
-    priority: Priority? = randomEnum<Priority>().randomNull(),
-    lastCompletionDate: Instant? = randomInstant().randomNull()
-) = Task(
-    uuid = randomString(),
-    title = randomString(),
-    daysPeriodicity = randomInt(),
-    lastCompletionDate = lastCompletionDate,
-    priority = priority,
-)
+    val title: String = "!";
+}
