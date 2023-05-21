@@ -25,6 +25,7 @@ import ru.olegivo.repeatodo.kotest.FreeSpec
 import ru.olegivo.repeatodo.randomInt
 import ru.olegivo.repeatodo.randomString
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 class TasksSorterByCompletionTest: FreeSpec() {
     private val dateTimeProvider = FakeDateTimeProvider()
@@ -46,7 +47,8 @@ class TasksSorterByCompletionTest: FreeSpec() {
                 val threshold = dateTimeProvider.getCurrentInstant() - thresholdMinutes.minutes
                 isTaskCompleted.considerAsCompletedAfter = threshold
                 val completed = createTask(minutesAgo = thresholdMinutes - 1)
-                val notCompleted = completed.copy(lastCompletionDate = getInstant(minutesAgo = thresholdMinutes))
+                val notCompleted =
+                    completed.copy(lastCompletionDate = getInstant(minutesAgo = thresholdMinutes))
                 val tasks = listOf(completed, notCompleted)
 
                 tasksSorter.sort(tasks)
@@ -94,17 +96,17 @@ class TasksSorterByCompletionTest: FreeSpec() {
                     .shouldContainExactly(title1, title2)
             }
 
-            "completed: by oldest last completion" {
-                val oneMinuteAgo = createTask(
-                    minutesAgo = 1
+            "completed: by oldest last completion (differs by days)" {
+                val completedNow = createTask(
+                    minutesAgo = 0
                 )
-                val twoMinuteAgo = createTask(
-                    minutesAgo = 2
+                val completedInPreviousDay = completedNow.copy(
+                    lastCompletionDate = dateTimeProvider.getCurrentStartOfDayInstant() - 1.seconds
                 )
-                val tasks = listOf(oneMinuteAgo, twoMinuteAgo)
+                val tasks = listOf(completedNow, completedInPreviousDay)
 
                 tasksSorter.sort(tasks)
-                    .shouldContainExactly(twoMinuteAgo, oneMinuteAgo)
+                    .shouldContainExactly(completedInPreviousDay, completedNow)
             }
 
             "completed + same last completion: by shortest periodicity" {
