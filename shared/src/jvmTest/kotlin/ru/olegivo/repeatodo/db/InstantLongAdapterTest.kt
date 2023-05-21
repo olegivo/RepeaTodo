@@ -24,7 +24,7 @@ import ru.olegivo.repeatodo.domain.roundNanoseconds
 import ru.olegivo.repeatodo.kotest.FreeSpec
 import ru.olegivo.repeatodo.randomInstant
 
-class LocalDateTimeLongAdapterTest: FreeSpec() {
+class InstantLongAdapterTest: FreeSpec() {
     init {
         val instantLongAdapter = InstantLongAdapter()
 
