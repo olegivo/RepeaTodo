@@ -106,11 +106,21 @@ internal fun EditTask(
                         showDialog = showAlertDialog,
                         onConfirm = { viewModel.onDeleteClicked() }
                     )
-                    TitleEditor(title, viewModel)
-                    DaysPeriodicityEditor(viewModel)
+                    TitleEditor(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        title = title,
+                        viewModel = viewModel
+                    )
+                    DaysPeriodicityEditor(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        viewModel = viewModel
+                    )
                     Spacer(
-                        modifier =
-                        Modifier
+                        modifier = Modifier
                             .width(IntrinsicSize.Max)
                             .weight(1f)
                     )
@@ -131,14 +141,14 @@ internal fun EditTask(
 
 @Composable
 private fun TitleEditor(
+    modifier: Modifier = Modifier,
     title: State<String>,
     viewModel: EditTaskViewModel
 ) {
     TextField(
         value = title.value,
         onValueChange = { viewModel.title.value = it },
-        modifier = Modifier
-            .padding(16.dp)
+        modifier = modifier
             .focusRequester(oneTimeFocusRequester()),
         placeholder = { Text("Enter a title here") },
         label = { Text("Title") },
@@ -149,14 +159,14 @@ private fun TitleEditor(
 
 @Composable
 private fun DaysPeriodicityEditor(
+    modifier: Modifier = Modifier,
     viewModel: EditTaskViewModel
 ) {
     val daysPeriodicity = viewModel.daysPeriodicity.collectAsState()
     TextField(
         value = daysPeriodicity.value,
         onValueChange = { viewModel.daysPeriodicity.value = it },
-        modifier = Modifier
-            .padding(16.dp),
+        modifier = modifier,
         placeholder = { Text("Enter a days periodicity here") },
         label = { Text("Days periodicity") },
         keyboardOptions = KeyboardOptions.Default.copy(
