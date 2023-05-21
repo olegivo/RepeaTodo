@@ -49,6 +49,7 @@ import ru.olegivo.repeatodo.domain.IsTaskCompletedUseCaseImpl
 import ru.olegivo.repeatodo.domain.SaveTaskUseCase
 import ru.olegivo.repeatodo.domain.SaveTaskUseCaseImpl
 import ru.olegivo.repeatodo.edit.navigation.EditTaskNavigator
+import ru.olegivo.repeatodo.list.domain.TasksListFilters
 import ru.olegivo.repeatodo.list.presentation.RelativeDateFormatter
 import ru.olegivo.repeatodo.list.presentation.RelativeDateFormatterImpl
 import ru.olegivo.repeatodo.list.presentation.TasksSorterByCompletion
@@ -76,6 +77,7 @@ object DependencyInjection {
             .bind<EditTaskNavigator>()
         singleOf(::LocalTasksDataSourceImpl).bind<LocalTasksDataSource>()
         singleOf(::createDatabase)
+        singleOf(::TasksListFilters) // TODO: scoped instead of single
         factoryOf(::InstantLongAdapter)
         factoryOf(::PriorityLongAdapter)
         factoryOf(::DateTimeProviderImpl).bind<DateTimeProvider>()

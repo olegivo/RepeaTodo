@@ -17,10 +17,12 @@
 
 package ru.olegivo.repeatodo.list.presentation
 
-enum class PriorityInList(val color: String) {
-    LOW("#FF4CAF50"),
-    MEDIUM("#FFFFC107"),
-    HIGH("#FFF44336");
+import ru.olegivo.repeatodo.domain.Priority
+
+enum class PriorityInList(val color: String, val priority: Priority) {
+    LOW("#FF4CAF50", Priority.LOW),
+    MEDIUM("#FFFFC107", Priority.MEDIUM),
+    HIGH("#FFF44336", Priority.HIGH);
 
     val title: String = "!";
 }

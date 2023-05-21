@@ -32,13 +32,12 @@ import ru.olegivo.repeatodo.edit.presentation.EditTaskViewModel
 import ru.olegivo.repeatodo.list.presentation.TasksListViewModel
 import ru.olegivo.repeatodo.main.navigation.MainNavigator
 import ru.olegivo.repeatodo.main.presentation.MainViewModel
-import ru.olegivo.repeatodo.main.presentation.MainViewModelImpl
 import ru.olegivo.repeatodo.platform.DispatchersProviderImpl
 
 actual fun platformModule() = module {
     singleOf(::DispatchersProviderImpl).bind<DispatchersProvider>()
     singleOf(::DriverFactoryImpl).bind<DriverFactory>()
-    factoryOf(::MainViewModelImpl).bind<MainViewModel>()
+    factoryOf(::MainViewModel)
     factoryOf(::AddTaskViewModel)
     factoryOf(::EditTaskViewModel)
     factoryOf(::TasksListViewModel)

@@ -15,17 +15,12 @@
  * RepeaTodo.
  */
 
-package ru.olegivo.repeatodo.main.presentation
+package ru.olegivo.repeatodo.list.domain
 
+import dev.icerock.moko.mvvm.flow.cMutableStateFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 
-class FakeMainViewModel : MainViewModel {
-
-    override val state = MutableStateFlow(MainUiState())
-
-    override fun onAddTaskClicked() {
-    }
-
-    override fun onCleared() {
-    }
+class TasksListFilters {
+    val isShowCompleted = MutableStateFlow(false).cMutableStateFlow()
+    val isShowOnlyHighestPriority = MutableStateFlow(true).cMutableStateFlow()
 }

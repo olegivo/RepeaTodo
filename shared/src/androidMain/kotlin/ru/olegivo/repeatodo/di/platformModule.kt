@@ -26,12 +26,11 @@ import ru.olegivo.repeatodo.add.presentation.AddTaskViewModel
 import ru.olegivo.repeatodo.edit.presentation.EditTaskViewModel
 import ru.olegivo.repeatodo.list.presentation.TasksListViewModel
 import ru.olegivo.repeatodo.main.presentation.MainViewModel
-import ru.olegivo.repeatodo.main.presentation.MainViewModelImpl
 import ru.olegivo.repeatodo.platform.DispatchersProviderImpl
 
 actual fun platformModule() = module {
     singleOf(::DispatchersProviderImpl).bind<DispatchersProvider>()
-    viewModelOf(::MainViewModelImpl).bind<MainViewModel>()
+    viewModelOf(::MainViewModel)
     viewModelOf(::AddTaskViewModel)
     viewModelOf(::TasksListViewModel)
     viewModelOf(::EditTaskViewModel)

@@ -14,11 +14,15 @@ struct MainView: View {
     @Environment(\.navigator) var navigator: MainNavigatorObservableObject
     @Environment(\.previewEnvironment) var previewEnvironment: PreviewEnvironment?
 
-//    @StateObject private var viewModel: MainViewModelObservableObject
+    @ObservedObject private var viewModel: MainViewModel
 
     var body: some View {
         NavigationView {
             VStack() {
+                Toggle("Show completed", isOn: viewModel.binding(\.isShowCompleted))
+                    .padding(.all)
+                Toggle("Show only high priority", isOn: viewModel.binding(\.isShowOnlyHighestPriority))
+                    .padding(.all)
                 Spacer()
                 Divider()
                 TasksListView.factory(previewEnvironment)
@@ -35,9 +39,8 @@ struct MainView: View {
     static func factory(_ previewEnvironment: PreviewEnvironment? = nil) -> some View {
         let di = MainComponent()
         let navigator = (previewEnvironment?.get() ?? di.mainNavigator()).asObservableObject()
-        return MainView(
-            //viewModel: (isPreview ? FakeMainViewModel() : di.mainViewModel()).asObservableObject()
-        )
+        let viewModel: MainViewModel = previewEnvironment?.get() ?? di.mainViewModel()
+        return MainView(viewModel: viewModel)
         .navigator(navigator)
 //        .previewEnvironment(preview{ $0.mainScreenFakes() })
     }

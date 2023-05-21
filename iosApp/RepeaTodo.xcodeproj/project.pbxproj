@@ -25,7 +25,6 @@
 		552A5B55285B61E50059083D /* ViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552A5B54285B61E50059083D /* ViewFactory.swift */; };
 		552A5B58285B62E50059083D /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552A5B57285B62E50059083D /* MainView.swift */; };
 		5570ECEC285DC1EA0062D58D /* FlowPublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5570ECEB285DC1EA0062D58D /* FlowPublisher.swift */; };
-		5570ECEE285DC2740062D58D /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5570ECED285DC2740062D58D /* MainViewModel.swift */; };
 		5570ECF5285F05A50062D58D /* TasksListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5570ECF4285F05A50062D58D /* TasksListView.swift */; };
 		5570ECF72861B0370062D58D /* AddTaskInlinedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5570ECF62861B0370062D58D /* AddTaskInlinedView.swift */; };
 		5570ECFA2861BCBC0062D58D /* EnvironmentValuesExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5570ECF92861BCBC0062D58D /* EnvironmentValuesExtensions.swift */; };
@@ -68,7 +67,6 @@
 		552A5B54285B61E50059083D /* ViewFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewFactory.swift; sourceTree = "<group>"; };
 		552A5B57285B62E50059083D /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		5570ECEB285DC1EA0062D58D /* FlowPublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowPublisher.swift; sourceTree = "<group>"; };
-		5570ECED285DC2740062D58D /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
 		5570ECF4285F05A50062D58D /* TasksListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksListView.swift; sourceTree = "<group>"; };
 		5570ECF62861B0370062D58D /* AddTaskInlinedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskInlinedView.swift; sourceTree = "<group>"; };
 		5570ECF92861BCBC0062D58D /* EnvironmentValuesExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentValuesExtensions.swift; sourceTree = "<group>"; };
@@ -149,7 +147,6 @@
 			isa = PBXGroup;
 			children = (
 				552A5B57285B62E50059083D /* MainView.swift */,
-				5570ECED285DC2740062D58D /* MainViewModel.swift */,
 			);
 			path = Main;
 			sourceTree = "<group>";
@@ -373,7 +370,6 @@
 				5131CA6629EC47ED00BFC251 /* EnvironmentValues.swift in Sources */,
 				5570ECEC285DC1EA0062D58D /* FlowPublisher.swift in Sources */,
 				5570ECFD28620C640062D58D /* EditTaskView.swift in Sources */,
-				5570ECEE285DC2740062D58D /* MainViewModel.swift in Sources */,
 				51E119B629F3FAF200E4D780 /* ViewModelStateNullable.swift in Sources */,
 				513E69CE2A11856500830262 /* DropdownSelector.swift in Sources */,
 				5168799D29D8CFA30067450C /* RepeaTodo_shared.swift in Sources */,
