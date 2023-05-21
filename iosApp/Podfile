@@ -1,11 +1,11 @@
 # Uncomment the next line to define a global platform for your project
 # platform :ios, '9.0'
 
-target 'iosApp' do
+target 'RepeaTodo' do
   # Comment the next line if you don't want to use dynamic frameworks
   # use_frameworks!
 
-  # Pods for iosApp
+  # Pods for RepeaTodo
   # pod 'mokoMvvmFlowSwiftUI', :podspec => 'https://raw.githubusercontent.com/icerockdev/moko-mvvm/release/0.16.0/mokoMvvmFlowSwiftUI.podspec'
 
 end
