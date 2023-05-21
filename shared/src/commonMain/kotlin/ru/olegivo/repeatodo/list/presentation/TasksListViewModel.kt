@@ -17,9 +17,7 @@
 
 package ru.olegivo.repeatodo.list.presentation
 
-import dev.icerock.moko.mvvm.flow.cMutableStateFlow
 import dev.icerock.moko.mvvm.flow.cStateFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
@@ -35,8 +33,10 @@ import ru.olegivo.repeatodo.domain.FakeDateTimeProvider
 import ru.olegivo.repeatodo.domain.FakeGetTasksListUseCase
 import ru.olegivo.repeatodo.domain.GetTasksListUseCase
 import ru.olegivo.repeatodo.domain.IsTaskCompletedUseCase
+import ru.olegivo.repeatodo.domain.Priority
 import ru.olegivo.repeatodo.domain.models.Task
 import ru.olegivo.repeatodo.edit.navigation.EditTaskNavigator
+import ru.olegivo.repeatodo.list.domain.TasksListFilters
 import ru.olegivo.repeatodo.main.navigation.FakeMainNavigator
 import ru.olegivo.repeatodo.utils.PreviewEnvironment
 import ru.olegivo.repeatodo.utils.newUuid
@@ -48,10 +48,10 @@ class TasksListViewModel(
     private val editTaskNavigator: EditTaskNavigator,
     private val isTaskCompleted: IsTaskCompletedUseCase,
     private val relativeDateFormatter: RelativeDateFormatter,
-    private val tasksSorterByCompletion: TasksSorterByCompletion
+    private val tasksSorterByCompletion: TasksSorterByCompletion,
+    tasksListFilters: TasksListFilters
 ): BaseViewModel() {
 
-    val isShowCompleted = MutableStateFlow(false).cMutableStateFlow()
     val state = combine(
         getTasks().map { tasks ->
             tasksSorterByCompletion.sort(tasks)
@@ -62,14 +62,13 @@ class TasksListViewModel(
                     )
                 }
         },
-        isShowCompleted
-    ) { tasks, showCompleted ->
+        tasksListFilters.isShowCompleted,
+        tasksListFilters.isShowOnlyHighestPriority
+    ) { tasks, showCompleted, isShowOnlyHighestPriority ->
         TasksListUiState(
-            if (showCompleted) {
-                tasks
-            } else {
-                tasks.filter { !it.isCompleted }
-            }
+            tasks
+                .filterByShowCompleted(showCompleted)
+                .filterByHighestPriority(isShowOnlyHighestPriority)
         )
     }
         .stateIn(
@@ -90,6 +89,29 @@ class TasksListViewModel(
             } else {
                 completeTask(task.uuid)
             }
+        }
+    }
+
+    private fun List<TaskUi>.filterByShowCompleted(showCompleted: Boolean): List<TaskUi> {
+        return if (showCompleted) {
+            this
+        } else {
+            filter { !it.isCompleted }
+        }
+    }
+
+    private fun List<TaskUi>.filterByHighestPriority(showOnlyHighestPriority: Boolean): List<TaskUi> {
+        return if (!showOnlyHighestPriority) {
+            this
+        } else {
+            groupBy { it.priority?.priority }
+                .let {
+                    it[Priority.HIGH]
+                        ?: it[Priority.MEDIUM]
+                        ?: it[Priority.LOW]
+                        ?: it[null]
+                        ?: emptyList()
+                }
         }
     }
 }
@@ -116,8 +138,11 @@ fun PreviewEnvironment.taskListFakes() {
     register<DateTimeProvider> { FakeDateTimeProvider() }
     register { TasksSorterByCompletion(get(), get()) }
     register {
-        TasksListViewModel(get(), get(), get(), get(), get(), get(), get()).also {
+        TasksListFilters().also {
             it.isShowCompleted.value = true
         }
+    }
+    register {
+        TasksListViewModel(get(), get(), get(), get(), get(), get(), get(), get())
     }
 }

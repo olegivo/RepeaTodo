@@ -19,6 +19,7 @@ package ru.olegivo.repeatodo.list.presentation
 
 import io.kotest.inspectors.shouldForAll
 import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldBeSameSizeAs
 import io.kotest.matchers.collections.shouldContainExactly
@@ -29,12 +30,15 @@ import ru.olegivo.repeatodo.domain.FakeCancelTaskCompletionUseCase
 import ru.olegivo.repeatodo.domain.FakeCompleteTaskUseCase
 import ru.olegivo.repeatodo.domain.FakeDateTimeProvider
 import ru.olegivo.repeatodo.domain.FakeGetTasksListUseCase
+import ru.olegivo.repeatodo.domain.Priority
 import ru.olegivo.repeatodo.domain.models.randomTask
 import ru.olegivo.repeatodo.kotest.FreeSpec
+import ru.olegivo.repeatodo.list.domain.TasksListFilters
 import ru.olegivo.repeatodo.main.navigation.FakeMainNavigator
 import ru.olegivo.repeatodo.main.navigation.NavigationDestination
 import ru.olegivo.repeatodo.randomInstant
 import ru.olegivo.repeatodo.randomList
+import ru.olegivo.repeatodo.randomNull
 import kotlin.time.Duration.Companion.minutes
 
 internal class TasksListViewModelTest: FreeSpec() {
@@ -48,6 +52,7 @@ internal class TasksListViewModelTest: FreeSpec() {
             val relativeDateFormatter = FakeRelativeDateFormatter()
             val editTaskNavigator = FakeMainNavigator()
 
+            val tasksListFilters = TasksListFilters()
             val viewModel = TasksListViewModel(
                 getTasks = getTasksListUseCase,
                 completeTask = completeTaskUseCase,
@@ -59,13 +64,18 @@ internal class TasksListViewModelTest: FreeSpec() {
                     dateTimeProvider = FakeDateTimeProvider(),
                     isTaskCompleted = isTaskCompletedUseCase
                 ),
+                tasksListFilters = tasksListFilters,
             )
             val state = viewModel.state.testIn(name = "state")
-            val isShowCompleted = viewModel.isShowCompleted.testIn(name = "isShowCompletedTasks")
+            val isShowCompleted =
+                tasksListFilters.isShowCompleted.testIn(name = "isShowCompletedTasks")
+            val isShowOnlyHighestPriority =
+                tasksListFilters.isShowOnlyHighestPriority.testIn(name = "isShowCompletedTasks")
 
             "initial state" - {
                 state.awaitItem().tasks.shouldBeEmpty()
                 isShowCompleted.awaitItem().shouldBeFalse()
+                isShowOnlyHighestPriority.awaitItem().shouldBeTrue()
 
                 val taskUi = randomTask().toUi(
                     isTaskCompleted = isTaskCompletedUseCase,
@@ -77,42 +87,106 @@ internal class TasksListViewModelTest: FreeSpec() {
                     isTaskCompletedUseCase.considerAsCompletedAfter = threshold
                     val lastCompletionDate = threshold + 1.minutes
 
+                    val completedHighestPriority =
+                        randomList {
+                            randomTask(
+                                lastCompletionDate = lastCompletionDate,
+                                priority = Priority.HIGH
+                            )
+                        }
+                    val completedLowerPriority =
+                        randomList {
+                            randomTask(
+                                lastCompletionDate = lastCompletionDate,
+                                priority = Priority.values()
+                                    .filter { it != Priority.HIGH }
+                                    .random()
+                                    .randomNull()
+                            )
+                        }
                     val completed =
-                        randomList { randomTask().copy(lastCompletionDate = lastCompletionDate) }
+                        completedHighestPriority + completedLowerPriority
+                    val notCompletedHighestPriority = randomList {
+                        randomTask(
+                            lastCompletionDate = null,
+                            priority = Priority.HIGH
+                        )
+                    }
+                    val notCompletedLowerPriority = randomList {
+                        randomTask(
+                            lastCompletionDate = null,
+                            priority = Priority.values()
+                                .filter { it != Priority.HIGH }
+                                .random()
+                                .randomNull()
+                        )
+                    }
                     val notCompleted =
-                        randomList { randomTask().copy(lastCompletionDate = null) }
+                        notCompletedHighestPriority + notCompletedLowerPriority
                     val list = completed + notCompleted
 
                     getTasksListUseCase.list.update { list }
 
-                    "state should contain only not completed tasks" {
+                    "state should contain only not completed tasks with highest priority" - {
                         state.awaitItem().tasks
                             .shouldForAll { it.isCompleted.shouldBeFalse() }
-                            .shouldBeSameSizeAs(notCompleted)
+                            .shouldBeSameSizeAs(notCompletedHighestPriority)
                             .shouldContainExactlyInAnyOrder(
-                                notCompleted.map {
+                                notCompletedHighestPriority.map {
                                     it.toUi(
                                         isTaskCompleted = isTaskCompletedUseCase,
                                         relativeDateFormatter = relativeDateFormatter
                                     )
                                 }
                             )
-                    }
 
-                    "state should contain completed and not completed WHEN isShowCompleted = true" {
-                        viewModel.isShowCompleted.update { true }
+                        "state should contain not completed high priority WHEN isShowOnlyHighestPriority = false" {
+                            tasksListFilters.isShowOnlyHighestPriority.update { false }
 
-                        val tasks = state.expectMostRecentItem().tasks
-                        val (completedResult, notCompletedResult) = tasks.partition { it.isCompleted }
-                        tasks shouldContainExactlyInAnyOrder list.map {
-                            it.toUi(
-                                isTaskCompleted = isTaskCompletedUseCase,
-                                relativeDateFormatter = relativeDateFormatter
-                            )
+                            state.awaitItem().tasks
+                                .shouldForAll { it.isCompleted.shouldBeFalse() }
+                                .shouldBeSameSizeAs(notCompleted)
+                                .shouldContainExactlyInAnyOrder(
+                                    notCompleted.map {
+                                        it.toUi(
+                                            isTaskCompleted = isTaskCompletedUseCase,
+                                            relativeDateFormatter = relativeDateFormatter
+                                        )
+                                    }
+                                )
                         }
 
-                        notCompletedResult.shouldBeSameSizeAs(notCompleted)
-                        completedResult.shouldBeSameSizeAs(completed)
+                        "state should contain completed high priority and not completed high priority WHEN isShowCompleted = true" - {
+                            tasksListFilters.isShowCompleted.update { true }
+
+                            val tasks = state.expectMostRecentItem().tasks
+                            val (completedResult, notCompletedResult) = tasks.partition { it.isCompleted }
+                            tasks shouldContainExactlyInAnyOrder (completedHighestPriority + notCompletedHighestPriority).map {
+                                it.toUi(
+                                    isTaskCompleted = isTaskCompletedUseCase,
+                                    relativeDateFormatter = relativeDateFormatter
+                                )
+                            }
+
+                            notCompletedResult.shouldBeSameSizeAs(notCompletedHighestPriority)
+                            completedResult.shouldBeSameSizeAs(completedHighestPriority)
+
+                            "state should contain completed high priority and not completed high priority WHEN isShowOnlyHighestPriority = false" {
+                                tasksListFilters.isShowOnlyHighestPriority.update { false }
+
+                                val tasks = state.expectMostRecentItem().tasks
+                                val (completedResult, notCompletedResult) = tasks.partition { it.isCompleted }
+                                tasks shouldContainExactlyInAnyOrder list.map {
+                                    it.toUi(
+                                        isTaskCompleted = isTaskCompletedUseCase,
+                                        relativeDateFormatter = relativeDateFormatter
+                                    )
+                                }
+
+                                notCompletedResult.shouldBeSameSizeAs(notCompleted)
+                                completedResult.shouldBeSameSizeAs(completed)
+                            }
+                        }
                     }
                 }
 

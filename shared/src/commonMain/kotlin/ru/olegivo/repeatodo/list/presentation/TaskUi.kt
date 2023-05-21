@@ -18,7 +18,6 @@
 package ru.olegivo.repeatodo.list.presentation
 
 import ru.olegivo.repeatodo.domain.IsTaskCompletedUseCase
-import ru.olegivo.repeatodo.domain.Priority
 import ru.olegivo.repeatodo.domain.models.Task
 
 data class TaskUi(
@@ -41,10 +40,6 @@ fun Task.toUi(
     ),
     lastCompletionDate = lastCompletionDate?.let { relativeDateFormatter.format(it) },
     priority = priority?.let {
-        when (it) {
-            Priority.LOW -> PriorityInList.LOW
-            Priority.MEDIUM -> PriorityInList.MEDIUM
-            Priority.HIGH -> PriorityInList.HIGH
-        }
+        PriorityInList.valueOf(it.toString())
     }
 )

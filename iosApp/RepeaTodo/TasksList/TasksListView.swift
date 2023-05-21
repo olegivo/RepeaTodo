@@ -20,23 +20,19 @@ struct TasksListView: View {
     private var navigator: MainNavigatorObservableObject
     
     var body: some View {
-        VStack {
-            Toggle("Show completed", isOn: viewModel.binding(\.isShowCompleted))
-                .padding(.all)
-            ScrollView {
-                LazyVStack(alignment: .leading) {
-                    ForEach(viewModel.tasks) { task in
-                        TasksListItemView(
-                            task: task,
-                            onTaskEditClicked: { viewModel.onTaskEditClicked(task: $0) },
-                            onCompleteTaskClicked: { viewModel.onTaskCompletionClicked(task: $0) }
-                        )
-                        Divider()
-                    }
+        ScrollView {
+            LazyVStack(alignment: .leading) {
+                ForEach(viewModel.tasks) { task in
+                    TasksListItemView(
+                        task: task,
+                        onTaskEditClicked: { viewModel.onTaskEditClicked(task: $0) },
+                        onCompleteTaskClicked: { viewModel.onTaskCompletionClicked(task: $0) }
+                    )
+                    Divider()
                 }
-                .cornerRadius(CGFloat(12))
-                .padding()
             }
+            .cornerRadius(CGFloat(12))
+            .padding()
         }
     }
     

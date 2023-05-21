@@ -174,6 +174,7 @@ struct EditTaskView_Previews: PreviewProvider {
                             uuid: "The UUID",
                             title: "Task 1",
                             daysPeriodicity: 1,
+                            priority: nil,
                             lastCompletionDate: nil
                         )
                     )
