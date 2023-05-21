@@ -32,7 +32,7 @@ import ru.olegivo.repeatodo.kotest.FreeSpec
 import ru.olegivo.repeatodo.main.navigation.FakeMainNavigator
 import ru.olegivo.repeatodo.randomString
 
-internal class EditTaskViewModelImplTest: FreeSpec() {
+internal class EditTaskViewModelTest: FreeSpec() {
 
     init {
         "viewModel" - {
