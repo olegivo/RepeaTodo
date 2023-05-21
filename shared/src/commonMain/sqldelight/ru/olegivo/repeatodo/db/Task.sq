@@ -1,7 +1,10 @@
+import ru.olegivo.repeatodo.domain.Priority;
+
 CREATE TABLE Task (
     uuid TEXT NOT NULL PRIMARY KEY,
     title TEXT NOT NULL,
-    daysPeriodicity INTEGER AS Int NOT NULL
+    daysPeriodicity INTEGER AS Int NOT NULL,
+    priority INTEGER AS Priority
 );
 
 CREATE INDEX task_uuid ON Task(uuid);
@@ -11,6 +14,7 @@ SELECT
     T.uuid,
     T.title,
     T.daysPeriodicity,
+    T.priority,
     TC.lastCompletionDateUtc
 FROM
     Task T
@@ -28,6 +32,7 @@ SELECT
     uuid,
     title,
     daysPeriodicity,
+    priority,
     lastCompletionDateUtc
 FROM
     taskView;
@@ -41,6 +46,7 @@ SELECT
     uuid,
     title,
     daysPeriodicity,
+    priority,
     lastCompletionDateUtc
 FROM
     taskView

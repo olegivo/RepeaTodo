@@ -15,23 +15,8 @@
  * RepeaTodo.
  */
 
-package ru.olegivo.repeatodo.domain.models
+package ru.olegivo.repeatodo.edit.presentation
 
-import kotlinx.datetime.Instant
 import ru.olegivo.repeatodo.domain.Priority
-import ru.olegivo.repeatodo.randomEnum
-import ru.olegivo.repeatodo.randomInstant
-import ru.olegivo.repeatodo.randomInt
-import ru.olegivo.repeatodo.randomNull
-import ru.olegivo.repeatodo.randomString
 
-fun randomTask(
-    priority: Priority? = randomEnum<Priority>().randomNull(),
-    lastCompletionDate: Instant? = randomInstant().randomNull()
-) = Task(
-    uuid = randomString(),
-    title = randomString(),
-    daysPeriodicity = randomInt(),
-    lastCompletionDate = lastCompletionDate,
-    priority = priority,
-)
+data class PriorityItem(val priority: Priority, val title: String)

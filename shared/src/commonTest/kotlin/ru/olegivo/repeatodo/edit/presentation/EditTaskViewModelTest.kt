@@ -19,6 +19,8 @@ package ru.olegivo.repeatodo.edit.presentation
 
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldBeEmpty
 import kotlinx.coroutines.flow.update
@@ -26,17 +28,20 @@ import ru.olegivo.repeatodo.assertItem
 import ru.olegivo.repeatodo.domain.FakeDeleteTaskUseCase
 import ru.olegivo.repeatodo.domain.FakeGetTaskUseCase
 import ru.olegivo.repeatodo.domain.FakeSaveTaskUseCase
+import ru.olegivo.repeatodo.domain.Priority
 import ru.olegivo.repeatodo.domain.models.Task
 import ru.olegivo.repeatodo.domain.models.randomTask
 import ru.olegivo.repeatodo.kotest.FreeSpec
 import ru.olegivo.repeatodo.main.navigation.FakeMainNavigator
+import ru.olegivo.repeatodo.randomEnum
 import ru.olegivo.repeatodo.randomString
 
 internal class EditTaskViewModelTest: FreeSpec() {
 
     init {
         "viewModel" - {
-            val initialTask = randomTask()
+            val initialPriority = randomEnum<Priority>()
+            val initialTask = randomTask(priority = initialPriority)
             val getTaskUseCase = FakeGetTaskUseCase()
             val saveTaskUseCase = FakeSaveTaskUseCase()
             val deleteTaskUseCase = FakeDeleteTaskUseCase()
@@ -60,6 +65,15 @@ internal class EditTaskViewModelTest: FreeSpec() {
                 viewModel.isDeleteError.assertItem { shouldBeFalse() }
                 viewModel.title.assertItem { shouldBeEmpty() }
                 viewModel.daysPeriodicity.assertItem { shouldBeEmpty() }
+                viewModel.priority.assertItem { shouldBeNull() }
+
+                "priorityItems" {
+                    viewModel.priorityItems.shouldContainExactly(
+                        PriorityItem(Priority.HIGH, "High"),
+                        PriorityItem(Priority.MEDIUM, "Medium"),
+                        PriorityItem(Priority.LOW, "Low"),
+                    )
+                }
 
                 "onCancelClicked should navigate back" {
                     viewModel.onCancelClicked()
@@ -79,6 +93,7 @@ internal class EditTaskViewModelTest: FreeSpec() {
                     viewModel.isDeleteError.assertItem { shouldBeFalse() }
                     viewModel.title.assertItem { shouldBeEmpty() }
                     viewModel.daysPeriodicity.assertItem { shouldBeEmpty() }
+                    viewModel.priority.assertItem { shouldBeNull() }
                 }
 
                 "load request complete successfully" - {
@@ -92,6 +107,7 @@ internal class EditTaskViewModelTest: FreeSpec() {
                     viewModel.isDeleteError.assertItem { shouldBeFalse() }
                     viewModel.title.assertItem { shouldBe(initialTask.title) }
                     viewModel.daysPeriodicity.assertItem { shouldBe(initialTask.daysPeriodicity.toString()) }
+                    viewModel.priority.assertItem { shouldBe(initialTask.priority) }
 
                     "should not navigate" {
                         mainNavigator.invocations shouldBe FakeMainNavigator.Invocations.None
@@ -141,6 +157,24 @@ internal class EditTaskViewModelTest: FreeSpec() {
                             } else {
                                 value - 1
                             }.toString()
+                        }
+
+                        "canSave should be true" {
+                            viewModel.canSave.assertItem { shouldBeTrue() }
+                        }
+                    }
+
+                    "clear priority" - {
+                        viewModel.priority.update { null }
+
+                        "canSave should be true" {
+                            viewModel.canSave.assertItem { shouldBeTrue() }
+                        }
+                    }
+
+                    "change priority to other" - {
+                        viewModel.priority.update {
+                            Priority.values().filter { it != initialPriority }.random()
                         }
 
                         "canSave should be true" {

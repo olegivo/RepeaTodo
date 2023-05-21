@@ -15,23 +15,25 @@
  * RepeaTodo.
  */
 
-package ru.olegivo.repeatodo.domain.models
+package ru.olegivo.repeatodo.db
 
-import kotlinx.datetime.Instant
+import io.kotest.matchers.shouldBe
 import ru.olegivo.repeatodo.domain.Priority
-import ru.olegivo.repeatodo.randomEnum
-import ru.olegivo.repeatodo.randomInstant
-import ru.olegivo.repeatodo.randomInt
-import ru.olegivo.repeatodo.randomNull
-import ru.olegivo.repeatodo.randomString
+import ru.olegivo.repeatodo.kotest.FreeSpec
 
-fun randomTask(
-    priority: Priority? = randomEnum<Priority>().randomNull(),
-    lastCompletionDate: Instant? = randomInstant().randomNull()
-) = Task(
-    uuid = randomString(),
-    title = randomString(),
-    daysPeriodicity = randomInt(),
-    lastCompletionDate = lastCompletionDate,
-    priority = priority,
-)
+class PriorityLongAdapterTest: FreeSpec() {
+    init {
+        val adapter = PriorityLongAdapter()
+
+        "decode(encode(value)) should be value" - {
+            Priority.values().forEach { priority ->
+                "priority = $priority" {
+                    val dbValue = adapter.encode(priority)
+                    val decoded = adapter.decode(dbValue)
+
+                    decoded shouldBe priority
+                }
+            }
+        }
+    }
+}

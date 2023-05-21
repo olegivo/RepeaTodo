@@ -60,4 +60,6 @@ fun randomLocalDateTime(): LocalDateTime =
 
 fun randomBoolean() = Random.nextBoolean()
 
+inline fun <reified T: Enum<T>> randomEnum() = enumValues<T>().random()
+
 fun <T> T.randomNull() = takeIf { randomBoolean() }

@@ -36,6 +36,7 @@ import ru.olegivo.repeatodo.domain.DeleteTaskUseCase
 import ru.olegivo.repeatodo.domain.FakeDeleteTaskUseCase
 import ru.olegivo.repeatodo.domain.FakeSaveTaskUseCase
 import ru.olegivo.repeatodo.domain.GetTaskUseCase
+import ru.olegivo.repeatodo.domain.Priority
 import ru.olegivo.repeatodo.domain.SaveTaskUseCase
 import ru.olegivo.repeatodo.domain.WorkState
 import ru.olegivo.repeatodo.domain.filterCompleted
@@ -71,14 +72,18 @@ class EditTaskViewModel(
 
     val daysPeriodicity = MutableStateFlow("").cMutableStateFlow()
 
+    val priority = MutableStateFlow<Priority?>(null).cMutableStateFlow()
+
     private val actualTask = combine(
         loadedTask,
         title,
-        daysPeriodicity.filter { it.toIntOrNull() != null }
-    ) { task, title, daysPeriodicity ->
+        daysPeriodicity.filter { it.toIntOrNull() != null },
+        priority
+    ) { task, title, daysPeriodicity, priority ->
         task.copy(
             title = title,
-            daysPeriodicity = daysPeriodicity.toInt()
+            daysPeriodicity = daysPeriodicity.toInt(),
+            priority = priority
         )
     }
 
@@ -113,6 +118,15 @@ class EditTaskViewModel(
     val isDeleteError = deletingState.map { it is WorkState.Error }
         .asState(false).cStateFlow()
 
+    val priorityItems: List<PriorityItem> =
+        Priority.values().sortedByDescending { it.value }.map { priority ->
+            PriorityItem(
+                priority = priority,
+                title = priority.toString().lowercase()
+                    .replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+            )
+        }
+
     init {
         loadTask()
     }
@@ -120,8 +134,7 @@ class EditTaskViewModel(
     private fun loadTask() {
         viewModelScope.launch {
             loadedTask.collect { origin ->
-                title.update { origin.title }
-                daysPeriodicity.update { origin.daysPeriodicity.toString() }
+                loadTaskFields(origin)
             }
         }
         viewModelScope.launch {
@@ -134,6 +147,12 @@ class EditTaskViewModel(
         viewModelScope.launch {
             loadingState.emitAll(getTask(uuid))
         }
+    }
+
+    private fun loadTaskFields(origin: Task) {
+        title.update { origin.title }
+        daysPeriodicity.update { origin.daysPeriodicity.toString() }
+        priority.update { origin.priority }
     }
 
     fun onSaveClicked() {
@@ -165,19 +184,23 @@ fun PreviewEnvironment.editTaskViewModelWithFakes(
             uuid = uuid,
             title = "Task 1",
             daysPeriodicity = 1,
+            priority = null,
             lastCompletionDate = null,
         )
     )
 ) {
     register<GetTaskUseCase> {
-        class FakeGetTaskUseCase(private val loadResult: WorkState<Task> = WorkState.Completed(
-            Task(
-                uuid = uuid,
-                title = "Task 1",
-                daysPeriodicity = 1,
-                lastCompletionDate = null,
+        class FakeGetTaskUseCase(
+            private val loadResult: WorkState<Task> = WorkState.Completed(
+                Task(
+                    uuid = uuid,
+                    title = "Task 1",
+                    daysPeriodicity = 1,
+                    priority = null,
+                    lastCompletionDate = null,
+                )
             )
-        )): GetTaskUseCase {
+        ): GetTaskUseCase {
             override fun invoke(uuid: String): Flow<WorkState<Task>> = flowOf(this.loadResult)
         }
 

@@ -18,51 +18,60 @@ struct EditTaskView: View {
 
     var body: some View {
         NavigationView {
-            Form {
-                if viewModel.state(\.isLoading) {
-                    ProgressView()
-                } else {
-                    Section(header: Text("Title")) {
-                        titleEditor()
-                    }
-                    Section(header: Text("Days periodicity")) {
-                        daysPeriodicityEditor()
-                    }
+            if viewModel.state(\.isLoading) {
+                ProgressView()
+            } else {
+                VStack(alignment: .leading) {
+                    Text("Title")
+                    titleEditor()
+                        .padding(.vertical)
                     
-                    Section {
-                        saveButton()
-                    }
+                    
+                    Text("Days periodicity")
+                    daysPeriodicityEditor()
+                        .padding(.vertical)
+                    
+                    
+                    Text("Priority")
+                    priorityEditor()
+                        .padding(.vertical)
+                    
+                    Spacer()
+                        .frame(height: .infinity)
+                    
+                    saveButton()
                 }
-            }
-            .actionSheet(isPresented: $showActionSheet) {
-                deleteConfirmation()
-            }
-            .navigationBarTitle("Edit Todo", displayMode: .inline)
-            .toolbar {
-                toolbarItemClose()
-                toolbarItemDelete()
-            }
-            .handleNavigation(navigator)
-            .alert(
-                "Can't load Task",
-                isPresented: Binding(
-                    get: { viewModel.state(\.isLoadingError) },
-                    set: {_,_ in }
-                ),
-                actions: {
-                    Button("OK") {
-                        viewModel.onCancelClicked()
-                    }
+                .padding()
+                .actionSheet(isPresented: $showActionSheet) {
+                    deleteConfirmation()
                 }
-            )
-            .alert(
-                "Save error",
-                isPresented: Binding(
-                    get: { viewModel.state(\.isSaveError) },
-                    set: {_,_ in }
-                ),
-                actions: { }
-            )
+                .navigationBarTitle("Edit Todo", displayMode: .inline)
+                .toolbar {
+                    toolbarItemClose()
+                    toolbarItemDelete()
+                }
+                .handleNavigation(navigator)
+                .alert(
+                    "Can't load Task",
+                    isPresented: Binding(
+                        get: { viewModel.state(\.isLoadingError) },
+                        set: {_,_ in }
+                    ),
+                    actions: {
+                        Button("OK") {
+                            viewModel.onCancelClicked()
+                        }
+                    }
+                )
+                .alert(
+                    "Save error",
+                    isPresented: Binding(
+                        get: { viewModel.state(\.isSaveError) },
+                        set: {_,_ in }
+                    ),
+                    actions: { }
+                )
+            }
         }
     }
 
@@ -79,6 +88,21 @@ struct EditTaskView: View {
             text: viewModel.binding(\.daysPeriodicity)
         )
         .keyboardType(.numberPad)
+    }
+
+    fileprivate func priorityEditor() -> some View {
+        let items = viewModel.priorityItems
+        
+        return DropdownSelector(
+            items: items,
+            selectedItem: items.first(where: {
+                $0.priority == viewModel.priority.value
+            }),
+            textSelector: { $0.title },
+            onSelected: {
+                viewModel.priority.setValue($0.priority)
+            }
+        )
     }
 
     fileprivate func saveButton() -> some View {

@@ -102,6 +102,7 @@ fun PreviewEnvironment.taskListFakes() {
                     uuid = newUuid(),
                     title = "Task $it",
                     daysPeriodicity = it,
+                    priority = null,
                     lastCompletionDate = null,
                 )
             }

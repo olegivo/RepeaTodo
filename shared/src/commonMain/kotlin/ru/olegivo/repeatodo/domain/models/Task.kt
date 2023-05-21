@@ -18,12 +18,14 @@
 package ru.olegivo.repeatodo.domain.models
 
 import kotlinx.datetime.Instant
+import ru.olegivo.repeatodo.domain.Priority
 
 data class Task(
     val uuid: String,
     val title: String,
     val daysPeriodicity: Int,
-    val lastCompletionDate: Instant? = null,
+    val priority: Priority?,
+    val lastCompletionDate: Instant? = null, // TODO: remove defaults
 ) {
     companion object {
         const val DEFAULT_DAYS_PERIODICITY: Int = 1

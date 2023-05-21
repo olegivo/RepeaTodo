@@ -31,14 +31,19 @@ private const val DbName: String = "repeatodo.db"
 
 fun createDatabase(
     driverFactory: DriverFactory,
-    instantLongAdapter: InstantLongAdapter
+    instantLongAdapter: InstantLongAdapter,
+    priorityAdapter: PriorityLongAdapter
 ): RepeaTodoDb {
 
     val driver = driverFactory.createDriver(
         dbName = DbName,
         foreignKeyConstraints = true
     )
-    val database = RepeaTodoDb(driver, TaskCompletion.Adapter(instantLongAdapter))
+    val database = RepeaTodoDb(
+        driver = driver,
+        TaskAdapter = Task.Adapter(priorityAdapter = priorityAdapter),
+        TaskCompletionAdapter = TaskCompletion.Adapter(completionDateUtcAdapter = instantLongAdapter)
+    )
 
     // Do more work with the database (see below).
     return database

@@ -119,6 +119,12 @@ internal fun EditTask(
                             .padding(16.dp),
                         viewModel = viewModel
                     )
+                    PriorityEditor(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        viewModel = viewModel
+                    )
                     Spacer(
                         modifier = Modifier
                             .width(IntrinsicSize.Max)
@@ -175,6 +181,22 @@ private fun DaysPeriodicityEditor(
         ),
         keyboardActions = KeyboardActions(onDone = { viewModel.onSaveClicked() })
     )
+}
+
+@Composable
+private fun PriorityEditor(
+    modifier: Modifier = Modifier,
+    viewModel: EditTaskViewModel
+) {
+    val priority = viewModel.priority.collectAsState()
+    val priorityItems = remember { mutableStateOf(viewModel.priorityItems) }
+    DropDownSelector(
+        modifier = modifier,
+        items = priorityItems,
+        initialValue = priorityItems.value.singleOrNull { it.priority == priority.value },
+        textSelector = { title },
+        canClear = true
+    ) { viewModel.priority.value = it?.priority }
 }
 
 @Composable
