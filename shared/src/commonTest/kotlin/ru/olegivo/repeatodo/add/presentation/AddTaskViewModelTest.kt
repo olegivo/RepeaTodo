@@ -17,7 +17,6 @@
 
 package ru.olegivo.repeatodo.add.presentation
 
-import io.kotest.core.spec.IsolationMode
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.nulls.shouldBeNull
@@ -29,6 +28,7 @@ import kotlinx.coroutines.flow.update
 import ru.olegivo.repeatodo.assertItem
 import ru.olegivo.repeatodo.domain.FakeSaveTaskUseCase
 import ru.olegivo.repeatodo.domain.models.Task
+import ru.olegivo.repeatodo.domain.models.ToDoList
 import ru.olegivo.repeatodo.kotest.FreeSpec
 import ru.olegivo.repeatodo.randomString
 
@@ -61,8 +61,12 @@ internal class AddTaskViewModelTest: FreeSpec() {
                         viewModel.title.assertItem { shouldBe(title) }
                         viewModel.canAdd.assertItem { shouldBeFalse() }
                         saveTaskUseCase.savingTask.shouldNotBeNull().should {
+                            // TODO: shouldBe(Task(uuid = concreteRandomUuid, ...)
                             it.title shouldBe title
                             it.daysPeriodicity shouldBe Task.DEFAULT_DAYS_PERIODICITY
+                            it.lastCompletionDate.shouldBeNull()
+                            it.priority.shouldBeNull()
+                            it.toDoListUuid shouldBe ToDoList.Predefined.Kind.INBOX.uuid
                         }
 
                         "save success" {

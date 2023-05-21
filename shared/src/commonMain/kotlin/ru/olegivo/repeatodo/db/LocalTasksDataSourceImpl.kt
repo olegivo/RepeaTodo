@@ -84,12 +84,14 @@ class LocalTasksDataSourceImpl(
         title: String,
         daysPeriodicity: Int,
         priority: Priority?,
+        toDoListUuid: String,
         lastCompletionDate: Long?
     ) = Task(
         uuid = uuid,
         title = title,
         daysPeriodicity = daysPeriodicity,
         priority = priority,
+        toDoListUuid = toDoListUuid,
         lastCompletionDate = lastCompletionDate?.toInstant()
     )
 

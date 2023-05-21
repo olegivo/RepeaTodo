@@ -25,10 +25,14 @@ import io.kotest.matchers.shouldBe
 import ru.olegivo.repeatodo.assertItem
 import ru.olegivo.repeatodo.domain.FakeDateTimeProvider
 import ru.olegivo.repeatodo.domain.LocalTasksDataSource
+import ru.olegivo.repeatodo.domain.Priority
 import ru.olegivo.repeatodo.domain.models.Task
-import ru.olegivo.repeatodo.domain.models.randomTask
+import ru.olegivo.repeatodo.domain.models.ToDoList
 import ru.olegivo.repeatodo.kotest.FreeSpec
+import ru.olegivo.repeatodo.randomEnum
+import ru.olegivo.repeatodo.randomNull
 import ru.olegivo.repeatodo.randomString
+import ru.olegivo.repeatodo.utils.newUuid
 import kotlin.time.Duration.Companion.hours
 
 class LocalTasksDataSourceImplTest: FreeSpec() {
@@ -43,8 +47,47 @@ class LocalTasksDataSourceImplTest: FreeSpec() {
                 instantLongAdapter = dbHelper.instantLongAdapter,
                 dispatchersProvider = dispatchersProvider
             )
+            // TODO: toDoListUuid != inbox
+            // Inbox:
+            dbHelper.driver.execute(
+                identifier = null,
+                sql = "INSERT INTO ToDoList VALUES (?, ?, ?)",
+                parameters = 3
+            ) {
+                bindString(1, ToDoList.Predefined.Kind.INBOX.uuid)
+                bindString(2, ToDoList.Predefined.Kind.INBOX.name)
+                bindLong(3, 1)
+            }
 
-            val task1 = randomTask(lastCompletionDate = null)
+            // Custom:
+            val customToDoListUuid = newUuid()
+            val customToDoListTitle = randomString()
+            dbHelper.driver.execute(
+                identifier = null,
+                sql = "INSERT INTO ToDoList VALUES (?, ?, ?)",
+                parameters = 3
+            ) {
+                bindString(1, customToDoListUuid)
+                bindString(2, customToDoListTitle)
+                bindLong(3, 0)
+            }
+
+            val task1 = Task(
+                uuid = randomString(),
+                title = randomString(),
+                daysPeriodicity = 1,
+                priority = randomEnum<Priority>().randomNull(),
+                toDoListUuid = ToDoList.Predefined.Kind.INBOX.uuid,
+                lastCompletionDate = null
+            )
+            val task2 = Task(
+                uuid = randomString(),
+                title = randomString(),
+                daysPeriodicity = 1,
+                priority = randomEnum<Priority>().randomNull(),
+                toDoListUuid = customToDoListUuid,
+                lastCompletionDate = null
+            )
 
             "empty data source" - {
 
@@ -65,7 +108,6 @@ class LocalTasksDataSourceImplTest: FreeSpec() {
                 }
 
                 "save" - {
-                    val task2 = randomTask(lastCompletionDate = null)
                     localTasksDataSource.save(task1)
 
                     "tasks should contain added tasks" {
@@ -79,7 +121,7 @@ class LocalTasksDataSourceImplTest: FreeSpec() {
                     }
 
                     "get should return added task WHEN specified added task uuid" {
-                        localTasksDataSource.save(task2) // one more
+                        localTasksDataSource.save(task2) // the other
 
                         localTasksDataSource.getTask(task1.uuid)
                             .assertItem { shouldBe(task1) }
@@ -93,7 +135,7 @@ class LocalTasksDataSourceImplTest: FreeSpec() {
                     }
 
                     "delete should delete added task WHEN specified added task uuid" {
-                        localTasksDataSource.save(task2) // one more
+                        localTasksDataSource.save(task2) // the other
                         localTasksDataSource.expectSelect(task1, task2)
 
                         localTasksDataSource.delete(uuid = task1.uuid)
@@ -106,7 +148,16 @@ class LocalTasksDataSourceImplTest: FreeSpec() {
                         localTasksDataSource.expectSelect(task1, task2)
 
                         val newVersion =
-                            randomTask(lastCompletionDate = null).copy(uuid = task1.uuid)
+                            Task(
+                                uuid = task1.uuid,
+                                lastCompletionDate = null,
+                                priority = Priority.values()
+                                    .filter { it != task1.priority }
+                                    .random(),
+                                title = randomString(),
+                                daysPeriodicity = task1.daysPeriodicity + 1,
+                                toDoListUuid = customToDoListUuid
+                            )
                         localTasksDataSource.save(newVersion)
 
                         localTasksDataSource.expectSelect(newVersion, task2)
@@ -114,28 +165,13 @@ class LocalTasksDataSourceImplTest: FreeSpec() {
                 }
 
                 "addTaskCompletion" - {
-                    val task1 = Task(
-                        uuid = randomString(),
-                        title = randomString(),
-                        daysPeriodicity = 1,
-                        priority = null,
-                        lastCompletionDate = null
-                    )
-                    val task2 = Task(
-                        uuid = randomString(),
-                        title = randomString(),
-                        daysPeriodicity = 1,
-                        priority = null,
-                        lastCompletionDate = null
-                    )
                     localTasksDataSource.save(task1)
                     localTasksDataSource.save(task2)
                     localTasksDataSource.expectSelect(task1, task2)
 
-                    val (d1, d2) = with(dateTimeProvider.getCurrentTimeZone()) {
+                    val (d1, d2) =
                         (dateTimeProvider.getCurrentInstant() - 1.hours) to
                             (dateTimeProvider.getCurrentInstant() - 2.hours)
-                    }
 
                     localTasksDataSource.addTaskCompletion(task1.uuid, d1)
                     localTasksDataSource.addTaskCompletion(task2.uuid, d2)
@@ -160,20 +196,6 @@ class LocalTasksDataSourceImplTest: FreeSpec() {
                 }
 
                 "deleteLatestTaskCompletion" - {
-                    val task1 = Task(
-                        uuid = randomString(),
-                        title = randomString(),
-                        daysPeriodicity = 1,
-                        priority = null,
-                        lastCompletionDate = null
-                    )
-                    val task2 = Task(
-                        uuid = randomString(),
-                        title = randomString(),
-                        daysPeriodicity = 1,
-                        priority = null,
-                        lastCompletionDate = null
-                    )
                     localTasksDataSource.save(task1)
                     localTasksDataSource.save(task2)
                     localTasksDataSource.expectSelect(task1, task2)

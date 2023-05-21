@@ -16,6 +16,7 @@
  */
 package ru.olegivo.repeatodo.edit.presentation
 
+import dev.icerock.moko.mvvm.flow.CStateFlow
 import dev.icerock.moko.mvvm.flow.cMutableStateFlow
 import dev.icerock.moko.mvvm.flow.cStateFlow
 import kotlinx.coroutines.channels.BufferOverflow
@@ -25,6 +26,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -36,11 +38,13 @@ import ru.olegivo.repeatodo.domain.DeleteTaskUseCase
 import ru.olegivo.repeatodo.domain.FakeDeleteTaskUseCase
 import ru.olegivo.repeatodo.domain.FakeSaveTaskUseCase
 import ru.olegivo.repeatodo.domain.GetTaskUseCase
+import ru.olegivo.repeatodo.domain.GetToDoListsUseCase
 import ru.olegivo.repeatodo.domain.Priority
 import ru.olegivo.repeatodo.domain.SaveTaskUseCase
 import ru.olegivo.repeatodo.domain.WorkState
 import ru.olegivo.repeatodo.domain.filterCompleted
 import ru.olegivo.repeatodo.domain.models.Task
+import ru.olegivo.repeatodo.domain.models.ToDoList
 import ru.olegivo.repeatodo.main.navigation.FakeMainNavigator
 import ru.olegivo.repeatodo.main.navigation.MainNavigator
 import ru.olegivo.repeatodo.utils.PreviewEnvironment
@@ -49,15 +53,26 @@ import ru.olegivo.repeatodo.utils.newUuid
 class EditTaskViewModel(
     private val uuid: String,
     private val getTask: GetTaskUseCase,
+    private val getToDoLists: GetToDoListsUseCase,
     private val saveTask: SaveTaskUseCase,
     private val deleteTask: DeleteTaskUseCase,
     private val mainNavigator: MainNavigator,
 ): BaseViewModel() {
 
-    private val loadingState = MutableSharedFlow<WorkState<Task>>(
+    private val loadingTask = MutableSharedFlow<WorkState<Task>>(
         replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
+
+    private val loadingToDoLists = MutableSharedFlow<WorkState<List<ToDoList>>>(
+        replay = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+
+    val loadingState = combine(
+        loadingTask,
+        loadingToDoLists
+    ) { taskState, toDoListsState -> taskState to toDoListsState }
 
     private val savingState = MutableSharedFlow<WorkState<Unit>>(
         replay = 1,
@@ -66,31 +81,48 @@ class EditTaskViewModel(
 
     private val deletingState = MutableStateFlow<WorkState<Unit>?>(null)
 
-    private val loadedTask = loadingState.filterCompleted()
+    private val loadedTask = loadingTask.filterCompleted()
+    private val loadedToDoLists = loadingToDoLists.filterCompleted()
 
     val title = MutableStateFlow("").cMutableStateFlow()
+
+    val toDoList = MutableStateFlow<ToDoListItem>(ToDoListItem.UNDEFINED).cMutableStateFlow()
 
     val daysPeriodicity = MutableStateFlow("").cMutableStateFlow()
 
     val priority = MutableStateFlow<Priority?>(null).cMutableStateFlow()
 
+    val toDoListItems: CStateFlow<List<ToDoListItem>> =
+        loadingToDoLists.filterCompleted()
+            .map { items ->
+                items.map { it.toItem() }
+            }
+            .asState(emptyList())
+            .cStateFlow()
+
     private val actualTask = combine(
         loadedTask,
         title,
         daysPeriodicity.filter { it.toIntOrNull() != null },
-        priority
-    ) { task, title, daysPeriodicity, priority ->
+        priority,
+        toDoList.filterNotNull()
+    ) { task, title, daysPeriodicity, priority, toDoList ->
         task.copy(
             title = title,
             daysPeriodicity = daysPeriodicity.toInt(),
-            priority = priority
+            priority = priority,
+            toDoListUuid = toDoList.uuid
         )
     }
 
-    val isLoading = loadingState.map { it is WorkState.InProgress }
+    val isLoading = loadingState.map { (taskState, toDoListsState) ->
+        taskState is WorkState.InProgress || toDoListsState is WorkState.InProgress
+    }
         .asState(false).cStateFlow()
 
-    val isLoadingError = loadingState.map { it is WorkState.Error }
+    val isLoadingError = loadingState.map { (taskState, toDoListsState) ->
+        taskState is WorkState.Error || toDoListsState is WorkState.Error
+    }
         .asState(false).cStateFlow()
 
     val canSave =
@@ -109,7 +141,7 @@ class EditTaskViewModel(
 
     val canDelete =
         combine(
-            loadingState.map { it is WorkState.Completed },
+            loadingTask.map { it is WorkState.Completed },
             deletingState
         ) { isLoaded, deleting ->
             isLoaded && (deleting == null || deleting is WorkState.Error)
@@ -128,7 +160,14 @@ class EditTaskViewModel(
         }
 
     init {
-        loadTask()
+        viewModelScope.launch {
+            launch {
+                loadingToDoLists.emitAll(getToDoLists())
+            }
+            launch {
+                loadTask()
+            }
+        }
     }
 
     private fun loadTask() {
@@ -145,14 +184,17 @@ class EditTaskViewModel(
             }
         }
         viewModelScope.launch {
-            loadingState.emitAll(getTask(uuid))
+            loadingTask.emitAll(getTask(uuid))
         }
     }
 
-    private fun loadTaskFields(origin: Task) {
+    private suspend fun loadTaskFields(origin: Task) {
         title.update { origin.title }
         daysPeriodicity.update { origin.daysPeriodicity.toString() }
         priority.update { origin.priority }
+        toDoList.update {
+            loadedToDoLists.first().single { it.uuid == origin.toDoListUuid }.toItem()
+        }
     }
 
     fun onSaveClicked() {
@@ -186,6 +228,7 @@ fun PreviewEnvironment.editTaskViewModelWithFakes(
             daysPeriodicity = 1,
             priority = null,
             lastCompletionDate = null,
+            toDoListUuid = ToDoList.Predefined.Kind.INBOX.uuid,
         )
     )
 ) {
@@ -198,6 +241,7 @@ fun PreviewEnvironment.editTaskViewModelWithFakes(
                     daysPeriodicity = 1,
                     priority = null,
                     lastCompletionDate = null,
+                    toDoListUuid = ToDoList.Predefined.Kind.INBOX.uuid,
                 )
             )
         ): GetTaskUseCase {
@@ -209,5 +253,5 @@ fun PreviewEnvironment.editTaskViewModelWithFakes(
     register<SaveTaskUseCase> { FakeSaveTaskUseCase() }
     register<DeleteTaskUseCase> { FakeDeleteTaskUseCase() }
     register<MainNavigator> { FakeMainNavigator() }
-    register { EditTaskViewModel(uuid, get(), get(), get(), get()) }
+    register { EditTaskViewModel(uuid, get(), get(), get(), get(), get()) }
 }

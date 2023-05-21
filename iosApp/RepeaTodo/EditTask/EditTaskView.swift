@@ -25,6 +25,10 @@ struct EditTaskView: View {
                     Text("Title")
                     titleEditor()
                         .padding(.vertical)
+
+                    Text("Todo-list")
+                    toDoListEditor()
+                        .padding(.vertical)
                     
                     Text("Days periodicity")
                     daysPeriodicityEditor()
@@ -102,6 +106,21 @@ struct EditTaskView: View {
         )
     }
 
+    fileprivate func toDoListEditor() -> some View {
+        DropdownSelector(
+            items: viewModel.state(\.toDoListItems),
+            selectedItem: viewModel.stateNullable<ToDoListItem>(
+                \.toDoList,
+                 equals: { $0 == $1 },
+                 mapper: { $0 }
+            ),
+            textSelector: { $0.title },
+            onSelected: {
+                viewModel.toDoList.setValue($0)
+            }
+        )
+    }
+
     fileprivate func saveButton() -> some View {
         return Button(action: {
             viewModel.onSaveClicked()
@@ -172,6 +191,7 @@ struct EditTaskView_Previews: PreviewProvider {
                             title: "Task 1",
                             daysPeriodicity: 1,
                             priority: nil,
+                            toDoListUuid: "TODO list UUID",
                             lastCompletionDate: nil
                         )
                     )

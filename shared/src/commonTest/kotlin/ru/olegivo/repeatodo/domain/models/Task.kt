@@ -27,6 +27,7 @@ import ru.olegivo.repeatodo.randomString
 
 fun randomTask(
     priority: Priority? = randomEnum<Priority>().randomNull(),
+    toDoListUuid: String = ToDoList.Predefined.Kind.INBOX.uuid,
     lastCompletionDate: Instant? = randomInstant().randomNull()
 ) = Task(
     uuid = randomString(),
@@ -34,4 +35,5 @@ fun randomTask(
     daysPeriodicity = randomInt(),
     lastCompletionDate = lastCompletionDate,
     priority = priority,
+    toDoListUuid = toDoListUuid,
 )

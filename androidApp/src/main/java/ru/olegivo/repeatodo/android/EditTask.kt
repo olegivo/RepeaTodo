@@ -63,7 +63,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.koin.core.parameter.parametersOf
 import ru.olegivo.repeatodo.domain.WorkState
-import ru.olegivo.repeatodo.domain.models.ToDoList
 import ru.olegivo.repeatodo.edit.presentation.EditTaskViewModel
 import ru.olegivo.repeatodo.edit.presentation.editTaskViewModelWithFakes
 import ru.olegivo.repeatodo.preview.fakeOrInjectKoin
@@ -114,6 +113,20 @@ internal fun EditTask(
                         title = title,
                         viewModel = viewModel
                     )
+                    Text(
+                        "Todo-list:",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp)
+                            .padding(horizontal = 16.dp),
+                    )
+                    ToDoListEditor(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp)
+                            .padding(horizontal = 16.dp),
+                        viewModel = viewModel
+                    )
                     DaysPeriodicityEditor(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -161,6 +174,19 @@ private fun TitleEditor(
         label = { Text("Title") },
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
         keyboardActions = KeyboardActions(onDone = { viewModel.onSaveClicked() })
+    )
+}
+
+@Composable
+fun ToDoListEditor(modifier: Modifier = Modifier, viewModel: EditTaskViewModel) {
+    val initialValue = viewModel.toDoList.collectAsState()
+    DropDownSelector(
+        modifier = modifier,
+        items = viewModel.toDoListItems.collectAsState(),
+        initialValue = initialValue,
+        textSelector = { title },
+        canClear = false,
+        onSelected = { item -> item?.let { viewModel.toDoList.value = it } }
     )
 }
 

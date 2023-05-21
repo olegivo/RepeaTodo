@@ -27,12 +27,14 @@ internal fun TaskDomain.toDb() =
         uuid = uuid,
         title = title,
         daysPeriodicity = daysPeriodicity,
-        priority = priority
+        priority = priority,
+        toDoListUuid = toDoListUuid
     )
 
 
 internal fun ToDoListDomain.Custom.toDb() =
     ToDoListDb(
         uuid = uuid,
-        title = title
+        title = title,
+        isPredefined = false
     )

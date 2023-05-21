@@ -15,22 +15,15 @@
  * RepeaTodo.
  */
 
-package ru.olegivo.repeatodo.domain.models
+package ru.olegivo.repeatodo.edit.presentation
 
-import kotlinx.datetime.Instant
-import ru.olegivo.repeatodo.domain.Priority
+import ru.olegivo.repeatodo.domain.models.ToDoList
 
-data class Task(
-    val uuid: String,
-    val title: String,
-    val daysPeriodicity: Int,
-    val priority: Priority?,
-    val toDoListUuid: String,
-    val lastCompletionDate: Instant?
-) {
+data class ToDoListItem(val uuid: String, val title: String) {
     companion object {
-        const val DEFAULT_DAYS_PERIODICITY: Int = 1
-        const val MIN_DAYS_PERIODICITY: Int = 1
-        const val MAX_DAYS_PERIODICITY: Int = 1000
+        val UNDEFINED = ToDoListItem("", "")
     }
 }
+
+fun ToDoList.toItem() =
+    ToDoListItem(uuid = uuid, title = title)

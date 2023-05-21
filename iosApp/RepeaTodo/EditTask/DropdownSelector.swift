@@ -117,11 +117,13 @@ where Item: Hashable {
                         }
                     )
                 }
-            }, alignment: .topLeading
+            },
+            alignment: .topLeading
         )
         .background(
             RoundedRectangle(cornerRadius: 5).fill(Color.white)
         )
+        .zIndex(1)
     }
     
     private func getSelectedText() -> String {

@@ -35,9 +35,11 @@ import ru.olegivo.repeatodo.domain.GetTasksListUseCase
 import ru.olegivo.repeatodo.domain.IsTaskCompletedUseCase
 import ru.olegivo.repeatodo.domain.Priority
 import ru.olegivo.repeatodo.domain.models.Task
+import ru.olegivo.repeatodo.domain.models.ToDoList
 import ru.olegivo.repeatodo.edit.navigation.EditTaskNavigator
 import ru.olegivo.repeatodo.list.domain.TasksListFilters
 import ru.olegivo.repeatodo.main.navigation.FakeMainNavigator
+import ru.olegivo.repeatodo.randomInstant
 import ru.olegivo.repeatodo.utils.PreviewEnvironment
 import ru.olegivo.repeatodo.utils.newUuid
 
@@ -125,7 +127,8 @@ fun PreviewEnvironment.taskListFakes() {
                     title = "Task $it",
                     daysPeriodicity = it,
                     priority = null,
-                    lastCompletionDate = null,
+                    toDoListUuid = ToDoList.Predefined.Kind.INBOX.uuid,
+                    lastCompletionDate = randomInstant(),
                 )
             }
         }

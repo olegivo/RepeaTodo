@@ -1,9 +1,10 @@
 CREATE TABLE ToDoList (
     uuid TEXT NOT NULL PRIMARY KEY,
-    title TEXT NOT NULL
+    title TEXT NOT NULL,
+    isPredefined INTEGER AS Boolean NOT NULL DEFAULT(0)
 );
 
-CREATE INDEX todolist_uuid ON Task(uuid);
+CREATE INDEX todolist_uuid ON ToDoList(uuid);
 
 getToDoLists:
 SELECT
