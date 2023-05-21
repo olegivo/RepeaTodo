@@ -12,6 +12,7 @@
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
 		5131CA6329EC461800BFC251 /* MainNavigator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5131CA6229EC461800BFC251 /* MainNavigator.swift */; };
 		5131CA6629EC47ED00BFC251 /* EnvironmentValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5131CA6529EC47ED00BFC251 /* EnvironmentValues.swift */; };
+		513E69CE2A11856500830262 /* DropdownSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513E69CD2A11856500830262 /* DropdownSelector.swift */; };
 		5168799D29D8CFA30067450C /* RepeaTodo_shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5168799B29D8CFA30067450C /* RepeaTodo_shared.swift */; };
 		51E119B629F3FAF200E4D780 /* ViewModelStateNullable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E119B029F3FAF200E4D780 /* ViewModelStateNullable.swift */; };
 		51E119B729F3FAF200E4D780 /* CFlowExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E119B129F3FAF200E4D780 /* CFlowExt.swift */; };
@@ -52,6 +53,7 @@
 		4A8D5B7F5C25DCDF16C1D951 /* libPods-iosApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-iosApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5131CA6229EC461800BFC251 /* MainNavigator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainNavigator.swift; sourceTree = "<group>"; };
 		5131CA6529EC47ED00BFC251 /* EnvironmentValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentValues.swift; sourceTree = "<group>"; };
+		513E69CD2A11856500830262 /* DropdownSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropdownSelector.swift; sourceTree = "<group>"; };
 		5168799B29D8CFA30067450C /* RepeaTodo_shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RepeaTodo_shared.swift; path = ../shared/build/bin/iosSimulatorArm64/debugFramework/sharedSwift/RepeaTodo_shared.swift; sourceTree = "<group>"; };
 		51E119B029F3FAF200E4D780 /* ViewModelStateNullable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModelStateNullable.swift; sourceTree = "<group>"; };
 		51E119B129F3FAF200E4D780 /* CFlowExt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CFlowExt.swift; sourceTree = "<group>"; };
@@ -180,6 +182,7 @@
 			isa = PBXGroup;
 			children = (
 				5570ECFC28620C640062D58D /* EditTaskView.swift */,
+				513E69CD2A11856500830262 /* DropdownSelector.swift */,
 			);
 			path = EditTask;
 			sourceTree = "<group>";
@@ -372,6 +375,7 @@
 				5570ECFD28620C640062D58D /* EditTaskView.swift in Sources */,
 				5570ECEE285DC2740062D58D /* MainViewModel.swift in Sources */,
 				51E119B629F3FAF200E4D780 /* ViewModelStateNullable.swift in Sources */,
+				513E69CE2A11856500830262 /* DropdownSelector.swift in Sources */,
 				5168799D29D8CFA30067450C /* RepeaTodo_shared.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				51E119BC29F4392D00E4D780 /* PreviewEnvironmentExt.swift in Sources */,
