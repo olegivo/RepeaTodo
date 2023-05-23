@@ -61,7 +61,16 @@ fun DrawerToDoListsCustomItem(
     val showDeleteConfirmation = itemViewModel.showDeleteConfirmation.collectAsState()
     Column {
         NavigationDrawerItem(
-            icon = { Icon(Icons.Outlined.List, contentDescription = null) },
+            icon = {
+                Icon(
+                    if(showDeleteConfirmation.value) {
+                        Icons.Outlined.Delete
+                    } else {
+                        Icons.Outlined.List
+                    },
+                    contentDescription = null
+                )
+            },
             label = {
                 if (isEditing.value) {
                     TextField(
@@ -81,22 +90,35 @@ fun DrawerToDoListsCustomItem(
             modifier = modifier,
             badge = {
                 Row {
-                    if (isEditing.value) {
-                        IconButton(
-                            enabled = itemViewModel.canSave.collectAsState().value,
-                            onClick = { itemViewModel.onSaveClicked() }
-                        ) {
-                            Icon(Icons.Outlined.Done, null)
+                    when {
+                        showDeleteConfirmation.value -> {
+                            IconButton(
+                                onClick = { itemViewModel.onDeleteConfirmed() }
+                            ) {
+                                Icon(Icons.Outlined.Done, null)
+                            }
+                            IconButton(onClick = { itemViewModel.onDeleteDismissed() }) {
+                                Icon(Icons.Outlined.Close, null)
+                            }
                         }
-                        IconButton(onClick = { itemViewModel.onCancelEditClicked() }) {
-                            Icon(Icons.Outlined.Close, null)
+                        isEditing.value -> {
+                            IconButton(
+                                enabled = itemViewModel.canSave.collectAsState().value,
+                                onClick = { itemViewModel.onSaveClicked() }
+                            ) {
+                                Icon(Icons.Outlined.Done, null)
+                            }
+                            IconButton(onClick = { itemViewModel.onCancelEditClicked() }) {
+                                Icon(Icons.Outlined.Close, null)
+                            }
                         }
-                    } else {
-                        IconButton(onClick = { itemViewModel.onBeginEditClicked() }) {
-                            Icon(Icons.Outlined.Edit, contentDescription = null)
-                        }
-                        IconButton(onClick = { itemViewModel.onDeleteClicked() }) {
-                            Icon(Icons.Outlined.Delete, null)
+                        else -> {
+                            IconButton(onClick = { itemViewModel.onBeginEditClicked() }) {
+                                Icon(Icons.Outlined.Edit, contentDescription = null)
+                            }
+                            IconButton(onClick = { itemViewModel.onDeleteClicked() }) {
+                                Icon(Icons.Outlined.Delete, null)
+                            }
                         }
                     }
                 }

@@ -22,6 +22,7 @@ import ru.olegivo.repeatodo.BaseViewModel
 import ru.olegivo.repeatodo.add.presentation.addTaskViewModelWithFakes
 import ru.olegivo.repeatodo.list.domain.TasksListFilters
 import ru.olegivo.repeatodo.list.presentation.taskListFakes
+import ru.olegivo.repeatodo.main.navigation.FakeMainNavigator
 import ru.olegivo.repeatodo.main.navigation.MainNavigator
 import ru.olegivo.repeatodo.utils.PreviewEnvironment
 
@@ -39,6 +40,8 @@ class MainViewModel(
 }
 
 fun PreviewEnvironment.mainScreenFakes() {
+    register { MainViewModel(get(), get()) }
+    register<MainNavigator> { FakeMainNavigator() }
     taskListFakes()
     addTaskViewModelWithFakes()
     addToDoListViewModelFakes()
