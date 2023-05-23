@@ -1,0 +1,22 @@
+CREATE TABLE ToDoList (
+    uuid TEXT NOT NULL PRIMARY KEY,
+    title TEXT NOT NULL
+);
+
+CREATE INDEX todolist_uuid ON Task(uuid);
+
+getToDoLists:
+SELECT
+    uuid,
+    title,
+    isPredefined
+FROM ToDoList
+;
+
+saveToDoList:
+INSERT OR REPLACE INTO ToDoList
+VALUES ?;
+
+deleteToDoList:
+DELETE FROM ToDoList
+WHERE uuid = :uuid;

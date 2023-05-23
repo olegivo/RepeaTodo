@@ -38,12 +38,16 @@ import ru.olegivo.repeatodo.domain.CompleteTaskUseCase
 import ru.olegivo.repeatodo.domain.CompleteTaskUseCaseImpl
 import ru.olegivo.repeatodo.domain.DateTimeProvider
 import ru.olegivo.repeatodo.domain.DateTimeProviderImpl
+import ru.olegivo.repeatodo.domain.DeleteCustomToDoListUseCase
+import ru.olegivo.repeatodo.domain.DeleteCustomToDoListUseCaseImpl
 import ru.olegivo.repeatodo.domain.DeleteTaskUseCase
 import ru.olegivo.repeatodo.domain.DeleteTaskUseCaseImpl
 import ru.olegivo.repeatodo.domain.GetTaskUseCase
 import ru.olegivo.repeatodo.domain.GetTaskUseCaseImpl
 import ru.olegivo.repeatodo.domain.GetTasksListUseCase
 import ru.olegivo.repeatodo.domain.GetTasksListUseCaseImpl
+import ru.olegivo.repeatodo.domain.GetToDoListsUseCase
+import ru.olegivo.repeatodo.domain.GetToDoListsUseCaseImpl
 import ru.olegivo.repeatodo.domain.IsTaskCompletedUseCase
 import ru.olegivo.repeatodo.domain.IsTaskCompletedUseCaseImpl
 import ru.olegivo.repeatodo.domain.SaveTaskUseCase
@@ -90,6 +94,9 @@ object DependencyInjection {
         factoryOf(::CompleteTaskUseCaseImpl).bind<CompleteTaskUseCase>()
         factoryOf(::CancelTaskCompletionUseCaseImpl).bind<CancelTaskCompletionUseCase>()
         factoryOf(::IsTaskCompletedUseCaseImpl).bind<IsTaskCompletedUseCase>()
+        factoryOf(::GetToDoListsUseCaseImpl).bind<GetToDoListsUseCase>()
+        factoryOf(::SaveCustomToDoListUseCaseImpl).bind<SaveCustomToDoListUseCase>()
+        factoryOf(::DeleteCustomToDoListUseCaseImpl).bind<DeleteCustomToDoListUseCase>()
         factoryOf(::TasksSorterByCompletion)
     }
 }

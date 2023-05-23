@@ -15,24 +15,11 @@
  * RepeaTodo.
  */
 
-package ru.olegivo.repeatodo.db
+package ru.olegivo.repeatodo.domain.models
 
-import ru.olegivo.repeatodo.db.Task as TaskDb
-import ru.olegivo.repeatodo.db.ToDoList as ToDoListDb
-import ru.olegivo.repeatodo.domain.models.Task as TaskDomain
-import ru.olegivo.repeatodo.domain.models.ToDoList as ToDoListDomain
+import ru.olegivo.repeatodo.randomString
 
-internal fun TaskDomain.toDb() =
-    TaskDb(
-        uuid = uuid,
-        title = title,
-        daysPeriodicity = daysPeriodicity,
-        priority = priority
-    )
-
-
-internal fun ToDoListDomain.Custom.toDb() =
-    ToDoListDb(
-        uuid = uuid,
-        title = title
-    )
+fun randomToDoList(uuid: String = randomString()) = ToDoList.Custom(
+    uuid = uuid,
+    title = randomString(),
+)

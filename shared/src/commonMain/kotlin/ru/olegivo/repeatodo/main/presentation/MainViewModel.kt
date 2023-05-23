@@ -41,4 +41,5 @@ class MainViewModel(
 fun PreviewEnvironment.mainScreenFakes() {
     taskListFakes()
     addTaskViewModelWithFakes()
+    addToDoListViewModelFakes()
 }

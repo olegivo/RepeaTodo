@@ -19,6 +19,7 @@ package ru.olegivo.repeatodo.db
 
 import io.kotest.matchers.shouldBe
 import ru.olegivo.repeatodo.domain.Priority
+import ru.olegivo.repeatodo.domain.models.randomToDoList
 import ru.olegivo.repeatodo.kotest.FreeSpec
 import ru.olegivo.repeatodo.randomInt
 import ru.olegivo.repeatodo.randomString
@@ -27,7 +28,7 @@ import ru.olegivo.repeatodo.domain.models.Task as TaskDomain
 
 class MappersKtTest: FreeSpec() {
     init {
-        "map" - {
+        "map tasks" - {
             (Priority.values().toList() + null).forEach { priority ->
                 "priority = $priority" {
                     val task = TaskDomain(
@@ -46,6 +47,13 @@ class MappersKtTest: FreeSpec() {
                     task.toDb() shouldBe expected
                 }
             }
+        }
+
+        "map custom todo list" {
+            val toDoList = randomToDoList()
+            val expected = ToDoList(toDoList.uuid, toDoList.title)
+
+            toDoList.toDb() shouldBe expected
         }
     }
 }

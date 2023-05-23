@@ -15,24 +15,21 @@
  * RepeaTodo.
  */
 
-package ru.olegivo.repeatodo.db
+package ru.olegivo.repeatodo.domain
 
-import ru.olegivo.repeatodo.db.Task as TaskDb
-import ru.olegivo.repeatodo.db.ToDoList as ToDoListDb
-import ru.olegivo.repeatodo.domain.models.Task as TaskDomain
-import ru.olegivo.repeatodo.domain.models.ToDoList as ToDoListDomain
+import kotlinx.coroutines.flow.flow
+import ru.olegivo.repeatodo.domain.models.ToDoList
 
-internal fun TaskDomain.toDb() =
-    TaskDb(
-        uuid = uuid,
-        title = title,
-        daysPeriodicity = daysPeriodicity,
-        priority = priority
-    )
-
-
-internal fun ToDoListDomain.Custom.toDb() =
-    ToDoListDb(
-        uuid = uuid,
-        title = title
-    )
+class DeleteCustomToDoListUseCaseImpl(
+    private val localToDoListsDataSource: LocalToDoListsDataSource
+): DeleteCustomToDoListUseCase {
+    override suspend fun invoke(toDoList: ToDoList.Custom) = flow {
+        try {
+            emit(WorkState.InProgress())
+            localToDoListsDataSource.delete(toDoList.uuid)
+            emit(WorkState.Completed(Unit))
+        } catch (e: Throwable) {
+            emit(WorkState.Error())
+        }
+    }
+}

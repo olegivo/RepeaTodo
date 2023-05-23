@@ -1,0 +1,6 @@
+CREATE TABLE ToDoList (
+    uuid TEXT NOT NULL PRIMARY KEY,
+    title TEXT NOT NULL
+);
+
+CREATE INDEX todolist_uuid ON Task(uuid);

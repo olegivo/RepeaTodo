@@ -15,24 +15,22 @@
  * RepeaTodo.
  */
 
-package ru.olegivo.repeatodo.db
+package ru.olegivo.repeatodo.domain.models
 
-import ru.olegivo.repeatodo.db.Task as TaskDb
-import ru.olegivo.repeatodo.db.ToDoList as ToDoListDb
-import ru.olegivo.repeatodo.domain.models.Task as TaskDomain
-import ru.olegivo.repeatodo.domain.models.ToDoList as ToDoListDomain
+sealed interface ToDoList {
+    val uuid: String
+    val title: String
 
-internal fun TaskDomain.toDb() =
-    TaskDb(
-        uuid = uuid,
-        title = title,
-        daysPeriodicity = daysPeriodicity,
-        priority = priority
-    )
+    data class Predefined(override val uuid: String, override val title: String): ToDoList {
+        override fun equals(other: Any?) =
+            other != null && other is Predefined && other.uuid == uuid
 
+        override fun hashCode() = uuid.hashCode()
 
-internal fun ToDoListDomain.Custom.toDb() =
-    ToDoListDb(
-        uuid = uuid,
-        title = title
-    )
+        enum class Kind(val uuid: String) {
+            INBOX("df210f40-1b27-4675-8a82-9e2f1e6de302")
+        }
+    }
+
+    data class Custom(override val uuid: String, override val title: String): ToDoList
+}
