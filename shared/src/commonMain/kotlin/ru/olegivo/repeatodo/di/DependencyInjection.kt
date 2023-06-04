@@ -25,7 +25,7 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.bind
 import org.koin.dsl.module
-import ru.olegivo.repeatodo.data.LocalTasksDataSource
+import ru.olegivo.repeatodo.domain.LocalTasksDataSource
 import ru.olegivo.repeatodo.db.InstantLongAdapter
 import ru.olegivo.repeatodo.db.LocalTasksDataSourceImpl
 import ru.olegivo.repeatodo.db.PriorityLongAdapter

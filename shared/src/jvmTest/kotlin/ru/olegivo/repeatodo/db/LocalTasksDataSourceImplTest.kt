@@ -24,7 +24,7 @@ import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import ru.olegivo.repeatodo.assertItem
-import ru.olegivo.repeatodo.data.LocalTasksDataSource
+import ru.olegivo.repeatodo.domain.LocalTasksDataSource
 import ru.olegivo.repeatodo.domain.FakeDateTimeProvider
 import ru.olegivo.repeatodo.domain.models.Task
 import ru.olegivo.repeatodo.domain.models.randomTask

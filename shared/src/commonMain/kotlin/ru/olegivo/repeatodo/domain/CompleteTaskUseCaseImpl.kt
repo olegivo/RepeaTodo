@@ -17,8 +17,6 @@
 
 package ru.olegivo.repeatodo.domain
 
-import ru.olegivo.repeatodo.data.LocalTasksDataSource
-
 class CompleteTaskUseCaseImpl(
     private val localTasksDataSource: LocalTasksDataSource,
     private val dateTimeProvider: DateTimeProvider

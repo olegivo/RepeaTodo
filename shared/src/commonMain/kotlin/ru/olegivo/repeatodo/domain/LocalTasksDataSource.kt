@@ -15,7 +15,7 @@
  * RepeaTodo.
  */
 
-package ru.olegivo.repeatodo.data
+package ru.olegivo.repeatodo.domain
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.Instant
