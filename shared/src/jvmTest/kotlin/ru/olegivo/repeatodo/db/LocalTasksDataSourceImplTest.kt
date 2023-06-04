@@ -17,49 +17,30 @@
 
 package ru.olegivo.repeatodo.db
 
-import com.squareup.sqldelight.sqlite.driver.JdbcSqliteDriver
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import ru.olegivo.repeatodo.assertItem
-import ru.olegivo.repeatodo.domain.LocalTasksDataSource
 import ru.olegivo.repeatodo.domain.FakeDateTimeProvider
+import ru.olegivo.repeatodo.domain.LocalTasksDataSource
 import ru.olegivo.repeatodo.domain.models.Task
 import ru.olegivo.repeatodo.domain.models.randomTask
 import ru.olegivo.repeatodo.kotest.FreeSpec
 import ru.olegivo.repeatodo.randomString
-import java.util.Properties
 import kotlin.time.Duration.Companion.hours
 
 class LocalTasksDataSourceImplTest: FreeSpec() {
     init {
         "instance" - {
             val dateTimeProvider = FakeDateTimeProvider()
-            val instantLongAdapter = InstantLongAdapter()
-            val priorityAdapter = PriorityLongAdapter()
-            val properties = Properties().apply {
-                setProperty(
-                    /*SQLiteConfig.Pragma.FOREIGN_KEYS*/ "foreign_keys",
-                    true.toString()
-                )
-            }
-            val driver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY, properties)
-            val driverFactory = object: DriverFactory {
-                override fun createDriver(dbName: String, foreignKeyConstraints: Boolean) =
-                    driver
-            }
-            val database = createDatabase(
-                driverFactory = driverFactory,
-                instantLongAdapter = instantLongAdapter,
-                priorityAdapter = priorityAdapter
-            )
-            RepeaTodoDb.Schema.create(driver)
+            val dbHelper = TestDbHelper.create()
+            val database = dbHelper.database
 
             val localTasksDataSource: LocalTasksDataSource = LocalTasksDataSourceImpl(
                 db = database,
-                instantLongAdapter = instantLongAdapter,
+                instantLongAdapter = dbHelper.instantLongAdapter,
                 dispatchersProvider = dispatchersProvider
             )
 
@@ -124,7 +105,8 @@ class LocalTasksDataSourceImplTest: FreeSpec() {
                         localTasksDataSource.save(task2) // one more
                         localTasksDataSource.expectSelect(task1, task2)
 
-                        val newVersion = randomTask(lastCompletionDate = null).copy(uuid = task1.uuid)
+                        val newVersion =
+                            randomTask(lastCompletionDate = null).copy(uuid = task1.uuid)
                         localTasksDataSource.save(newVersion)
 
                         localTasksDataSource.expectSelect(newVersion, task2)
@@ -166,7 +148,7 @@ class LocalTasksDataSourceImplTest: FreeSpec() {
                     "delete task should delete its completions" {
                         localTasksDataSource.delete(task1.uuid)
                         localTasksDataSource.delete(task2.uuid)
-                        val long = driver.executeQuery(
+                        val long = dbHelper.driver.executeQuery(
                             null,
                             "select count(*) from TaskCompletion",
                             0
