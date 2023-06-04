@@ -26,12 +26,10 @@ struct EditTaskView: View {
                     titleEditor()
                         .padding(.vertical)
                     
-                    
                     Text("Days periodicity")
                     daysPeriodicityEditor()
                         .padding(.vertical)
-                    
-                    
+
                     Text("Priority")
                     priorityEditor()
                         .padding(.vertical)
