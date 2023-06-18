@@ -35,8 +35,7 @@ struct EditTaskView: View {
                         .padding(.vertical)
                     
                     Spacer()
-                        .frame(height: .infinity)
-                    
+
                     saveButton()
                 }
                 .padding()

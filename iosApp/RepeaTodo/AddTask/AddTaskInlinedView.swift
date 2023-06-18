@@ -1,11 +1,3 @@
-//
-//  AddTaskInlinedView.swift
-//  iosApp
-//
-//  Created by Олег Иващенко on 21.06.2022.
-//  Copyright © 2022 orgName. All rights reserved.
-//
-
 import SwiftUI
 import shared
 
@@ -37,7 +29,7 @@ struct AddTaskInlinedView: View {
     }
 
     static func factory(_ previewEnvironment: PreviewEnvironment? = nil) -> AddTaskInlinedView {
-        var viewModel: AddTaskViewModel = previewEnvironment?.get() ?? AddTaskComponent().addTaskViewModel()
+        let viewModel: AddTaskViewModel = previewEnvironment?.get() ?? AddTaskComponent().addTaskViewModel()
         return AddTaskInlinedView(viewModel: viewModel)
     }
 }
