@@ -74,7 +74,7 @@ internal fun EditTask(
     uuid: String? = null,
     previewEnvironment: PreviewEnvironment? = null,
 ) {
-    val viewModel: EditTaskViewModel = fakeOrInjectKoin(previewEnvironment) { parametersOf(uuid) }
+    val viewModel: EditTaskViewModel = previewEnvironment.fakeOrInjectKoin { parametersOf(uuid) }
     val showAlertDialog = remember { mutableStateOf(false) }
     Scaffold(
         modifier = modifier,

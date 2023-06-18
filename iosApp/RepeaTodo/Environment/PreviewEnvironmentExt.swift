@@ -22,4 +22,12 @@ extension PreviewEnvironment {
 
         return result
     }
+
+    func get<T: AnyObject>(_ param: Any) -> T {
+        guard let result = get(objCClass: T.self, param: param) as? T else {
+            fatalError("Can't provide an instance of type: \(T.self) with param \(param)")
+        }
+
+        return result
+    }
 }

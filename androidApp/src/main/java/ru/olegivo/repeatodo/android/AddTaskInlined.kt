@@ -46,7 +46,7 @@ internal fun AddTaskInlined(
     modifier: Modifier = Modifier,
     previewEnvironment: PreviewEnvironment? = null,
 ) {
-    val viewModel: AddTaskViewModel = fakeOrInjectKoin(previewEnvironment)
+    val viewModel: AddTaskViewModel = previewEnvironment.fakeOrInjectKoin()
     Row(
         modifier = modifier
             .padding(16.dp)

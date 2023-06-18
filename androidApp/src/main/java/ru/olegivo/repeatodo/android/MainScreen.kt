@@ -51,7 +51,7 @@ internal fun MainScreen(
     modifier: Modifier = Modifier,
     previewEnvironment: PreviewEnvironment? = null
 ) {
-    val viewModel: MainViewModel = fakeOrInjectKoin(previewEnvironment)
+    val viewModel: MainViewModel = previewEnvironment.fakeOrInjectKoin()
     val isCompletedTasksFilter = viewModel.isShowCompleted.collectAsState()
     val isHighestPriorityTasksFilter = viewModel.isShowOnlyHighestPriority.collectAsState()
 

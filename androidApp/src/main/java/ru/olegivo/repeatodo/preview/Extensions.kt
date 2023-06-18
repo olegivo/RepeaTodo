@@ -24,8 +24,8 @@ import ru.olegivo.repeatodo.utils.PreviewEnvironment
 
 
 @Composable
-internal inline fun <reified T> fakeOrInjectKoin(
-    previewEnvironment: PreviewEnvironment?,
+internal inline fun <reified T> PreviewEnvironment?.fakeOrInjectKoin(
     noinline parameters: ParametersDefinition? = null
 ): T =
-    previewEnvironment?.get() ?: koinInject(parameters = parameters)
+    this?.get(parameters?.invoke()?.values?.firstOrNull())
+        ?: koinInject(parameters = parameters)

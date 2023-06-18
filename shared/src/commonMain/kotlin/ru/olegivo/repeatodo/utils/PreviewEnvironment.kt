@@ -21,15 +21,15 @@ import kotlin.reflect.KClass
 
 class PreviewEnvironment {
 
-    val registry = mutableMapOf<KClass<*>, () -> Any>()
+    val registry = mutableMapOf<KClass<*>, (Any?) -> Any>()
 
-    inline fun <reified T> get(): T = get(T::class)
+    inline fun <reified T> get(param: Any? = null): T = get(T::class, param)
 
-    inline fun <reified T> get(kClass: KClass<*>) =
-        registry.getValue(kClass).invoke() as T
+    inline fun <reified T> get(kClass: KClass<*>, param: Any? = null) =
+        registry.getValue(kClass).invoke(param) as T
 
-    inline fun <reified T: Any> register(crossinline block: () -> T) {
-        registry[T::class] = { block() }
+    inline fun <reified T: Any> register(crossinline block: (Any?) -> T) {
+        registry[T::class] = { block(it) }
     }
 
     companion object {
