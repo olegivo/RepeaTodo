@@ -46,12 +46,14 @@ import ru.olegivo.repeatodo.main.presentation.MainViewModel
 import ru.olegivo.repeatodo.preview.fakeOrInjectKoin
 import ru.olegivo.repeatodo.utils.PreviewEnvironment
 
+private const val MAIN_VIEW_MODEL_REMEMBER_KEY = "MAIN_VIEW_MODEL_REMEMBER_KEY"
+
 @Composable
 internal fun MainScreen(
     modifier: Modifier = Modifier,
     previewEnvironment: PreviewEnvironment? = null
 ) {
-    val viewModel: MainViewModel = previewEnvironment.fakeOrInjectKoin()
+    val viewModel: MainViewModel = previewEnvironment.fakeOrInjectKoin(MAIN_VIEW_MODEL_REMEMBER_KEY)
     val isCompletedTasksFilter = viewModel.isShowCompleted.collectAsState()
     val isHighestPriorityTasksFilter = viewModel.isShowOnlyHighestPriority.collectAsState()
 
