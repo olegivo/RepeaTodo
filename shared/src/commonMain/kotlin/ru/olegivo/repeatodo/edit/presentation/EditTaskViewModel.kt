@@ -69,7 +69,7 @@ class EditTaskViewModel(
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
 
-    val loadingState = combine(
+    private val loadingState = combine(
         loadingTask,
         loadingToDoLists
     ) { taskState, toDoListsState -> taskState to toDoListsState }
@@ -90,7 +90,7 @@ class EditTaskViewModel(
 
     val daysPeriodicity = MutableStateFlow("").cMutableStateFlow()
 
-    val priority = MutableStateFlow<Priority?>(null).cMutableStateFlow()
+    val priority = MutableStateFlow<PriorityItem?>(null).cMutableStateFlow()
 
     val toDoListItems: CStateFlow<List<ToDoListItem>> =
         loadingToDoLists.filterCompleted()
@@ -110,7 +110,7 @@ class EditTaskViewModel(
         task.copy(
             title = title,
             daysPeriodicity = daysPeriodicity.toInt(),
-            priority = priority,
+            priority = priority?.priority,
             toDoListUuid = toDoList.uuid
         )
     }
@@ -152,11 +152,7 @@ class EditTaskViewModel(
 
     val priorityItems: List<PriorityItem> =
         Priority.values().sortedByDescending { it.value }.map { priority ->
-            PriorityItem(
-                priority = priority,
-                title = priority.toString().lowercase()
-                    .replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
-            )
+            priority.toItem()
         }
 
     init {
@@ -191,7 +187,7 @@ class EditTaskViewModel(
     private suspend fun loadTaskFields(origin: Task) {
         title.update { origin.title }
         daysPeriodicity.update { origin.daysPeriodicity.toString() }
-        priority.update { origin.priority }
+        priority.update { origin.priority?.toItem() }
         toDoList.update {
             loadedToDoLists.first().single { it.uuid == origin.toDoListUuid }.toItem()
         }

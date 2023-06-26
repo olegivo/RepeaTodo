@@ -92,16 +92,16 @@ struct EditTaskView: View {
     }
 
     fileprivate func priorityEditor() -> some View {
-        let items = viewModel.priorityItems
-        
-        return DropdownSelector(
-            items: items,
-            selectedItem: items.first(where: {
-                $0.priority == viewModel.priority.value
-            }),
+        DropdownSelector(
+            items: viewModel.priorityItems,
+            selectedItem: viewModel.stateNullable<PriorityItem>(
+                \.priority,
+                 equals: { $0 == $1 },
+                 mapper: { $0 }
+            ),
             textSelector: { $0.title },
             onSelected: {
-                viewModel.priority.setValue($0.priority)
+                viewModel.priority.setValue($0)
             }
         )
     }

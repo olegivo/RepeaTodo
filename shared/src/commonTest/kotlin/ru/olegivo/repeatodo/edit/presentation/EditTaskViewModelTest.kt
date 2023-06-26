@@ -36,7 +36,6 @@ import ru.olegivo.repeatodo.domain.Priority
 import ru.olegivo.repeatodo.domain.models.Task
 import ru.olegivo.repeatodo.domain.models.ToDoList
 import ru.olegivo.repeatodo.domain.models.randomTask
-import ru.olegivo.repeatodo.domain.models.randomToDoList
 import ru.olegivo.repeatodo.kotest.FreeSpec
 import ru.olegivo.repeatodo.main.navigation.FakeMainNavigator
 import ru.olegivo.repeatodo.main.presentation.FakeGetToDoListsUseCase
@@ -163,7 +162,7 @@ internal class EditTaskViewModelTest: FreeSpec() {
                         viewModel.isDeleteError.assertItem { shouldBeFalse() }
                         viewModel.title.assertItem { shouldBe(initialTask.title) }
                         viewModel.daysPeriodicity.assertItem { shouldBe(initialTask.daysPeriodicity.toString()) }
-                        viewModel.priority.assertItem { shouldBe(initialTask.priority) }
+                        viewModel.priority.assertItem { shouldNotBeNull().priority shouldBe initialTask.priority }
                         viewModel.toDoList.assertItem {
                             shouldNotBeNull().should {
                                 it.title shouldBe initialToDoList.title
@@ -235,7 +234,9 @@ internal class EditTaskViewModelTest: FreeSpec() {
 
                         "change priority to other" - {
                             viewModel.priority.update {
-                                Priority.values().filter { it != initialPriority }.random()
+                                viewModel.priorityItems
+                                    .filter { it.priority != initialPriority }
+                                    .random()
                             }
 
                             "canSave should be true" {

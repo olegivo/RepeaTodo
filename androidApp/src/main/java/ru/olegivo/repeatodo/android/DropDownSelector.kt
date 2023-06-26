@@ -45,14 +45,14 @@ import androidx.compose.ui.text.font.FontWeight
 fun <T: Any> DropDownSelector(
     modifier: Modifier,
     items: State<List<T>>,
-    initialValue: T?,
+    initialValue: State<T?>,
     textSelector: T.() -> String,
     noneSelectedItem: T? = null,
     canClear: Boolean = true,
     onSelected: (T?) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedItemIndex by remember { mutableStateOf(items.value.indexOf(initialValue)) }
+    var selectedItemIndex by remember { mutableStateOf(items.value.indexOf(initialValue.value)) }
 
     Box(
         modifier = Modifier

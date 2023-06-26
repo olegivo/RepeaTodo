@@ -20,3 +20,9 @@ package ru.olegivo.repeatodo.edit.presentation
 import ru.olegivo.repeatodo.domain.Priority
 
 data class PriorityItem(val priority: Priority, val title: String)
+
+fun Priority.toItem() = PriorityItem(
+    priority = this,
+    title = toString().lowercase()
+        .replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+)

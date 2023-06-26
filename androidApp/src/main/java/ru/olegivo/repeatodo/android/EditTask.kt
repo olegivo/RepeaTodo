@@ -220,10 +220,11 @@ private fun PriorityEditor(
     DropDownSelector(
         modifier = modifier,
         items = priorityItems,
-        initialValue = priorityItems.value.singleOrNull { it.priority == priority.value },
+        initialValue = priority,
         textSelector = { title },
-        canClear = true
-    ) { viewModel.priority.value = it?.priority }
+        canClear = true,
+        onSelected = { viewModel.priority.value = it }
+    )
 }
 
 @Composable
