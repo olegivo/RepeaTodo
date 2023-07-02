@@ -18,12 +18,23 @@
 package ru.olegivo.repeatodo.db
 
 import ru.olegivo.repeatodo.db.Task as TaskDb
+import ru.olegivo.repeatodo.db.ToDoList as ToDoListDb
 import ru.olegivo.repeatodo.domain.models.Task as TaskDomain
+import ru.olegivo.repeatodo.domain.models.ToDoList as ToDoListDomain
 
 internal fun TaskDomain.toDb() =
     TaskDb(
         uuid = uuid,
         title = title,
         daysPeriodicity = daysPeriodicity,
-        priority = priority
+        priority = priority,
+        toDoListUuid = toDoListUuid
+    )
+
+
+internal fun ToDoListDomain.Custom.toDb() =
+    ToDoListDb(
+        uuid = uuid,
+        title = title,
+        isPredefined = false
     )

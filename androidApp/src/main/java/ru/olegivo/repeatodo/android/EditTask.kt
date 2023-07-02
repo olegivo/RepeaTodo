@@ -74,7 +74,7 @@ internal fun EditTask(
     uuid: String? = null,
     previewEnvironment: PreviewEnvironment? = null,
 ) {
-    val viewModel: EditTaskViewModel = fakeOrInjectKoin(previewEnvironment) { parametersOf(uuid) }
+    val viewModel: EditTaskViewModel = previewEnvironment.fakeOrInjectKoin { parametersOf(uuid) }
     val showAlertDialog = remember { mutableStateOf(false) }
     Scaffold(
         modifier = modifier,
@@ -111,6 +111,20 @@ internal fun EditTask(
                             .fillMaxWidth()
                             .padding(16.dp),
                         title = title,
+                        viewModel = viewModel
+                    )
+                    Text(
+                        "Todo-list:",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp)
+                            .padding(horizontal = 16.dp),
+                    )
+                    ToDoListEditor(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp)
+                            .padding(horizontal = 16.dp),
                         viewModel = viewModel
                     )
                     DaysPeriodicityEditor(
@@ -164,6 +178,19 @@ private fun TitleEditor(
 }
 
 @Composable
+fun ToDoListEditor(modifier: Modifier = Modifier, viewModel: EditTaskViewModel) {
+    val initialValue = viewModel.toDoList.collectAsState()
+    DropDownSelector(
+        modifier = modifier,
+        items = viewModel.toDoListItems.collectAsState(),
+        initialValue = initialValue,
+        textSelector = { title },
+        canClear = false,
+        onSelected = { item -> item?.let { viewModel.toDoList.value = it } }
+    )
+}
+
+@Composable
 private fun DaysPeriodicityEditor(
     modifier: Modifier = Modifier,
     viewModel: EditTaskViewModel
@@ -193,10 +220,11 @@ private fun PriorityEditor(
     DropDownSelector(
         modifier = modifier,
         items = priorityItems,
-        initialValue = priorityItems.value.singleOrNull { it.priority == priority.value },
+        initialValue = priority,
         textSelector = { title },
-        canClear = true
-    ) { viewModel.priority.value = it?.priority }
+        canClear = true,
+        onSelected = { viewModel.priority.value = it }
+    )
 }
 
 @Composable

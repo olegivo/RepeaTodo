@@ -25,20 +25,21 @@ struct EditTaskView: View {
                     Text("Title")
                     titleEditor()
                         .padding(.vertical)
-                    
+
+                    Text("Todo-list")
+                    toDoListEditor()
+                        .padding(.vertical)
                     
                     Text("Days periodicity")
                     daysPeriodicityEditor()
                         .padding(.vertical)
-                    
-                    
+
                     Text("Priority")
                     priorityEditor()
                         .padding(.vertical)
                     
                     Spacer()
-                        .frame(height: .infinity)
-                    
+
                     saveButton()
                 }
                 .padding()
@@ -91,16 +92,31 @@ struct EditTaskView: View {
     }
 
     fileprivate func priorityEditor() -> some View {
-        let items = viewModel.priorityItems
-        
-        return DropdownSelector(
-            items: items,
-            selectedItem: items.first(where: {
-                $0.priority == viewModel.priority.value
-            }),
+        DropdownSelector(
+            items: viewModel.priorityItems,
+            selectedItem: viewModel.stateNullable<PriorityItem>(
+                \.priority,
+                 equals: { $0 == $1 },
+                 mapper: { $0 }
+            ),
             textSelector: { $0.title },
             onSelected: {
-                viewModel.priority.setValue($0.priority)
+                viewModel.priority.setValue($0)
+            }
+        )
+    }
+
+    fileprivate func toDoListEditor() -> some View {
+        DropdownSelector(
+            items: viewModel.state(\.toDoListItems),
+            selectedItem: viewModel.stateNullable<ToDoListItem>(
+                \.toDoList,
+                 equals: { $0 == $1 },
+                 mapper: { $0 }
+            ),
+            textSelector: { $0.title },
+            onSelected: {
+                viewModel.toDoList.setValue($0)
             }
         )
     }
@@ -175,6 +191,7 @@ struct EditTaskView_Previews: PreviewProvider {
                             title: "Task 1",
                             daysPeriodicity: 1,
                             priority: nil,
+                            toDoListUuid: "TODO list UUID",
                             lastCompletionDate: nil
                         )
                     )

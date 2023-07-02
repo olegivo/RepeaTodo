@@ -35,6 +35,7 @@ import ru.olegivo.repeatodo.domain.FakeSaveTaskUseCase
 import ru.olegivo.repeatodo.domain.SaveTaskUseCase
 import ru.olegivo.repeatodo.domain.WorkState
 import ru.olegivo.repeatodo.domain.models.Task
+import ru.olegivo.repeatodo.domain.models.ToDoList
 import ru.olegivo.repeatodo.utils.PreviewEnvironment
 import ru.olegivo.repeatodo.utils.newUuid
 
@@ -61,7 +62,8 @@ class AddTaskViewModel(private val saveTask: SaveTaskUseCase): BaseViewModel() {
                 title = title.value,
                 daysPeriodicity = Task.DEFAULT_DAYS_PERIODICITY,
                 priority = null,
-                lastCompletionDate = null
+                lastCompletionDate = null,
+                toDoListUuid = ToDoList.Predefined.Kind.INBOX.uuid
             )
             savingState.emitAll(saveTask(task))
         }

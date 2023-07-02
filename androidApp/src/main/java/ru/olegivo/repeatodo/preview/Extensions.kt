@@ -18,14 +18,23 @@
 package ru.olegivo.repeatodo.preview
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import org.koin.compose.koinInject
 import org.koin.core.parameter.ParametersDefinition
 import ru.olegivo.repeatodo.utils.PreviewEnvironment
 
 
 @Composable
-internal inline fun <reified T> fakeOrInjectKoin(
-    previewEnvironment: PreviewEnvironment?,
+internal inline fun <reified T> PreviewEnvironment?.fakeOrInjectKoin(
+    rememberKey: Any? = null,
     noinline parameters: ParametersDefinition? = null
 ): T =
-    previewEnvironment?.get() ?: koinInject(parameters = parameters)
+    this?.get(parameters?.invoke()?.values?.firstOrNull())
+        ?: run {
+            val result = koinInject<T>(parameters = parameters)
+            if (rememberKey != null) remember(rememberKey) {
+                result
+            } else {
+                result
+            }
+        }

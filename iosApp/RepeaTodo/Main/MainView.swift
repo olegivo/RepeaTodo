@@ -15,21 +15,43 @@ struct MainView: View {
     @Environment(\.previewEnvironment) var previewEnvironment: PreviewEnvironment?
 
     @ObservedObject private var viewModel: MainViewModel
+    @State var presentSideMenu = false
 
     var body: some View {
         NavigationView {
-            VStack() {
-                Toggle("Show completed", isOn: viewModel.binding(\.isShowCompleted))
-                    .padding(.all)
-                Toggle("Show only high priority", isOn: viewModel.binding(\.isShowOnlyHighestPriority))
-                    .padding(.all)
-                Spacer()
-                Divider()
-                TasksListView.factory(previewEnvironment)
-                    .environmentObject(navigator)
-                Divider()
-                AddTaskInlinedView.factory(previewEnvironment)
-                    .padding()
+            ZStack {
+                VStack() {
+                    HStack{
+                        Button{
+                            presentSideMenu.toggle()
+                        } label: {
+                            Image(systemName: "list.bullet")
+                                .resizable()
+                                .frame(width: 32, height: 32)
+                        }
+                        Spacer()
+                    }
+                    Toggle("Show completed", isOn: viewModel.binding(\.isShowCompleted))
+                        .padding(.all)
+                    Toggle("Show only high priority", isOn: viewModel.binding(\.isShowOnlyHighestPriority))
+                        .padding(.all)
+                    Spacer()
+                    Divider()
+                    TasksListView.factory(previewEnvironment)
+                        .environmentObject(navigator)
+                    Divider()
+                    AddTaskInlinedView.factory(previewEnvironment)
+                        .padding()
+                }
+                
+                SideMenu(
+                    isShowing: $presentSideMenu,
+                    content: AnyView(
+                        SideMenuView(
+                            presentSideMenu: $presentSideMenu
+                        )
+                    )
+                )
             }
         }
         .navigationTitle("Todos")
@@ -41,8 +63,7 @@ struct MainView: View {
         let navigator = (previewEnvironment?.get() ?? di.mainNavigator()).asObservableObject()
         let viewModel: MainViewModel = previewEnvironment?.get() ?? di.mainViewModel()
         return MainView(viewModel: viewModel)
-        .navigator(navigator)
-//        .previewEnvironment(preview{ $0.mainScreenFakes() })
+            .navigator(navigator)
     }
 }
 

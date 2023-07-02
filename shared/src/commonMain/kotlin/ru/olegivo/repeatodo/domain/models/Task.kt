@@ -25,7 +25,8 @@ data class Task(
     val title: String,
     val daysPeriodicity: Int,
     val priority: Priority?,
-    val lastCompletionDate: Instant? = null, // TODO: remove defaults
+    val toDoListUuid: String,
+    val lastCompletionDate: Instant?
 ) {
     companion object {
         const val DEFAULT_DAYS_PERIODICITY: Int = 1

@@ -29,3 +29,12 @@ fun PreviewEnvironment.get(objCClass: Any): Any {
 
     return get(kClazz)
 }
+
+fun PreviewEnvironment.get(objCClass: Any, param: Any): Any {
+    val kClazz = when (objCClass) {
+        is ObjCProtocol -> getOriginalKotlinClass(objCClass)!!
+        else -> getOriginalKotlinClass(objCClass as ObjCClass)!!
+    }
+
+    return get(kClazz, param)
+}

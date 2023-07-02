@@ -15,17 +15,13 @@
  * RepeaTodo.
  */
 
-package ru.olegivo.repeatodo.data
+package ru.olegivo.repeatodo.domain
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.datetime.Instant
-import ru.olegivo.repeatodo.domain.models.Task
+import ru.olegivo.repeatodo.domain.models.ToDoList
 
-interface LocalTasksDataSource {
-    fun getTasks(): Flow<List<Task>>
-    fun getTask(uuid: String): Flow<Task?>
-    suspend fun save(task: Task)
+interface LocalToDoListsDataSource {
+    fun getToDoLists(): Flow<List<ToDoList>>
+    suspend fun save(toDoList: ToDoList.Custom)
     suspend fun delete(uuid: String)
-    suspend fun addTaskCompletion(taskUuid: String, completionDate: Instant)
-    suspend fun deleteLatestTaskCompletion(taskUuid: String)
 }

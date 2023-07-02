@@ -25,9 +25,10 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.bind
 import org.koin.dsl.module
-import ru.olegivo.repeatodo.data.LocalTasksDataSource
+import ru.olegivo.repeatodo.domain.LocalTasksDataSource
 import ru.olegivo.repeatodo.db.InstantLongAdapter
 import ru.olegivo.repeatodo.db.LocalTasksDataSourceImpl
+import ru.olegivo.repeatodo.db.LocalToDoListsDataSourceImpl
 import ru.olegivo.repeatodo.db.PriorityLongAdapter
 import ru.olegivo.repeatodo.db.createDatabase
 import ru.olegivo.repeatodo.domain.AddTaskUseCase
@@ -38,14 +39,21 @@ import ru.olegivo.repeatodo.domain.CompleteTaskUseCase
 import ru.olegivo.repeatodo.domain.CompleteTaskUseCaseImpl
 import ru.olegivo.repeatodo.domain.DateTimeProvider
 import ru.olegivo.repeatodo.domain.DateTimeProviderImpl
+import ru.olegivo.repeatodo.domain.DeleteCustomToDoListUseCase
+import ru.olegivo.repeatodo.domain.DeleteCustomToDoListUseCaseImpl
 import ru.olegivo.repeatodo.domain.DeleteTaskUseCase
 import ru.olegivo.repeatodo.domain.DeleteTaskUseCaseImpl
 import ru.olegivo.repeatodo.domain.GetTaskUseCase
 import ru.olegivo.repeatodo.domain.GetTaskUseCaseImpl
 import ru.olegivo.repeatodo.domain.GetTasksListUseCase
 import ru.olegivo.repeatodo.domain.GetTasksListUseCaseImpl
+import ru.olegivo.repeatodo.domain.GetToDoListsUseCase
+import ru.olegivo.repeatodo.domain.GetToDoListsUseCaseImpl
 import ru.olegivo.repeatodo.domain.IsTaskCompletedUseCase
 import ru.olegivo.repeatodo.domain.IsTaskCompletedUseCaseImpl
+import ru.olegivo.repeatodo.domain.LocalToDoListsDataSource
+import ru.olegivo.repeatodo.domain.SaveCustomToDoListUseCase
+import ru.olegivo.repeatodo.domain.SaveCustomToDoListUseCaseImpl
 import ru.olegivo.repeatodo.domain.SaveTaskUseCase
 import ru.olegivo.repeatodo.domain.SaveTaskUseCaseImpl
 import ru.olegivo.repeatodo.edit.navigation.EditTaskNavigator
@@ -61,14 +69,14 @@ object DependencyInjection {
     fun initKoin(appDeclaration: KoinAppDeclaration = {}) {
         startKoin {
             appDeclaration()
-            modules(commonModule(), platformModule())
+            modules(commonModule(), platformModule)
         }
     }
 
     fun initKoinAndReturnInstance(appDeclaration: KoinAppDeclaration = {}): Koin =
         startKoin {
             appDeclaration()
-            modules(commonModule(), platformModule())
+            modules(commonModule(), platformModule)
         }.koin
 
     private fun commonModule() = module {
@@ -76,6 +84,7 @@ object DependencyInjection {
             .bind<MainNavigator>()
             .bind<EditTaskNavigator>()
         singleOf(::LocalTasksDataSourceImpl).bind<LocalTasksDataSource>()
+        singleOf(::LocalToDoListsDataSourceImpl).bind<LocalToDoListsDataSource>()
         singleOf(::createDatabase)
         singleOf(::TasksListFilters) // TODO: scoped instead of single
         factoryOf(::InstantLongAdapter)
@@ -90,8 +99,13 @@ object DependencyInjection {
         factoryOf(::CompleteTaskUseCaseImpl).bind<CompleteTaskUseCase>()
         factoryOf(::CancelTaskCompletionUseCaseImpl).bind<CancelTaskCompletionUseCase>()
         factoryOf(::IsTaskCompletedUseCaseImpl).bind<IsTaskCompletedUseCase>()
+        factoryOf(::GetToDoListsUseCaseImpl).bind<GetToDoListsUseCase>()
+        factoryOf(::SaveCustomToDoListUseCaseImpl).bind<SaveCustomToDoListUseCase>()
+        factoryOf(::DeleteCustomToDoListUseCaseImpl).bind<DeleteCustomToDoListUseCase>()
         factoryOf(::TasksSorterByCompletion)
+
+        includes(platformModule)
     }
 }
 
-expect fun platformModule(): Module
+internal expect val platformModule: Module

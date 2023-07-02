@@ -10,16 +10,21 @@
 		058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557BA273AAA24004C7B11 /* Assets.xcassets */; };
 		058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
+		510B192F2A1AB0D200C73335 /* SideMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510B192E2A1AB0D200C73335 /* SideMenuView.swift */; };
+		510B19312A1AB35E00C73335 /* SideMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510B19302A1AB35E00C73335 /* SideMenu.swift */; };
 		5131CA6329EC461800BFC251 /* MainNavigator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5131CA6229EC461800BFC251 /* MainNavigator.swift */; };
 		5131CA6629EC47ED00BFC251 /* EnvironmentValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5131CA6529EC47ED00BFC251 /* EnvironmentValues.swift */; };
 		513E69CE2A11856500830262 /* DropdownSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513E69CD2A11856500830262 /* DropdownSelector.swift */; };
 		5168799D29D8CFA30067450C /* RepeaTodo_shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5168799B29D8CFA30067450C /* RepeaTodo_shared.swift */; };
+		51B392AF2A23EAB5004E3AC4 /* DrawerToDoListsCustomItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B392AE2A23EAB5004E3AC4 /* DrawerToDoListsCustomItemView.swift */; };
 		51E119B629F3FAF200E4D780 /* ViewModelStateNullable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E119B029F3FAF200E4D780 /* ViewModelStateNullable.swift */; };
 		51E119B729F3FAF200E4D780 /* CFlowExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E119B129F3FAF200E4D780 /* CFlowExt.swift */; };
 		51E119B829F3FAF200E4D780 /* ViewModelObservable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E119B229F3FAF200E4D780 /* ViewModelObservable.swift */; };
 		51E119B929F3FAF200E4D780 /* ViewModelState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E119B329F3FAF200E4D780 /* ViewModelState.swift */; };
 		51E119BA29F3FAF200E4D780 /* ViewModelBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E119B429F3FAF200E4D780 /* ViewModelBinding.swift */; };
 		51E119BC29F4392D00E4D780 /* PreviewEnvironmentExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E119BB29F4392D00E4D780 /* PreviewEnvironmentExt.swift */; };
+		51F939692A3DEBF60011FFF7 /* DrawerToDoListsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F939682A3DEBF60011FFF7 /* DrawerToDoListsView.swift */; };
+		51F9396B2A3F48630011FFF7 /* AddToDoListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F9396A2A3F48630011FFF7 /* AddToDoListView.swift */; };
 		552A5B4F285B60EE0059083D /* NavigationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552A5B4E285B60EE0059083D /* NavigationHandler.swift */; };
 		552A5B53285B619C0059083D /* NavigationDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552A5B52285B619C0059083D /* NavigationDirection.swift */; };
 		552A5B55285B61E50059083D /* ViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552A5B54285B61E50059083D /* ViewFactory.swift */; };
@@ -50,10 +55,13 @@
 		058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		2152FB032600AC8F00CF470E /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
 		4A8D5B7F5C25DCDF16C1D951 /* libPods-iosApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-iosApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		510B192E2A1AB0D200C73335 /* SideMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuView.swift; sourceTree = "<group>"; };
+		510B19302A1AB35E00C73335 /* SideMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenu.swift; sourceTree = "<group>"; };
 		5131CA6229EC461800BFC251 /* MainNavigator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainNavigator.swift; sourceTree = "<group>"; };
 		5131CA6529EC47ED00BFC251 /* EnvironmentValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentValues.swift; sourceTree = "<group>"; };
 		513E69CD2A11856500830262 /* DropdownSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropdownSelector.swift; sourceTree = "<group>"; };
 		5168799B29D8CFA30067450C /* RepeaTodo_shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RepeaTodo_shared.swift; path = ../shared/build/bin/iosSimulatorArm64/debugFramework/sharedSwift/RepeaTodo_shared.swift; sourceTree = "<group>"; };
+		51B392AE2A23EAB5004E3AC4 /* DrawerToDoListsCustomItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawerToDoListsCustomItemView.swift; sourceTree = "<group>"; };
 		51E119B029F3FAF200E4D780 /* ViewModelStateNullable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModelStateNullable.swift; sourceTree = "<group>"; };
 		51E119B129F3FAF200E4D780 /* CFlowExt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CFlowExt.swift; sourceTree = "<group>"; };
 		51E119B229F3FAF200E4D780 /* ViewModelObservable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModelObservable.swift; sourceTree = "<group>"; };
@@ -61,6 +69,8 @@
 		51E119B429F3FAF200E4D780 /* ViewModelBinding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModelBinding.swift; sourceTree = "<group>"; };
 		51E119B529F3FAF200E4D780 /* mokoMvvmFlowSwiftUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mokoMvvmFlowSwiftUI.h; sourceTree = "<group>"; };
 		51E119BB29F4392D00E4D780 /* PreviewEnvironmentExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewEnvironmentExt.swift; sourceTree = "<group>"; };
+		51F939682A3DEBF60011FFF7 /* DrawerToDoListsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawerToDoListsView.swift; sourceTree = "<group>"; };
+		51F9396A2A3F48630011FFF7 /* AddToDoListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddToDoListView.swift; sourceTree = "<group>"; };
 		53F3EB61A669B189A1488218 /* Pods-iosApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.debug.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.debug.xcconfig"; sourceTree = "<group>"; };
 		552A5B4E285B60EE0059083D /* NavigationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationHandler.swift; sourceTree = "<group>"; };
 		552A5B52285B619C0059083D /* NavigationDirection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationDirection.swift; sourceTree = "<group>"; };
@@ -146,7 +156,12 @@
 		552A5B56285B62D00059083D /* Main */ = {
 			isa = PBXGroup;
 			children = (
+				51F9396A2A3F48630011FFF7 /* AddToDoListView.swift */,
 				552A5B57285B62E50059083D /* MainView.swift */,
+				510B19302A1AB35E00C73335 /* SideMenu.swift */,
+				510B192E2A1AB0D200C73335 /* SideMenuView.swift */,
+				51F939682A3DEBF60011FFF7 /* DrawerToDoListsView.swift */,
+				51B392AE2A23EAB5004E3AC4 /* DrawerToDoListsCustomItemView.swift */,
 			);
 			path = Main;
 			sourceTree = "<group>";
@@ -358,10 +373,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				51F9396B2A3F48630011FFF7 /* AddToDoListView.swift in Sources */,
 				51E119BA29F3FAF200E4D780 /* ViewModelBinding.swift in Sources */,
 				5570ECF72861B0370062D58D /* AddTaskInlinedView.swift in Sources */,
+				51B392AF2A23EAB5004E3AC4 /* DrawerToDoListsCustomItemView.swift in Sources */,
 				552A5B58285B62E50059083D /* MainView.swift in Sources */,
 				51E119B729F3FAF200E4D780 /* CFlowExt.swift in Sources */,
+				510B192F2A1AB0D200C73335 /* SideMenuView.swift in Sources */,
 				552A5B53285B619C0059083D /* NavigationDirection.swift in Sources */,
 				5570ECFA2861BCBC0062D58D /* EnvironmentValuesExtensions.swift in Sources */,
 				5131CA6329EC461800BFC251 /* MainNavigator.swift in Sources */,
@@ -370,6 +388,7 @@
 				5131CA6629EC47ED00BFC251 /* EnvironmentValues.swift in Sources */,
 				5570ECEC285DC1EA0062D58D /* FlowPublisher.swift in Sources */,
 				5570ECFD28620C640062D58D /* EditTaskView.swift in Sources */,
+				510B19312A1AB35E00C73335 /* SideMenu.swift in Sources */,
 				51E119B629F3FAF200E4D780 /* ViewModelStateNullable.swift in Sources */,
 				513E69CE2A11856500830262 /* DropdownSelector.swift in Sources */,
 				5168799D29D8CFA30067450C /* RepeaTodo_shared.swift in Sources */,
@@ -377,6 +396,7 @@
 				51E119BC29F4392D00E4D780 /* PreviewEnvironmentExt.swift in Sources */,
 				552A5B55285B61E50059083D /* ViewFactory.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,
+				51F939692A3DEBF60011FFF7 /* DrawerToDoListsView.swift in Sources */,
 				51E119B929F3FAF200E4D780 /* ViewModelState.swift in Sources */,
 				51E119B829F3FAF200E4D780 /* ViewModelObservable.swift in Sources */,
 			);

@@ -28,24 +28,41 @@ import ru.olegivo.repeatodo.DispatchersProvider
 import ru.olegivo.repeatodo.add.presentation.AddTaskViewModel
 import ru.olegivo.repeatodo.db.DriverFactory
 import ru.olegivo.repeatodo.db.DriverFactoryImpl
+import ru.olegivo.repeatodo.domain.models.ToDoList
 import ru.olegivo.repeatodo.edit.presentation.EditTaskViewModel
 import ru.olegivo.repeatodo.list.presentation.TasksListViewModel
 import ru.olegivo.repeatodo.main.navigation.MainNavigator
+import ru.olegivo.repeatodo.main.presentation.AddToDoListViewModel
+import ru.olegivo.repeatodo.main.presentation.AddToDoListViewModelImpl
+import ru.olegivo.repeatodo.main.presentation.DrawerToDoListsCustomItemViewModel
+import ru.olegivo.repeatodo.main.presentation.DrawerToDoListsCustomItemViewModelImpl
+import ru.olegivo.repeatodo.main.presentation.DrawerToDoListsViewModel
+import ru.olegivo.repeatodo.main.presentation.DrawerToDoListsViewModelImpl
 import ru.olegivo.repeatodo.main.presentation.MainViewModel
 import ru.olegivo.repeatodo.platform.DispatchersProviderImpl
 
-actual fun platformModule() = module {
+actual val platformModule = module {
     singleOf(::DispatchersProviderImpl).bind<DispatchersProvider>()
     singleOf(::DriverFactoryImpl).bind<DriverFactory>()
     factoryOf(::MainViewModel)
     factoryOf(::AddTaskViewModel)
     factoryOf(::EditTaskViewModel)
     factoryOf(::TasksListViewModel)
+    factoryOf(::DrawerToDoListsViewModelImpl).bind<DrawerToDoListsViewModel>()
+    factoryOf(::DrawerToDoListsCustomItemViewModelImpl).bind<DrawerToDoListsCustomItemViewModel>()
+    singleOf(::AddToDoListViewModelImpl).bind<AddToDoListViewModel>()
 }
 
 object MainComponent: KoinComponent {
     fun mainViewModel() = get<MainViewModel>()
     fun mainNavigator() = get<MainNavigator>()
+}
+
+object ToDoListsComponent: KoinComponent {
+    fun drawerToDoListsViewModel() = get<DrawerToDoListsViewModel>()
+    fun addToDoListViewModel() = get<AddToDoListViewModel>()
+    fun drawerToDoListsCustomItemViewModel(item: ToDoList) =
+        get<DrawerToDoListsCustomItemViewModel> { parametersOf(item) }
 }
 
 object AddTaskComponent: KoinComponent {

@@ -16,6 +16,27 @@ extension ObservableObject where Self: ViewModel {
     ) -> R? {
         let stateFlow: CStateFlow<T> = self[keyPath: flowKey]
         var lastValue: T? = stateFlow.value
+
+        var disposable: DisposableHandle? = nil
+
+        disposable = stateFlow.subscribe(onCollect: { [weak self] value in
+            if !equals(lastValue, value) {
+                lastValue = value
+                self?.objectWillChange.send()
+                disposable?.dispose()
+            }
+        })
+
+        return mapper(stateFlow.value)
+    }
+
+    func stateNullable<T, R>(
+        _ flowKey: KeyPath<Self, CMutableStateFlow<T>>,
+        equals: @escaping (T?, T?) -> Bool,
+        mapper: @escaping (T?) -> R?
+    ) -> R? {
+        let stateFlow: CMutableStateFlow<T> = self[keyPath: flowKey]
+        var lastValue: T? = stateFlow.value
         
         var disposable: DisposableHandle? = nil
         

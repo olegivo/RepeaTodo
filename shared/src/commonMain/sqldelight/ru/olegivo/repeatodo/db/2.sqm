@@ -1,0 +1,65 @@
+import kotlinx.datetime.Instant;
+import ru.olegivo.repeatodo.domain.Priority;
+
+CREATE TABLE ToDoList (
+    uuid TEXT NOT NULL PRIMARY KEY,
+    title TEXT NOT NULL,
+    isPredefined INTEGER NOT NULL DEFAULT(0)
+);
+CREATE INDEX todolist_uuid ON ToDoList(uuid);
+
+INSERT INTO ToDoList VALUES ('df210f40-1b27-4675-8a82-9e2f1e6de302', 'Inbox', 1);
+
+CREATE TABLE tpm_Task (
+    uuid TEXT NOT NULL PRIMARY KEY,
+    title TEXT NOT NULL,
+    daysPeriodicity INTEGER AS Int NOT NULL,
+    priority INTEGER AS Priority,
+    toDoListUuid TEXT NOT NULL,
+    FOREIGN KEY (toDoListUuid) REFERENCES ToDoList(uuid)
+);
+INSERT INTO tpm_Task (uuid, title, daysPeriodicity, priority, toDoListUuid)
+SELECT uuid, title, daysPeriodicity, priority, 'df210f40-1b27-4675-8a82-9e2f1e6de302'
+FROM   Task;
+
+CREATE TABLE tpm_TaskCompletion (
+    uuid TEXT NOT NULL PRIMARY KEY,
+    taskUuid TEXT NOT NULL REFERENCES tpm_Task(uuid) ON DELETE CASCADE,
+    completionDateUtc INTEGER AS Instant
+);
+INSERT INTO tpm_TaskCompletion (uuid, taskUuid, completionDateUtc)
+SELECT uuid, taskUuid, completionDateUtc
+FROM   TaskCompletion;
+
+DROP VIEW taskView;
+
+DROP INDEX task_uuid;
+DROP TABLE Task;
+ALTER TABLE tpm_Task RENAME TO Task;
+CREATE INDEX task_uuid ON Task(uuid);
+
+DROP INDEX taskCompletion_uuid;
+DROP INDEX taskCompletion_taskUuid;
+DROP TABLE TaskCompletion;
+ALTER TABLE tpm_TaskCompletion RENAME TO TaskCompletion;
+CREATE INDEX taskCompletion_uuid ON TaskCompletion(uuid);
+CREATE INDEX taskCompletion_taskUuid ON TaskCompletion(taskUuid);
+
+CREATE VIEW taskView AS
+SELECT
+    T.uuid,
+    T.title,
+    T.daysPeriodicity,
+    T.priority,
+    T.toDoListUuid,
+    TC.lastCompletionDateUtc
+FROM
+    Task T
+    LEFT JOIN (
+        SELECT
+            TC.taskUuid,
+            MAX(TC.completionDateUtc) AS lastCompletionDateUtc
+        FROM TaskCompletion TC
+        GROUP BY
+            TC.taskUuid
+    ) TC ON T.uuid = TC.taskUuid;

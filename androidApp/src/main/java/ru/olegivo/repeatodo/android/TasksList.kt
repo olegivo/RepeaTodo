@@ -53,7 +53,7 @@ internal fun TasksList(
     modifier: Modifier = Modifier,
     previewEnvironment: PreviewEnvironment? = null,
 ) {
-    val viewModel: TasksListViewModel = fakeOrInjectKoin(previewEnvironment)
+    val viewModel: TasksListViewModel = previewEnvironment.fakeOrInjectKoin()
 
     val tasks = viewModel.state.collectAsState().value.tasks
     LazyColumn(modifier) {
