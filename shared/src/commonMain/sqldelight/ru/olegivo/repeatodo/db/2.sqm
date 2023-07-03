@@ -29,14 +29,11 @@ CREATE TABLE tpm_TaskCompletion (
 );
 INSERT INTO tpm_TaskCompletion (uuid, taskUuid, completionDateUtc)
 SELECT uuid, taskUuid, completionDateUtc
-FROM   TaskCompletion;
+FROM   TaskCompletion
+WHERE taskUuid IN (SELECT uuid FROM Task) -- exclude phantom records of probably deleted tasks
+;
 
 DROP VIEW taskView;
-
-DROP INDEX task_uuid;
-DROP TABLE Task;
-ALTER TABLE tpm_Task RENAME TO Task;
-CREATE INDEX task_uuid ON Task(uuid);
 
 DROP INDEX taskCompletion_uuid;
 DROP INDEX taskCompletion_taskUuid;
@@ -44,6 +41,11 @@ DROP TABLE TaskCompletion;
 ALTER TABLE tpm_TaskCompletion RENAME TO TaskCompletion;
 CREATE INDEX taskCompletion_uuid ON TaskCompletion(uuid);
 CREATE INDEX taskCompletion_taskUuid ON TaskCompletion(taskUuid);
+
+DROP INDEX task_uuid;
+DROP TABLE Task;
+ALTER TABLE tpm_Task RENAME TO Task;
+CREATE INDEX task_uuid ON Task(uuid);
 
 CREATE VIEW taskView AS
 SELECT
