@@ -47,30 +47,16 @@ class LocalTasksDataSourceImplTest: FreeSpec() {
                 instantLongAdapter = dbHelper.instantLongAdapter,
                 dispatchersProvider = dispatchersProvider
             )
-            // TODO: toDoListUuid != inbox
             // Inbox:
-            dbHelper.driver.execute(
-                identifier = null,
-                sql = "INSERT INTO ToDoList VALUES (?, ?, ?)",
-                parameters = 3
-            ) {
-                bindString(1, ToDoList.Predefined.Kind.INBOX.uuid)
-                bindString(2, ToDoList.Predefined.Kind.INBOX.name)
-                bindLong(3, 1)
-            }
+            dbHelper.createInboxToDoList()
 
             // Custom:
             val customToDoListUuid = newUuid()
             val customToDoListTitle = randomString()
-            dbHelper.driver.execute(
-                identifier = null,
-                sql = "INSERT INTO ToDoList VALUES (?, ?, ?)",
-                parameters = 3
-            ) {
-                bindString(1, customToDoListUuid)
-                bindString(2, customToDoListTitle)
-                bindLong(3, 0)
-            }
+            dbHelper.createCustomToDoList(
+                uuid = customToDoListUuid,
+                title = customToDoListTitle
+            )
 
             val task1 = Task(
                 uuid = randomString(),

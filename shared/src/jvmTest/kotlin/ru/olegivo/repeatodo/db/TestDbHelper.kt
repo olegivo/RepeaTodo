@@ -18,6 +18,7 @@
 package ru.olegivo.repeatodo.db
 
 import com.squareup.sqldelight.sqlite.driver.JdbcSqliteDriver
+import ru.olegivo.repeatodo.domain.models.ToDoList
 import java.util.Properties
 
 class TestDbHelper private constructor(
@@ -53,5 +54,45 @@ class TestDbHelper private constructor(
                 driver = driver,
             )
         }
+    }
+}
+
+internal val InboxToDoList = ToDoList.Predefined(
+    uuid = ToDoList.Predefined.Kind.INBOX.uuid,
+    title = ToDoList.Predefined.Kind.INBOX.name,
+)
+
+internal fun TestDbHelper.createInboxToDoList() {
+    createToDoList(
+        uuid = InboxToDoList.uuid,
+        title = InboxToDoList.title,
+        isPredefined = true
+    )
+}
+
+internal fun TestDbHelper.createCustomToDoList(
+    uuid: String,
+    title: String
+) {
+    createToDoList(
+        uuid = uuid,
+        title = title,
+        isPredefined = false
+    )
+}
+
+private fun TestDbHelper.createToDoList(
+    uuid: String,
+    title: String,
+    isPredefined: Boolean
+) {
+    driver.execute(
+        identifier = null,
+        sql = "INSERT INTO ToDoList (uuid, title, isPredefined) VALUES (?, ?, ?)",
+        parameters = 3
+    ) {
+        bindString(1, uuid)
+        bindString(2, title)
+        bindLong(3, if (isPredefined) 1 else 0)
     }
 }

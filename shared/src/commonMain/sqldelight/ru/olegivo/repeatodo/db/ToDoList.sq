@@ -21,3 +21,7 @@ VALUES ?;
 deleteToDoList:
 DELETE FROM ToDoList
 WHERE uuid = :uuid;
+
+moveTasksToInbox:
+UPDATE Task SET toDoListUuid = 'df210f40-1b27-4675-8a82-9e2f1e6de302'
+WHERE toDoListUuid = :toDoListUuid;
