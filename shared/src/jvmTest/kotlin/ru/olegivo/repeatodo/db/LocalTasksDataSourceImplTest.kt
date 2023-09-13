@@ -47,8 +47,6 @@ class LocalTasksDataSourceImplTest: FreeSpec() {
                 instantLongAdapter = dbHelper.instantLongAdapter,
                 dispatchersProvider = dispatchersProvider
             )
-            // Inbox:
-            dbHelper.createInboxToDoList()
 
             // Custom:
             val customToDoListUuid = newUuid()

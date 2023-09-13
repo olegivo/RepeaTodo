@@ -5,6 +5,7 @@ CREATE TABLE ToDoList (
 );
 
 CREATE INDEX todolist_uuid ON ToDoList(uuid);
+INSERT INTO ToDoList VALUES ('df210f40-1b27-4675-8a82-9e2f1e6de302', 'Inbox', 1);
 
 getToDoLists:
 SELECT
