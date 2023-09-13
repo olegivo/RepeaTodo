@@ -51,7 +51,19 @@ class LocalTasksDataSourceImpl(
 
     override suspend fun save(task: Task) {
         withContext(dispatchersProvider.io) {
-            db.taskQueries.saveTask(task.toDb())
+            if (db.taskQueries.isTaskExists(task.uuid).executeAsOne()) {
+                with(task) {
+                    db.taskQueries.updateTask(
+                        title = title,
+                        daysPeriodicity = daysPeriodicity,
+                        priority = priority,
+                        toDoListUuid = toDoListUuid,
+                        uuid = uuid
+                    )
+                }
+            } else {
+                db.taskQueries.addTask(task.toDb())
+            }
         }
     }
 

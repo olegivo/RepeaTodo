@@ -59,7 +59,7 @@ class LocalToDoListsDataSourceImplTest: FreeSpec() {
                     val toDoList2 = randomToDoList()
                     localToDoListsDataSource.save(toDoList1)
 
-                    "tasks should contain added todo-lists" {
+                    "todo-lists should contain added todo-lists" {
                         localToDoListsDataSource.getToDoLists().testIn(name = "getTasks")
                             .assertItem { shouldContainExactly(InboxToDoList, toDoList1) }
                     }
@@ -71,10 +71,7 @@ class LocalToDoListsDataSourceImplTest: FreeSpec() {
                             .assertItem { shouldContainExactly(InboxToDoList, toDoList1) }
                     }
 
-                    "delete should delete added todo-list WHEN specified added task uuid" - {
-                        localToDoListsDataSource.save(toDoList2) // one more
-                        localToDoListsDataSource.expectSelect(InboxToDoList, toDoList1, toDoList2)
-
+                    "add task to exist todo-list" - {
                         val taskUuid = newUuid()
                         val localTasksDataSource: LocalTasksDataSource = LocalTasksDataSourceImpl(
                             db = database,
@@ -91,26 +88,48 @@ class LocalToDoListsDataSourceImplTest: FreeSpec() {
                         )
                         localTasksDataSource.save(task)
 
-                        localToDoListsDataSource.delete(uuid = toDoList1.uuid)
+                        "delete should delete added todo-list WHEN specified added todo-list uuid" - {
+                            localToDoListsDataSource.save(toDoList2) // one more
+                            localToDoListsDataSource.expectSelect(
+                                InboxToDoList,
+                                toDoList1,
+                                toDoList2
+                            )
 
-                        localToDoListsDataSource.expectSelect(InboxToDoList, toDoList2)
+                            localToDoListsDataSource.delete(uuid = toDoList1.uuid)
 
-                        "should move tasks from deleted todo-list to inbox" {
-                            localTasksDataSource.getTask(taskUuid).assertItem {
-                                shouldBe(task.copy(toDoListUuid = ToDoList.Predefined.Kind.INBOX.uuid))
+                            localToDoListsDataSource.expectSelect(InboxToDoList, toDoList2)
+
+                            "should move tasks from deleted todo-list to inbox" {
+                                localTasksDataSource.getTask(taskUuid).assertItem {
+                                    shouldBe(task.copy(toDoListUuid = ToDoList.Predefined.Kind.INBOX.uuid))
+                                }
                             }
                         }
-                    }
 
-                    "update added todo-list" {
-                        localToDoListsDataSource.save(toDoList2) // one more
-                        localToDoListsDataSource.expectSelect(InboxToDoList, toDoList1, toDoList2)
+                        "update added todo-list" - {
+                            localToDoListsDataSource.save(toDoList2) // one more
+                            localToDoListsDataSource.expectSelect(
+                                InboxToDoList,
+                                toDoList1,
+                                toDoList2
+                            )
 
-                        val newVersion =
-                            randomToDoList(uuid = toDoList1.uuid)
-                        localToDoListsDataSource.save(newVersion)
+                            val newVersion = randomToDoList(uuid = toDoList1.uuid)
+                            localToDoListsDataSource.save(newVersion)
 
-                        localToDoListsDataSource.expectSelect(InboxToDoList, newVersion, toDoList2)
+                            localToDoListsDataSource.expectSelect(
+                                InboxToDoList,
+                                newVersion,
+                                toDoList2
+                            )
+
+                            "should do nothing with tasks of updated todo-list" {
+                                localTasksDataSource.getTask(taskUuid).assertItem {
+                                    shouldBe(task)
+                                }
+                            }
+                        }
                     }
                 }
             }

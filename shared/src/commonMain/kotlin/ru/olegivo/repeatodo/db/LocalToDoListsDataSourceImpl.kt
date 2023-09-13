@@ -40,7 +40,18 @@ class LocalToDoListsDataSourceImpl(
 
     override suspend fun save(toDoList: ToDoList.Custom) {
         withContext(dispatchersProvider.io) {
-            db.toDoListQueries.saveToDoList(toDoList.toDb())
+            db.transaction {
+                if (db.toDoListQueries.isToDoListExists(toDoList.uuid).executeAsOne()) {
+                    with(toDoList) {
+                        db.toDoListQueries.updateToDoList(
+                            title = title,
+                            uuid = uuid
+                        )
+                    }
+                } else {
+                    db.toDoListQueries.addToDoList(toDoList.toDb())
+                }
+            }
         }
     }
 

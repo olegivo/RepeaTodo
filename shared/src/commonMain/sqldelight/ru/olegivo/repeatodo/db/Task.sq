@@ -41,9 +41,25 @@ SELECT
 FROM
     taskView;
 
-saveTask:
-INSERT OR REPLACE INTO Task
+isTaskExists:
+SELECT EXISTS(
+    SELECT 1 FROM Task
+    WHERE uuid = :uuid
+)
+;
+
+addTask:
+INSERT INTO Task
 VALUES ?;
+
+updateTask:
+UPDATE Task SET
+    title = :title,
+    daysPeriodicity = :daysPeriodicity,
+    priority = :priority,
+    toDoListUuid = :toDoListUuid
+WHERE uuid = :uuid
+;
 
 getTask:
 SELECT
