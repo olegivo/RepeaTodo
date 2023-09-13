@@ -62,14 +62,6 @@ internal val InboxToDoList = ToDoList.Predefined(
     title = ToDoList.Predefined.Kind.INBOX.name,
 )
 
-internal fun TestDbHelper.createInboxToDoList() {
-    createToDoList(
-        uuid = InboxToDoList.uuid,
-        title = InboxToDoList.title,
-        isPredefined = true
-    )
-}
-
 internal fun TestDbHelper.createCustomToDoList(
     uuid: String,
     title: String
