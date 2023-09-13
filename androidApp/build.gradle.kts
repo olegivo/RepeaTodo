@@ -26,8 +26,8 @@ android {
         applicationId = "ru.olegivo.repeatodo.android"
         minSdk = 26
         targetSdk = 33
-        versionCode = 2
-        versionName = "0.2"
+        versionCode = 3
+        versionName = "0.3"
     }
     buildTypes {
         getByName("release") {
