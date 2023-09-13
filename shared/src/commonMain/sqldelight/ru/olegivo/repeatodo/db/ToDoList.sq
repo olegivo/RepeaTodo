@@ -15,9 +15,22 @@ SELECT
 FROM ToDoList
 ;
 
-saveToDoList:
-INSERT OR REPLACE INTO ToDoList
+isToDoListExists:
+SELECT EXISTS(
+    SELECT 1 FROM ToDoList
+    WHERE uuid = :uuid AND isPredefined = 0
+)
+;
+
+addToDoList:
+INSERT INTO ToDoList
 VALUES ?;
+
+updateToDoList:
+UPDATE ToDoList SET
+    title = :title
+WHERE uuid = :uuid AND isPredefined = 0
+;
 
 deleteToDoList:
 DELETE FROM ToDoList

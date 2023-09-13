@@ -111,28 +111,61 @@ class LocalTasksDataSourceImplTest: FreeSpec() {
                             .assertItem { shouldBe(task1) }
                     }
 
-                    "delete should do nothing WHEN specified not exist task uuid" {
-                        localTasksDataSource.delete(uuid = task2.uuid)
-
-                        localTasksDataSource.getTasks()
-                            .assertItem { shouldContainExactly(task1) }
-                    }
-
-                    "delete should delete added task WHEN specified added task uuid" {
+                    "addTaskCompletion" - {
                         localTasksDataSource.save(task2) // the other
                         localTasksDataSource.expectSelect(task1, task2)
 
-                        localTasksDataSource.delete(uuid = task1.uuid)
+                        val (d1, d2) =
+                            (dateTimeProvider.getCurrentInstant() - 1.hours) to
+                                (dateTimeProvider.getCurrentInstant() - 2.hours)
 
-                        localTasksDataSource.expectSelect(task2)
-                    }
+                        localTasksDataSource.addTaskCompletion(task1.uuid, d1)
+                        localTasksDataSource.addTaskCompletion(task2.uuid, d2)
 
-                    "update added task" {
-                        localTasksDataSource.save(task2) // one more
-                        localTasksDataSource.expectSelect(task1, task2)
+                        val task1WithCompletion = task1.copy(lastCompletionDate = d1)
+                        val task2WithCompletion = task2.copy(lastCompletionDate = d2)
 
-                        val newVersion =
-                            Task(
+                        "should update tasks last completion dates" {
+                            localTasksDataSource.expectSelect(
+                                task1WithCompletion,
+                                task2WithCompletion
+                            )
+                        }
+
+                        "delete should do nothing WHEN specified not exist task uuid" {
+                            localTasksDataSource.delete(uuid = newUuid())
+
+                            localTasksDataSource.expectSelect(
+                                task1WithCompletion,
+                                task2WithCompletion
+                            )
+                        }
+
+                        "delete task WHEN specified added task uuid" - {
+                            localTasksDataSource.delete(uuid = task1.uuid)
+
+                            "should delete added task, not delete other and their completions " {
+                                localTasksDataSource.expectSelect(task2WithCompletion)
+                            }
+
+                            "should delete deleted task's completions" {
+                                val long = dbHelper.driver
+                                    .executeQuery(
+                                        null,
+                                        "select count(*) from TaskCompletion WHERE taskUuid = ?",
+                                        1
+                                    ) {
+                                        bindString(1, task1.uuid)
+                                    }
+                                    .use {
+                                        it.getLong(0)
+                                    }
+                                long shouldBe 0L
+                            }
+                        }
+
+                        "update added task" - {
+                            val newVersion = Task(
                                 uuid = task1.uuid,
                                 lastCompletionDate = null,
                                 priority = Priority.values()
@@ -142,78 +175,52 @@ class LocalTasksDataSourceImplTest: FreeSpec() {
                                 daysPeriodicity = task1.daysPeriodicity + 1,
                                 toDoListUuid = customToDoListUuid
                             )
-                        localTasksDataSource.save(newVersion)
+                            localTasksDataSource.save(newVersion)
 
-                        localTasksDataSource.expectSelect(newVersion, task2)
-                    }
-                }
-
-                "addTaskCompletion" - {
-                    localTasksDataSource.save(task1)
-                    localTasksDataSource.save(task2)
-                    localTasksDataSource.expectSelect(task1, task2)
-
-                    val (d1, d2) =
-                        (dateTimeProvider.getCurrentInstant() - 1.hours) to
-                            (dateTimeProvider.getCurrentInstant() - 2.hours)
-
-                    localTasksDataSource.addTaskCompletion(task1.uuid, d1)
-                    localTasksDataSource.addTaskCompletion(task2.uuid, d2)
-
-                    localTasksDataSource.expectSelect(
-                        task1.copy(lastCompletionDate = d1),
-                        task2.copy(lastCompletionDate = d2)
-                    )
-
-                    "delete task should delete its completions" {
-                        localTasksDataSource.delete(task1.uuid)
-                        localTasksDataSource.delete(task2.uuid)
-                        val long = dbHelper.driver.executeQuery(
-                            null,
-                            "select count(*) from TaskCompletion",
-                            0
-                        ).use {
-                            it.getLong(0)
+                            "should update task, not update its last completion date and not change other tasks and theirs completions" {
+                                localTasksDataSource.expectSelect(
+                                    newVersion.copy(lastCompletionDate = d1),
+                                    task2WithCompletion
+                                )
+                            }
                         }
-                        long shouldBe 0L
-                    }
-                }
-
-                "deleteLatestTaskCompletion" - {
-                    localTasksDataSource.save(task1)
-                    localTasksDataSource.save(task2)
-                    localTasksDataSource.expectSelect(task1, task2)
-
-                    val (d1, d2) = with(dateTimeProvider.getCurrentTimeZone()) {
-                        (dateTimeProvider.getCurrentInstant() - 1.hours) to
-                            (dateTimeProvider.getCurrentInstant() - 2.hours)
                     }
 
-                    localTasksDataSource.addTaskCompletion(task1.uuid, d1)
-                    localTasksDataSource.addTaskCompletion(task1.uuid, d2)
-                    localTasksDataSource.addTaskCompletion(task2.uuid, d1)
-                    localTasksDataSource.addTaskCompletion(task2.uuid, d2)
+                    "deleteLatestTaskCompletion" - {
+                        localTasksDataSource.save(task2)
+                        localTasksDataSource.expectSelect(task1, task2)
 
-                    localTasksDataSource.expectSelect(
-                        task1.copy(lastCompletionDate = d1),
-                        task2.copy(lastCompletionDate = d1)
-                    )
+                        val (d1, d2) = with(dateTimeProvider.getCurrentTimeZone()) {
+                            (dateTimeProvider.getCurrentInstant() - 1.hours) to
+                                (dateTimeProvider.getCurrentInstant() - 2.hours)
+                        }
 
-                    "delete 1/2 completion" - {
-                        localTasksDataSource.deleteLatestTaskCompletion(task1.uuid)
+                        localTasksDataSource.addTaskCompletion(task1.uuid, d1)
+                        localTasksDataSource.addTaskCompletion(task1.uuid, d2)
+                        localTasksDataSource.addTaskCompletion(task2.uuid, d1)
+                        localTasksDataSource.addTaskCompletion(task2.uuid, d2)
 
                         localTasksDataSource.expectSelect(
-                            task1.copy(lastCompletionDate = d2),
+                            task1.copy(lastCompletionDate = d1),
                             task2.copy(lastCompletionDate = d1)
                         )
 
-                        "delete 2/2 completion" {
+                        "delete 1/2 completion" - {
                             localTasksDataSource.deleteLatestTaskCompletion(task1.uuid)
 
                             localTasksDataSource.expectSelect(
-                                task1.copy(lastCompletionDate = null),
+                                task1.copy(lastCompletionDate = d2),
                                 task2.copy(lastCompletionDate = d1)
                             )
+
+                            "delete 2/2 completion" {
+                                localTasksDataSource.deleteLatestTaskCompletion(task1.uuid)
+
+                                localTasksDataSource.expectSelect(
+                                    task1.copy(lastCompletionDate = null),
+                                    task2.copy(lastCompletionDate = d1)
+                                )
+                            }
                         }
                     }
                 }
