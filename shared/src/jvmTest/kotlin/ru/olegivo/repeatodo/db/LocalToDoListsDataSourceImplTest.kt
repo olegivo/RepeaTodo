@@ -20,18 +20,24 @@ package ru.olegivo.repeatodo.db
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
+import io.kotest.matchers.shouldBe
 import ru.olegivo.repeatodo.assertItem
+import ru.olegivo.repeatodo.domain.LocalTasksDataSource
 import ru.olegivo.repeatodo.domain.LocalToDoListsDataSource
 import ru.olegivo.repeatodo.domain.models.ToDoList
 import ru.olegivo.repeatodo.domain.models.randomToDoList
 import ru.olegivo.repeatodo.kotest.FreeSpec
+import ru.olegivo.repeatodo.randomString
+import ru.olegivo.repeatodo.utils.newUuid
+import ru.olegivo.repeatodo.domain.models.Task as TaskDomain
 
 class LocalToDoListsDataSourceImplTest: FreeSpec() {
     init {
         "instance" - {
-            val database = TestDbHelper.create().database
+            val dbHelper = TestDbHelper.create()
+            val database = dbHelper.database
 
-            val localTasksDataSource: LocalToDoListsDataSource = LocalToDoListsDataSourceImpl(
+            val localToDoListsDataSource: LocalToDoListsDataSource = LocalToDoListsDataSourceImpl(
                 db = database,
                 dispatchersProvider = dispatchersProvider
             )
@@ -40,7 +46,7 @@ class LocalToDoListsDataSourceImplTest: FreeSpec() {
             "empty data source" - {
 
                 "getToDoLists should be empty" {
-                    localTasksDataSource.getToDoLists()
+                    localToDoListsDataSource.getToDoLists()
                         .assertItem { shouldBeEmpty() }
                 }
 
@@ -52,38 +58,61 @@ class LocalToDoListsDataSourceImplTest: FreeSpec() {
 
                 "save" - {
                     val toDoList2 = randomToDoList()
-                    localTasksDataSource.save(toDoList1)
+                    localToDoListsDataSource.save(toDoList1)
 
-                    "tasks should contain added tasks" {
-                        localTasksDataSource.getToDoLists().testIn(name = "getTasks")
+                    "tasks should contain added todo-lists" {
+                        localToDoListsDataSource.getToDoLists().testIn(name = "getTasks")
                             .assertItem { shouldContainExactly(toDoList1) }
                     }
 
-                    "delete should do nothing WHEN specified not exist task uuid" {
-                        localTasksDataSource.delete(uuid = toDoList2.uuid)
+                    "delete should do nothing WHEN specified not exist todo-list uuid" {
+                        localToDoListsDataSource.delete(uuid = toDoList2.uuid)
 
-                        localTasksDataSource.getToDoLists()
+                        localToDoListsDataSource.getToDoLists()
                             .assertItem { shouldContainExactly(toDoList1) }
                     }
 
-                    "delete should delete added task WHEN specified added task uuid" {
-                        localTasksDataSource.save(toDoList2) // one more
-                        localTasksDataSource.expectSelect(toDoList1, toDoList2)
+                    "delete should delete added todo-list WHEN specified added task uuid" - {
+                        localToDoListsDataSource.save(toDoList2) // one more
+                        localToDoListsDataSource.expectSelect(toDoList1, toDoList2)
 
-                        localTasksDataSource.delete(uuid = toDoList1.uuid)
+                        val taskUuid = newUuid()
+                        val localTasksDataSource: LocalTasksDataSource = LocalTasksDataSourceImpl(
+                            db = database,
+                            instantLongAdapter = dbHelper.instantLongAdapter,
+                            dispatchersProvider = dispatchersProvider
+                        )
+                        val task = TaskDomain(
+                            uuid = taskUuid,
+                            title = randomString(),
+                            daysPeriodicity = 1,
+                            priority = null,
+                            toDoListUuid = toDoList1.uuid,
+                            lastCompletionDate = null
+                        )
+                        localTasksDataSource.save(task)
+                        dbHelper.createInboxToDoList()
 
-                        localTasksDataSource.expectSelect(toDoList2)
+                        localToDoListsDataSource.delete(uuid = toDoList1.uuid)
+
+                        localToDoListsDataSource.expectSelect(toDoList2, InboxToDoList)
+
+                        "should move tasks from deleted todo-list to inbox" {
+                            localTasksDataSource.getTask(taskUuid).assertItem {
+                                shouldBe(task.copy(toDoListUuid = ToDoList.Predefined.Kind.INBOX.uuid))
+                            }
+                        }
                     }
 
-                    "update added task" {
-                        localTasksDataSource.save(toDoList2) // one more
-                        localTasksDataSource.expectSelect(toDoList1, toDoList2)
+                    "update added todo-list" {
+                        localToDoListsDataSource.save(toDoList2) // one more
+                        localToDoListsDataSource.expectSelect(toDoList1, toDoList2)
 
                         val newVersion =
                             randomToDoList(uuid = toDoList1.uuid)
-                        localTasksDataSource.save(newVersion)
+                        localToDoListsDataSource.save(newVersion)
 
-                        localTasksDataSource.expectSelect(newVersion, toDoList2)
+                        localToDoListsDataSource.expectSelect(newVersion, toDoList2)
                     }
                 }
             }

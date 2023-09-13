@@ -46,7 +46,10 @@ class LocalToDoListsDataSourceImpl(
 
     override suspend fun delete(uuid: String) {
         withContext(dispatchersProvider.io) {
-            db.toDoListQueries.deleteToDoList(uuid)
+            db.transaction {
+                db.toDoListQueries.moveTasksToInbox(uuid)
+                db.toDoListQueries.deleteToDoList(uuid)
+            }
         }
     }
 
