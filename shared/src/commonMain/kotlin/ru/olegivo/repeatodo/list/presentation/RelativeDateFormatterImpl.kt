@@ -18,6 +18,7 @@
 package ru.olegivo.repeatodo.list.presentation
 
 import kotlinx.datetime.Instant
+import kotlinx.datetime.daysUntil
 import kotlinx.datetime.periodUntil
 import ru.olegivo.repeatodo.domain.DateTimeProvider
 
@@ -35,9 +36,10 @@ class RelativeDateFormatterImpl(private val dateTimeProvider: DateTimeProvider):
             }
 
         return when {
-            periodUntil.days >= 1 -> "${periodUntil.days}d"
-            periodUntil.hours >= 1 -> "${periodUntil.hours}h"
-            periodUntil.minutes >= 1 -> "${periodUntil.minutes}m"
+            periodUntil.months > 0 -> "${value.daysUntil(current, currentTimeZone)}d"
+            periodUntil.days > 0 -> "${periodUntil.days}d"
+            periodUntil.hours > 0 -> "${periodUntil.hours}h"
+            periodUntil.minutes > 0 -> "${periodUntil.minutes}m"
             periodUntil.minutes < 1 -> "several seconds"
             else -> TODO()
         }.let {

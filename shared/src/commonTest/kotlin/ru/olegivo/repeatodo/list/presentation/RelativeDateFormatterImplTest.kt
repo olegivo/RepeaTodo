@@ -50,6 +50,7 @@ class RelativeDateFormatterImplTest: FreeSpec() {
                 (-1).days to "1d ago",
                 (-1).days - 1.hours - 10.minutes - 10.seconds to "1d ago",
                 (-10).days to "10d ago",
+                (-90).days to "90d ago",
             ).forEach { (extraPeriod, expected) ->
                 val value = currentInstant + extraPeriod
                 "should return `$expected` WHEN $extraPeriod from current datetime" {
