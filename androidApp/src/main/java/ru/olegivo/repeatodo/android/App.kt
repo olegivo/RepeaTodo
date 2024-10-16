@@ -20,7 +20,7 @@ import android.app.Application
 import org.koin.android.ext.koin.androidContext
 import ru.olegivo.repeatodo.di.DependencyInjection
 
-class App : Application() {
+class App: Application() {
     override fun onCreate() {
         super.onCreate()
         DependencyInjection.initKoin {

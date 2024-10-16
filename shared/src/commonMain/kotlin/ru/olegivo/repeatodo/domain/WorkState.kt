@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
 
 sealed interface WorkState<T> {
-    class InProgress<T> : WorkState<T> {
+    class InProgress<T>: WorkState<T> {
 
         override fun equals(other: Any?): Boolean {
             if (other == null || this::class != other::class) return false
@@ -34,7 +34,7 @@ sealed interface WorkState<T> {
         }
     }
 
-    class Error<T> : WorkState<T> {
+    class Error<T>: WorkState<T> {
 
         override fun equals(other: Any?): Boolean {
             if (other == null || this::class != other::class) return false
@@ -46,7 +46,7 @@ sealed interface WorkState<T> {
         }
     }
 
-    data class Completed<T>(val result: T) : WorkState<T>
+    data class Completed<T>(val result: T): WorkState<T>
 }
 
 fun <T> Flow<WorkState<T>>.filterCompleted() =

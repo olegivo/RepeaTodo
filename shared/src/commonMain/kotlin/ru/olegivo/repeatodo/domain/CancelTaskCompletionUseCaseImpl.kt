@@ -18,7 +18,7 @@
 package ru.olegivo.repeatodo.domain
 
 class CancelTaskCompletionUseCaseImpl(
-   private val localTasksDataSource: LocalTasksDataSource
+    private val localTasksDataSource: LocalTasksDataSource
 ): CancelTaskCompletionUseCase {
 
     override suspend fun invoke(taskUuid: String) {

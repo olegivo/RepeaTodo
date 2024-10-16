@@ -22,13 +22,17 @@ import io.kotest.core.test.TestCase
 import io.kotest.core.test.TestResult
 import io.kotest.core.test.TestType
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.test.*
+import kotlinx.coroutines.test.TestDispatcher
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
 
 class CoroutineTestListener(
     private val lifecycleMode: LifecycleMode = LifecycleMode.Root,
     val dispatcher: TestDispatcher = UnconfinedTestDispatcher(),
     val scope: TestScope = TestScope(dispatcher),
-) : TestListener {
+): TestListener {
 
     private fun shouldRun(testCase: TestCase) =
         (lifecycleMode == LifecycleMode.Root && testCase.descriptor.isRootTest()) ||
