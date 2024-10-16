@@ -25,7 +25,7 @@ import ru.olegivo.repeatodo.domain.models.Task
 import ru.olegivo.repeatodo.utils.VisibleForTesting
 
 @VisibleForTesting
-class FakeSaveTaskUseCase : SaveTaskUseCase {
+class FakeSaveTaskUseCase: SaveTaskUseCase {
 
     private val workState = MutableStateFlow<WorkState<Unit>?>(null)
     var savingTask: Task? = null

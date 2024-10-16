@@ -25,8 +25,8 @@ import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import ru.olegivo.repeatodo.android.ui.theme.AppTheme
 import org.koin.android.ext.android.inject
+import ru.olegivo.repeatodo.android.ui.theme.AppTheme
 
 class MainActivity: AppCompatActivity() {
     private val androidNavigator: AndroidNavigator by inject()

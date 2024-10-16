@@ -63,7 +63,7 @@ fun DrawerToDoListsCustomItem(
         NavigationDrawerItem(
             icon = {
                 Icon(
-                    if(showDeleteConfirmation.value) {
+                    if (showDeleteConfirmation.value) {
                         Icons.Outlined.Delete
                     } else {
                         Icons.Outlined.List

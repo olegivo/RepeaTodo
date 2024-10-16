@@ -25,7 +25,6 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.bind
 import org.koin.dsl.module
-import ru.olegivo.repeatodo.domain.LocalTasksDataSource
 import ru.olegivo.repeatodo.db.InstantLongAdapter
 import ru.olegivo.repeatodo.db.LocalTasksDataSourceImpl
 import ru.olegivo.repeatodo.db.LocalToDoListsDataSourceImpl
@@ -51,6 +50,7 @@ import ru.olegivo.repeatodo.domain.GetToDoListsUseCase
 import ru.olegivo.repeatodo.domain.GetToDoListsUseCaseImpl
 import ru.olegivo.repeatodo.domain.IsTaskCompletedUseCase
 import ru.olegivo.repeatodo.domain.IsTaskCompletedUseCaseImpl
+import ru.olegivo.repeatodo.domain.LocalTasksDataSource
 import ru.olegivo.repeatodo.domain.LocalToDoListsDataSource
 import ru.olegivo.repeatodo.domain.SaveCustomToDoListUseCase
 import ru.olegivo.repeatodo.domain.SaveCustomToDoListUseCaseImpl

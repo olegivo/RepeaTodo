@@ -31,7 +31,7 @@ import kotlinx.coroutines.launch
 import ru.olegivo.repeatodo.main.navigation.MainNavigator
 import ru.olegivo.repeatodo.main.navigation.NavigationDestination
 
-class AndroidNavigator(mainNavigator: MainNavigator) : CoroutineScope {
+class AndroidNavigator(mainNavigator: MainNavigator): CoroutineScope {
     private lateinit var navController: NavHostController
 
     override val coroutineContext = SupervisorJob() + Dispatchers.Main
@@ -64,13 +64,13 @@ class AndroidNavigator(mainNavigator: MainNavigator) : CoroutineScope {
     }
 }
 
-sealed class NavRoutes<TGraph : NavGraph, TRoute : NavRoute>(
+sealed class NavRoutes<TGraph: NavGraph, TRoute: NavRoute>(
     taskGraphFactory: () -> TGraph
 ) {
     val navGraph: NavGraph = taskGraphFactory()
     fun getNavRoute(builder: () -> TRoute): NavRoute = builder()
 
-    companion object : NavGraph {
+    companion object: NavGraph {
         val startRoute = HomeRoutes.getNavRoute { HomeRoute() }
 
         override fun addTo(navGraphBuilder: NavGraphBuilder) {
@@ -80,15 +80,15 @@ sealed class NavRoutes<TGraph : NavGraph, TRoute : NavRoute>(
         }
     }
 
-    object HomeRoutes : NavRoutes<HomeGraph, HomeRoute>({ HomeGraph() })
-    object EditTaskRoutes : NavRoutes<EditTaskGraph, EditTaskRoute>({ EditTaskGraph() })
+    object HomeRoutes: NavRoutes<HomeGraph, HomeRoute>({ HomeGraph() })
+    object EditTaskRoutes: NavRoutes<EditTaskGraph, EditTaskRoute>({ EditTaskGraph() })
 }
 
 interface NavGraph {
     fun addTo(navGraphBuilder: NavGraphBuilder)
 }
 
-class HomeGraph : NavGraph {
+class HomeGraph: NavGraph {
     override fun addTo(navGraphBuilder: NavGraphBuilder) {
         navGraphBuilder.composable(route = Routes.Home.route) {
             MainScreen()
@@ -96,7 +96,7 @@ class HomeGraph : NavGraph {
     }
 }
 
-class EditTaskGraph : NavGraph {
+class EditTaskGraph: NavGraph {
     override fun addTo(navGraphBuilder: NavGraphBuilder) {
         navGraphBuilder.composable(route = Routes.Tasks.Edit.route,
             arguments = listOf(
@@ -116,10 +116,10 @@ interface NavRoute {
     fun getDestinationRoute(): String
 }
 
-class HomeRoute : NavRoute {
+class HomeRoute: NavRoute {
     override fun getDestinationRoute() = Routes.Home.route
 }
 
-class EditTaskRoute(private val uuid: String) : NavRoute {
+class EditTaskRoute(private val uuid: String): NavRoute {
     override fun getDestinationRoute() = Routes.Tasks.Edit(uuid).route
 }

@@ -18,7 +18,6 @@
 package ru.olegivo.repeatodo.main.navigation
 
 import dev.icerock.moko.mvvm.flow.CFlow
-import kotlinx.coroutines.flow.SharedFlow
 import ru.olegivo.repeatodo.edit.navigation.EditTaskNavigator
 
 interface MainNavigator: EditTaskNavigator {
@@ -31,6 +30,6 @@ interface MainNavigator: EditTaskNavigator {
 }
 
 sealed class NavigationDestination {
-    object AddTask : NavigationDestination()
-    data class EditTask(val uuid: String) : NavigationDestination()
+    object AddTask: NavigationDestination()
+    data class EditTask(val uuid: String): NavigationDestination()
 }
