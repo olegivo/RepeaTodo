@@ -21,13 +21,13 @@ plugins {
 }
 
 android {
-    compileSdk = 33
+    compileSdk = 34
     defaultConfig {
         applicationId = "ru.olegivo.repeatodo.android"
         minSdk = 26
-        targetSdk = 33
         versionCode = 4
         versionName = "0.4"
+        targetSdk = 34
     }
     buildTypes {
         getByName("release") {
