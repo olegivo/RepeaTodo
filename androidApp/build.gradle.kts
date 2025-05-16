@@ -25,9 +25,9 @@ android {
     defaultConfig {
         applicationId = "ru.olegivo.repeatodo.android"
         minSdk = 26
-        versionCode = 4
-        versionName = "0.4"
         targetSdk = 34
+        versionCode = 5
+        versionName = "0.5"
     }
     buildTypes {
         getByName("release") {
