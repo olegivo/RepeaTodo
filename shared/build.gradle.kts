@@ -129,10 +129,10 @@ kotlin {
 }
 
 android {
-    compileSdk = 34
+    compileSdk = 36
     defaultConfig {
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 36
     }
     namespace = "ru.olegivo.repeatodo"
 }
