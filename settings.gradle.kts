@@ -15,6 +15,8 @@
  * RepeaTodo.
  */
 
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 pluginManagement {
     repositories {
         google()
@@ -22,8 +24,6 @@ pluginManagement {
         mavenCentral()
     }
 }
-
-enableFeaturePreview("VERSION_CATALOGS")
 
 rootProject.name = "RepeaTodo"
 include(":androidApp")

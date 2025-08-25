@@ -135,6 +135,11 @@ android {
         targetSdk = 36
     }
     namespace = "ru.olegivo.repeatodo"
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
 }
 
 kswift {

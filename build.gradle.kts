@@ -22,16 +22,17 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:7.4.2")
+        classpath("com.android.tools.build:gradle:8.13.0")
     }
 }
 
 // Kotlin plugins are declared here (apply false) so the whole build resolves a
-// single Kotlin Gradle Plugin version (1.9.10). Applying `kotlin("multiplatform")`
+// single Kotlin Gradle Plugin version. Applying `kotlin("multiplatform")`
 // in a subproject alongside versioned aliases otherwise lets an older transitive
-// Kotlin Gradle Plugin shadow 1.9.10, which breaks `androidTarget()`.
+// Kotlin Gradle Plugin shadow the catalog version, which breaks `androidTarget()`.
 plugins {
     alias(libs.plugins.multiplatform) apply false
+    alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.kotest) apply false
     alias(libs.plugins.moko.kswift) apply false
     alias(libs.plugins.sqlDelight) apply false
