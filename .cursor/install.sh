@@ -19,11 +19,11 @@ ANDROID_SDK_ROOT="${ANDROID_SDK_ROOT:-$HOME/android-sdk}"
 CMDLINE_TOOLS_ZIP="commandlinetools-linux-11076708_latest.zip"
 CMDLINE_TOOLS_URL="https://dl.google.com/android/repository/${CMDLINE_TOOLS_ZIP}"
 # Package list is derived from the module Gradle files:
-#   androidApp and shared compileSdk/targetSdk 36.
+#   androidApp compileSdk 34 / targetSdk 36, shared compileSdk/targetSdk 34.
 ANDROID_PACKAGES=(
   "platform-tools"
-  "platforms;android-36"
-  "build-tools;36.0.0"
+  "platforms;android-34"
+  "build-tools;34.0.0"
 )
 
 log() { printf '\n\033[1;34m==> %s\033[0m\n' "$*"; }

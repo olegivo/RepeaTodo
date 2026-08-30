@@ -21,7 +21,7 @@ plugins {
 }
 
 android {
-    compileSdk = 36
+    compileSdk = 34
     defaultConfig {
         applicationId = "ru.olegivo.repeatodo.android"
         minSdk = 26
