@@ -17,13 +17,12 @@
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
-@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
-    alias(libs.plugins.kotest)
-    alias(libs.plugins.moko.kswift)
-    alias(libs.plugins.sqlDelight)
+    id("io.kotest.multiplatform")
+    id("dev.icerock.moko.kswift")
+    id("com.squareup.sqldelight")
 }
 
 kotlin {
@@ -36,7 +35,7 @@ kotlin {
             useJUnitPlatform()
         }
     }
-    android()
+    androidTarget()
 
     val xcf = XCFramework("shared")
 
