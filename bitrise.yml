@@ -1,0 +1,150 @@
+---
+format_version: '11'
+default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+project_type: ios
+trigger_map:
+- pull_request_source_branch: "*"
+  workflow: primary
+workflows:
+  deploy:
+    description: |
+      The workflow tests, builds and deploys the app using *Deploy to bitrise.io* step.
+
+      For testing the *retry_on_failure* test repetition mode is enabled.
+
+      Next steps:
+      - Set up [Connecting to an Apple service with API key](https://devcenter.bitrise.io/en/accounts/connecting-to-services/connecting-to-an-apple-service-with-api-key.html##).
+      - Or further customise code signing following our [iOS code signing](https://devcenter.bitrise.io/en/code-signing/ios-code-signing.html) guide.
+    steps:
+    - git-clone@8: {}
+    - cocoapods-install@2:
+        inputs:
+        - is_cache_disabled: 'true'
+    - xcode-archive@5:
+        inputs:
+        - project_path: "$BITRISE_PROJECT_PATH"
+        - scheme: "$BITRISE_SCHEME"
+        - distribution_method: "$BITRISE_DISTRIBUTION_METHOD"
+        - automatic_code_signing: api-key
+        - cache_level: none
+    - deploy-to-bitrise-io@2: {}
+  primary:
+    description: |
+      The workflow only builds the project because the project scanner could not find any tests.
+
+      Next steps:
+      - Check out [Getting started with iOS apps](https://devcenter.bitrise.io/en/getting-started/getting-started-with-ios-apps.html).
+    steps:
+    - git-clone@8: {}
+    - restore-gradle-cache@2: {}
+    - install-missing-android-tools@3:
+        inputs:
+        - gradlew_path: "$PROJECT_LOCATION/gradlew"
+    - restore-cocoapods-cache@2: {}
+    - cocoapods-install@2:
+        inputs:
+        - is_cache_disabled: 'true'
+    - gradle-runner@4:
+        inputs:
+        - app_file_include_filter: none
+        - mapping_file_include_filter: none
+        - gradle_task: ":androidApp:assembleDebug :shared:assembleSharedDebugXCFramework"
+        title: 'Gradle: Build Android'
+    - gradle-runner@4:
+        inputs:
+        - app_file_include_filter: none
+        - mapping_file_include_filter: none
+        - gradle_task: ":shared:assembleSharedDebugXCFramework"
+        title: 'Gradle: Build Shared XCFramework'
+    - xcode-build-for-simulator@3:
+        inputs:
+        - code_signing_allowed: 'yes'
+        - configuration: Debug
+        is_skippable: true
+    - script@1:
+        inputs:
+        - content: |-
+            #!/usr/bin/env bash
+            # fail if any commands fails
+            set -e
+            # make pipelines' return status equal the last command to exit with a non-zero status, or zero if all commands exit successfully
+            set -o pipefail
+            # debug log
+            set -x
+
+            # write your script here
+            echo "Hello World!"
+
+            pwd
+            ls ./shared/build/
+            ls ./shared/build/bin/
+            ls ./shared/build/bin/iosSimulatorArm64/
+            ls ./shared/build/bin/iosSimulatorArm64/debugFramework/
+            ls ./shared/build/bin/iosSimulatorArm64/debugFramework/sharedSwift/
+
+            # or run a script from your repository, like:
+            # bash ./path/to/script.sh
+            # not just bash, e.g.:
+            # ruby ./path/to/script.rb
+        is_always_run: true
+    - gradle-runner@4:
+        inputs:
+        - app_file_include_filter: none
+        - mapping_file_include_filter: none
+        - gradle_task: ":shared:jvmTest"
+        title: 'Gradle: shared tests'
+    - gradle-runner@4:
+        inputs:
+        - app_file_include_filter: none
+        - mapping_file_include_filter: none
+        - gradle_task: ":shared:generateCommonMainRepeaTodoDbSchema
+            :shared:verifySqlDelightMigration"
+        title: 'Gradle: Check DB Migrations'
+    - script@1:
+        title: Sanitize branch name for artifact zip
+        inputs:
+        - content: |-
+            #!/usr/bin/env bash
+            set -euo pipefail
+            # `zip` treats "/" in the archive name as a path separator, so a branch
+            # name like "cursor/upgrade-kotlin-1-9-10-eba9" makes deploy-to-bitrise-io
+            # try to write the zip into a non-existent subdirectory and fail
+            # ("zip I/O error: No such file or directory"). Replace "/" with "-".
+            SAFE_BRANCH=$(printf '%s' "$BITRISE_GIT_BRANCH" | tr '/' '-')
+            envman add --key SAFE_BRANCH --value "$SAFE_BRANCH"
+    - deploy-to-bitrise-io@2:
+        title: Deploy to Bitrise.io - Test Reports
+        inputs:
+        - is_compress: 'true'
+        - zip_name: RepeaTodo - $BITRISE_BUILD_NUMBER - $SAFE_BRANCH - Common Tests
+        - deploy_path: "./shared/build/reports/tests/jvmTest/"
+    - deploy-to-bitrise-io@2: {}
+    - save-gradle-cache@1: {}
+    - save-cocoapods-cache@1: {}
+meta:
+  bitrise.io:
+    stack: osx-xcode-latest-stable
+    machine_type_id: g2-m1.4core
+app:
+  envs:
+  - opts:
+      is_expand: false
+    BITRISE_PROJECT_PATH: iosApp/RepeaTodo.xcworkspace
+  - opts:
+      is_expand: false
+    BITRISE_SCHEME: RepeaTodo Debug
+  - opts:
+      is_expand: false
+    BITRISE_DISTRIBUTION_METHOD: development
+  - opts:
+      is_expand: false
+    PROJECT_LOCATION: "."
+  - opts:
+      is_expand: false
+    MODULE: app
+  - opts:
+      is_expand: false
+    VARIANT: debug
+  - opts:
+      is_expand: false
+    GRADLEW_PATH: "./gradlew"
