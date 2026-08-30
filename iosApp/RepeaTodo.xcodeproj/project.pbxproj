@@ -343,7 +343,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd \"$SRCROOT/..\"\n./gradlew :shared:embedAndSignAppleFrameworkForXcode\n";
+			shellScript = "cd \"$SRCROOT/..\"\n# Xcode does not export EXPANDED_CODE_SIGN_IDENTITY when code signing is\n# disabled (e.g. simulator archive with CODE_SIGNING_ALLOWED=NO). Kotlin 1.9.10's\n# embedAndSignAppleFrameworkForXcode reads it into a non-optional 'sign' task\n# input, so default it to '-' (ad-hoc) to avoid a Gradle configuration error.\nexport EXPANDED_CODE_SIGN_IDENTITY=\"${EXPANDED_CODE_SIGN_IDENTITY:--}\"\n./gradlew :shared:embedAndSignAppleFrameworkForXcode\n";
 		};
 		7EA9AE29315A218A1BB6245A /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
