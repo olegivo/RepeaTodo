@@ -36,7 +36,22 @@ workflows:
       - Check out [Getting started with iOS apps](https://devcenter.bitrise.io/en/getting-started/getting-started-with-ios-apps.html).
     steps:
     - git-clone@8: {}
-    - restore-gradle-cache@2: {}
+    # Split Gradle vs Kotlin/Native caches. The bundled save-gradle-cache step
+    # puts ~/.konan (compiler + LLVM, ~1GB) in the same archive as Maven
+    # artifacts and keys it on **/*.gradle*, so a targetSdk bump forces a
+    # 1.3GB rewrite. Konan only changes with the Kotlin version.
+    - restore-cache@2:
+        title: Restore Gradle dependency cache
+        inputs:
+        - key: |
+            {{ .OS }}-{{ .Arch }}-gradle-deps-{{ checksum "gradle/libs.versions.toml" "gradle/wrapper/gradle-wrapper.properties" "gradle.properties" "build.gradle.kts" "settings.gradle.kts" }}
+            {{ .OS }}-{{ .Arch }}-gradle-deps-
+    - restore-cache@2:
+        title: Restore Kotlin/Native cache
+        inputs:
+        - key: |
+            {{ .OS }}-{{ .Arch }}-konan-{{ checksum "gradle/libs.versions.toml" }}
+            {{ .OS }}-{{ .Arch }}-konan-
     - install-missing-android-tools@3:
         inputs:
         - gradlew_path: "$PROJECT_LOCATION/gradlew"
@@ -119,7 +134,25 @@ workflows:
         - zip_name: RepeaTodo - $BITRISE_BUILD_NUMBER - $SAFE_BRANCH - Common Tests
         - deploy_path: "./shared/build/reports/tests/jvmTest/"
     - deploy-to-bitrise-io@2: {}
-    - save-gradle-cache@1: {}
+    - save-cache@1:
+        title: Save Gradle dependency cache
+        inputs:
+        - key: '{{ .OS }}-{{ .Arch }}-gradle-deps-{{ checksum "gradle/libs.versions.toml" "gradle/wrapper/gradle-wrapper.properties" "gradle.properties" "build.gradle.kts" "settings.gradle.kts" }}'
+        - paths: |
+            ~/.gradle/caches/modules-*/files-*
+            ~/.gradle/caches/modules-*/metadata-*
+            ~/.gradle/wrapper
+        - is_key_unique: "true"
+        - compression_level: 1
+    - save-cache@1:
+        title: Save Kotlin/Native cache
+        inputs:
+        - key: '{{ .OS }}-{{ .Arch }}-konan-{{ checksum "gradle/libs.versions.toml" }}'
+        - paths: |
+            ~/.konan/kotlin-*
+            ~/.konan/dependencies
+        - is_key_unique: "true"
+        - compression_level: 1
     - save-cocoapods-cache@1: {}
 meta:
   bitrise.io:
