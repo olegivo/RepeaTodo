@@ -52,7 +52,7 @@ workflows:
         - gradlew_path: "$GRADLEW_PATH"
         - app_file_include_filter: "*.aab"
         - mapping_file_include_filter: none
-    - sign-apk@3:
+    - sign-apk@2:
         title: Android Sign
         inputs:
         - android_app: "$BITRISE_AAB_PATH"
