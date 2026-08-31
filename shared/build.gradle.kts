@@ -27,9 +27,6 @@ plugins {
 
 kotlin {
     jvmToolchain(17)
-    compilerOptions {
-        freeCompilerArgs.add("-Xexpect-actual-classes")
-    }
     jvm {
 //        compilations.all {
 //            kotlinOptions.jvmTarget = "1.8"
@@ -90,11 +87,13 @@ kotlin {
         }
         val jvmMain by getting {
             dependencies {
+                dependsOn(commonMain)
                 implementation(libs.sqlDelight.driver.sqlite)
             }
         }
         val jvmTest by getting {
             dependencies {
+                dependsOn(jvmMain)
                 implementation(libs.kotest.runner.junit5.jvm)
             }
         }
