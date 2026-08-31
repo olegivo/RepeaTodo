@@ -6,11 +6,9 @@ trigger_map:
 - pull_request_source_branch: "*"
   workflow: primary
 workflows:
-  deploy:
+  deploy-ios:
     description: |
-      The workflow tests, builds and deploys the app using *Deploy to bitrise.io* step.
-
-      For testing the *retry_on_failure* test repetition mode is enabled.
+      Archives the iOS app and uploads the IPA to Bitrise.io.
 
       Next steps:
       - Set up [Connecting to an Apple service with API key](https://devcenter.bitrise.io/en/accounts/connecting-to-services/connecting-to-an-apple-service-with-api-key.html##).
@@ -28,6 +26,56 @@ workflows:
         - automatic_code_signing: api-key
         - cache_level: none
     - deploy-to-bitrise-io@2: {}
+  deploy-android-play:
+    description: |
+      Builds a signed Android App Bundle and uploads it to Google Play
+      internal testing. Run manually (Start/Schedule). Promote to production
+      in Play Console.
+
+      Requires Bitrise Code signing: Android keystore and generic file
+      PLAY_SERVICE_ACCOUNT_JSON ($BITRISEIO_PLAY_SERVICE_ACCOUNT_JSON_URL).
+    steps:
+    - git-clone@8: {}
+    - restore-cache@2:
+        title: Restore Gradle dependency cache
+        inputs:
+        - key: |
+            {{ .OS }}-{{ .Arch }}-gradle-deps-{{ checksum "gradle/libs.versions.toml" "gradle/wrapper/gradle-wrapper.properties" "gradle.properties" "build.gradle.kts" "settings.gradle.kts" }}
+            {{ .OS }}-{{ .Arch }}-gradle-deps-
+    - install-missing-android-tools@3:
+        inputs:
+        - gradlew_path: "$PROJECT_LOCATION/gradlew"
+    - gradle-runner@4:
+        title: 'Gradle: bundleRelease'
+        inputs:
+        - gradle_task: ":androidApp:bundleRelease"
+        - gradlew_path: "$GRADLEW_PATH"
+        - app_file_include_filter: "*.aab"
+        - mapping_file_include_filter: none
+    - sign-apk@2:
+        title: Android Sign
+        inputs:
+        - android_app: "$BITRISE_AAB_PATH"
+    - google-play-deploy@3:
+        title: Google Play Deploy — internal testing
+        inputs:
+        - service_account_json_key_path: "$BITRISEIO_PLAY_SERVICE_ACCOUNT_JSON_URL"
+        - package_name: ru.olegivo.repeatodo.android
+        - app_path: "$BITRISE_SIGNED_AAB_PATH"
+        - track: internal
+        - status: completed
+        - retry_without_sending_to_review: "true"
+    - deploy-to-bitrise-io@2: {}
+    - save-cache@1:
+        title: Save Gradle dependency cache
+        inputs:
+        - key: '{{ .OS }}-{{ .Arch }}-gradle-deps-{{ checksum "gradle/libs.versions.toml" "gradle/wrapper/gradle-wrapper.properties" "gradle.properties" "build.gradle.kts" "settings.gradle.kts" }}'
+        - paths: |
+            ~/.gradle/caches/modules-*/files-*
+            ~/.gradle/caches/modules-*/metadata-*
+            ~/.gradle/wrapper
+        - is_key_unique: "true"
+        - compression_level: 1
   primary:
     description: |
       The workflow only builds the project because the project scanner could not find any tests.
