@@ -33,6 +33,16 @@ allprojects {
         google()
         mavenCentral()
     }
+    configurations.configureEach {
+        resolutionStrategy.eachDependency {
+            if (requested.group == "org.jetbrains.kotlinx" &&
+                requested.name.startsWith("atomicfu")
+            ) {
+                useVersion("0.17.3")
+                because("atomicfu 0.23.x Native klibs need Kotlin 1.9.21+; we use 1.9.10")
+            }
+        }
+    }
 }
 
 tasks.register("clean", Delete::class) {
