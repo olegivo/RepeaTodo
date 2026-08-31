@@ -155,3 +155,10 @@ sqldelight {
         verifyMigrations = true
     }
 }
+
+// SQLDelight 1.5.5 writes schema dumps under src/commonMain/sqldelight, which
+// VerifyMigrationTask also reads. Gradle 8 treats that as an implicit
+// dependency unless the tasks are ordered (Bitrise runs both together).
+tasks.withType<com.squareup.sqldelight.gradle.VerifyMigrationTask>().configureEach {
+    mustRunAfter(tasks.withType<com.squareup.sqldelight.gradle.GenerateSchemaTask>())
+}
