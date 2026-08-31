@@ -15,22 +15,13 @@
  * RepeaTodo.
  */
 
-buildscript {
-    repositories {
-        gradlePluginPortal()
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath("com.android.tools.build:gradle:8.13.0")
-    }
-}
-
-// Kotlin plugins are declared here (apply false) so the whole build resolves a
-// single Kotlin Gradle Plugin version. Applying `kotlin("multiplatform")`
-// in a subproject alongside versioned aliases otherwise lets an older transitive
-// Kotlin Gradle Plugin shadow the catalog version, which breaks `androidTarget()`.
+// Plugins are declared here (apply false) so the whole build resolves a
+// single version of AGP and the Kotlin Gradle Plugin. Mixing AGP on the
+// buildscript classpath with Kotlin in plugins {} puts kotlinx-coroutines
+// in two classloaders and breaks SDK loading on AGP 8.7+.
 plugins {
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.library) apply false
     alias(libs.plugins.multiplatform) apply false
     alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.kotest) apply false
@@ -46,5 +37,5 @@ allprojects {
 }
 
 tasks.register("clean", Delete::class) {
-    delete(rootProject.buildDir)
+    delete(rootProject.layout.buildDirectory)
 }

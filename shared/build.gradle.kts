@@ -19,13 +19,17 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
     kotlin("multiplatform")
-    id("com.android.library")
+    alias(libs.plugins.android.library)
     id("io.kotest.multiplatform")
     id("dev.icerock.moko.kswift")
     id("com.squareup.sqldelight")
 }
 
 kotlin {
+    jvmToolchain(17)
+    compilerOptions {
+        freeCompilerArgs.add("-Xexpect-actual-classes")
+    }
     jvm {
 //        compilations.all {
 //            kotlinOptions.jvmTarget = "1.8"
@@ -86,13 +90,11 @@ kotlin {
         }
         val jvmMain by getting {
             dependencies {
-                dependsOn(commonMain)
                 implementation(libs.sqlDelight.driver.sqlite)
             }
         }
         val jvmTest by getting {
             dependencies {
-                dependsOn(jvmMain)
                 implementation(libs.kotest.runner.junit5.jvm)
             }
         }
@@ -132,7 +134,6 @@ android {
     compileSdk = 36
     defaultConfig {
         minSdk = 26
-        targetSdk = 36
     }
     namespace = "ru.olegivo.repeatodo"
 

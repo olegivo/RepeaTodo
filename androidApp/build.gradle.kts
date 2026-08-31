@@ -16,7 +16,7 @@
  */
 
 plugins {
-    id("com.android.application")
+    alias(libs.plugins.android.application)
     kotlin("android")
     alias(libs.plugins.compose.compiler)
 }
@@ -41,6 +41,10 @@ android {
     }
     buildFeatures {
         compose = true
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
