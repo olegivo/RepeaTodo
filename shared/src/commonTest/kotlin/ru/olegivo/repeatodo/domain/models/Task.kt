@@ -32,7 +32,10 @@ fun randomTask(
 ) = Task(
     uuid = randomString(),
     title = randomString(),
-    daysPeriodicity = randomInt(),
+    daysPeriodicity = randomInt(
+        from = Task.MIN_DAYS_PERIODICITY,
+        until = Task.MAX_DAYS_PERIODICITY + 1
+    ),
     lastCompletionDate = lastCompletionDate,
     priority = priority,
     toDoListUuid = toDoListUuid,
