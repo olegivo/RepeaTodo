@@ -110,7 +110,7 @@ workflows:
         - gradle_task: ":androidApp:bundleRelease"
         - gradlew_path: "$GRADLEW_PATH"
         - app_file_include_filter: "*.aab"
-        - mapping_file_include_filter: none
+        - mapping_file_include_filter: "*/mapping.txt"
     - sign-apk@2:
         title: Android Sign
         inputs:
