@@ -168,7 +168,7 @@ workflows:
         - is_cache_disabled: 'true'
     - gradle-runner@4:
         inputs:
-        - app_file_include_filter: none
+        - app_file_include_filter: "*.apk"
         - mapping_file_include_filter: none
         - gradle_task: ":androidApp:assembleDebug :shared:assembleSharedDebugXCFramework"
         title: 'Gradle: Build Android'
