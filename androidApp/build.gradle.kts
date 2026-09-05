@@ -16,12 +16,12 @@
  */
 
 plugins {
-    id("com.android.application")
+    alias(libs.plugins.android.application)
     kotlin("android")
 }
 
 android {
-    compileSdk = 34
+    compileSdk = 36
     defaultConfig {
         applicationId = "ru.olegivo.repeatodo.android"
         minSdk = 26
@@ -44,6 +44,14 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.3"
     }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+}
+
+kotlin {
+    jvmToolchain(17)
 }
 
 dependencies {

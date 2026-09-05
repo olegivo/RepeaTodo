@@ -15,22 +15,13 @@
  * RepeaTodo.
  */
 
-buildscript {
-    repositories {
-        gradlePluginPortal()
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath("com.android.tools.build:gradle:7.4.2")
-    }
-}
-
-// Kotlin plugins are declared here (apply false) so the whole build resolves a
-// single Kotlin Gradle Plugin version (1.9.10). Applying `kotlin("multiplatform")`
-// in a subproject alongside versioned aliases otherwise lets an older transitive
-// Kotlin Gradle Plugin shadow 1.9.10, which breaks `androidTarget()`.
+// Plugins are declared here (apply false) so the whole build resolves a
+// single version of AGP and the Kotlin Gradle Plugin. Mixing AGP on the
+// buildscript classpath with Kotlin in plugins {} puts kotlinx-coroutines
+// in two classloaders and breaks SDK loading on AGP 8.7+.
 plugins {
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.library) apply false
     alias(libs.plugins.multiplatform) apply false
     alias(libs.plugins.kotest) apply false
     alias(libs.plugins.moko.kswift) apply false
@@ -42,8 +33,18 @@ allprojects {
         google()
         mavenCentral()
     }
+    configurations.configureEach {
+        resolutionStrategy.eachDependency {
+            if (requested.group == "org.jetbrains.kotlinx" &&
+                requested.name.startsWith("atomicfu")
+            ) {
+                useVersion("0.17.3")
+                because("atomicfu 0.23.x Native klibs need Kotlin 1.9.21+; we use 1.9.10")
+            }
+        }
+    }
 }
 
 tasks.register("clean", Delete::class) {
-    delete(rootProject.buildDir)
+    delete(rootProject.layout.buildDirectory)
 }

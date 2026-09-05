@@ -13,17 +13,17 @@
 set -euo pipefail
 
 # --- Pinned versions -------------------------------------------------------
-JDK_APT_PACKAGE="openjdk-17-jdk-headless"           # AGP 7.4.2 + Gradle 7.5 need JDK 11-17
+JDK_APT_PACKAGE="openjdk-17-jdk-headless"           # AGP 8.13 + Gradle 8.13 need JDK 17
 JAVA_HOME_DIR="/usr/lib/jvm/java-17-openjdk-amd64"
 ANDROID_SDK_ROOT="${ANDROID_SDK_ROOT:-$HOME/android-sdk}"
 CMDLINE_TOOLS_ZIP="commandlinetools-linux-11076708_latest.zip"
 CMDLINE_TOOLS_URL="https://dl.google.com/android/repository/${CMDLINE_TOOLS_ZIP}"
 # Package list is derived from the module Gradle files:
-#   androidApp compileSdk 34 / targetSdk 36, shared compileSdk/targetSdk 34.
+#   androidApp and shared compileSdk/targetSdk 36.
 ANDROID_PACKAGES=(
   "platform-tools"
-  "platforms;android-34"
-  "build-tools;34.0.0"
+  "platforms;android-36"
+  "build-tools;36.0.0"
 )
 
 log() { printf '\n\033[1;34m==> %s\033[0m\n' "$*"; }

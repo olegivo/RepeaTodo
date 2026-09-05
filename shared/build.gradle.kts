@@ -19,13 +19,14 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
     kotlin("multiplatform")
-    id("com.android.library")
+    alias(libs.plugins.android.library)
     id("io.kotest.multiplatform")
     id("dev.icerock.moko.kswift")
     id("com.squareup.sqldelight")
 }
 
 kotlin {
+    jvmToolchain(17)
     jvm {
 //        compilations.all {
 //            kotlinOptions.jvmTarget = "1.8"
@@ -129,12 +130,16 @@ kotlin {
 }
 
 android {
-    compileSdk = 34
+    compileSdk = 36
     defaultConfig {
         minSdk = 26
-        targetSdk = 34
     }
     namespace = "ru.olegivo.repeatodo"
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
 }
 
 kswift {
@@ -149,4 +154,11 @@ sqldelight {
         schemaOutputDirectory = file("src/commonMain/sqldelight/databases")
         verifyMigrations = true
     }
+}
+
+// SQLDelight 1.5.5 writes schema dumps under src/commonMain/sqldelight, which
+// VerifyMigrationTask also reads. Gradle 8 treats that as an implicit
+// dependency unless the tasks are ordered (Bitrise runs both together).
+tasks.withType<com.squareup.sqldelight.gradle.VerifyMigrationTask>().configureEach {
+    mustRunAfter(tasks.withType<com.squareup.sqldelight.gradle.GenerateSchemaTask>())
 }

@@ -5,6 +5,8 @@ project_type: ios
 trigger_map:
 - pull_request_source_branch: "*"
   workflow: primary
+- tag: ":^[0-9]+\\.[0-9]+\\.[0-9]+$"
+  workflow: deploy-android-play
 workflows:
   deploy-ios:
     description: |
@@ -29,19 +31,76 @@ workflows:
   deploy-android-play:
     description: |
       Builds a signed Android App Bundle and uploads it to Google Play
-      internal testing. Run manually (Start/Schedule). Promote to production
-      in Play Console.
+      internal testing. Triggered by a 3-part numeric tag (1.2.3) or
+      Start/Schedule. Promote to production in Play Console.
+
+      versionName = <tag>.<BITRISE_BUILD_NUMBER>
+      versionCode = Major*1000000 + Minor*10000 + Patch*100 + (BITRISE_BUILD_NUMBER % 100)
+      Tag from BITRISE_GIT_TAG, else nearest git describe tag, else 0.0.1.
+      Manual Start clones depth 100 so describe can see ancestor tags;
+      webhook/schedule keep the default shallow clone.
 
       Requires Bitrise Code signing: Android keystore and generic file
       PLAY_SERVICE_ACCOUNT_JSON ($BITRISEIO_PLAY_SERVICE_ACCOUNT_JSON_URL).
     steps:
-    - git-clone@8: {}
+    - git-clone@8:
+        title: Git Clone (manual, depth 100)
+        run_if: '{{getenv "BITRISE_TRIGGER_METHOD" | eq "manual"}}'
+        inputs:
+        - fetch_tags: "yes"
+        - clone_depth: "100"
+    - git-clone@8:
+        title: Git Clone (automatic, default shallow)
+        run_if: '{{getenv "BITRISE_TRIGGER_METHOD" | ne "manual"}}'
+        inputs:
+        - fetch_tags: "yes"
+    - script@1:
+        title: Calculate Android versionCode and versionName
+        inputs:
+        - content: |-
+            #!/usr/bin/env bash
+            set -ex
+
+            if [ -n "$BITRISE_GIT_TAG" ]; then
+              BASE_VERSION="$BITRISE_GIT_TAG"
+              echo "Сборка по тегу: $BASE_VERSION"
+            else
+              BASE_VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.1")
+              echo "Сборка без тега. Найден предыдущий тег: $BASE_VERSION"
+            fi
+
+            if [[ "$BASE_VERSION" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+) ]]; then
+              MAJOR="${BASH_REMATCH[1]}"
+              MINOR="${BASH_REMATCH[2]}"
+              PATCH="${BASH_REMATCH[3]}"
+              BASE_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+            else
+              MAJOR=0
+              MINOR=0
+              PATCH=1
+              BASE_VERSION="0.0.1"
+            fi
+
+            BUILD_DIGIT=$(( BITRISE_BUILD_NUMBER % 100 ))
+            CALCULATED_VERSION_CODE=$(( (MAJOR * 1000000) + (MINOR * 10000) + (PATCH * 100) + BUILD_DIGIT ))
+            FINAL_VERSION_NAME="${BASE_VERSION}.${BITRISE_BUILD_NUMBER}"
+
+            echo "Итоговый versionCode: $CALCULATED_VERSION_CODE"
+            echo "Итоговый versionName: $FINAL_VERSION_NAME"
+
+            envman add --key CALCULATED_VERSION_CODE --value "$CALCULATED_VERSION_CODE"
+            envman add --key CALCULATED_VERSION_NAME --value "$FINAL_VERSION_NAME"
+    - change-android-versioncode-and-versionname@1:
+        inputs:
+        - build_gradle_path: "./androidApp/build.gradle.kts"
+        - new_version_code: "$CALCULATED_VERSION_CODE"
+        - new_version_name: "$CALCULATED_VERSION_NAME"
     - restore-cache@2:
         title: Restore Gradle dependency cache
         inputs:
         - key: |
-            {{ .OS }}-{{ .Arch }}-gradle-deps-{{ checksum "gradle/libs.versions.toml" "gradle/wrapper/gradle-wrapper.properties" "gradle.properties" "build.gradle.kts" "settings.gradle.kts" }}
-            {{ .OS }}-{{ .Arch }}-gradle-deps-
+            {{ .OS }}-{{ .Arch }}-gradle-deps-agp813-{{ checksum "gradle/libs.versions.toml" "gradle/wrapper/gradle-wrapper.properties" "gradle.properties" "build.gradle.kts" "settings.gradle.kts" }}
+            {{ .OS }}-{{ .Arch }}-gradle-deps-agp813-
     - install-missing-android-tools@3:
         inputs:
         - gradlew_path: "$PROJECT_LOCATION/gradlew"
@@ -69,7 +128,7 @@ workflows:
     - save-cache@1:
         title: Save Gradle dependency cache
         inputs:
-        - key: '{{ .OS }}-{{ .Arch }}-gradle-deps-{{ checksum "gradle/libs.versions.toml" "gradle/wrapper/gradle-wrapper.properties" "gradle.properties" "build.gradle.kts" "settings.gradle.kts" }}'
+        - key: '{{ .OS }}-{{ .Arch }}-gradle-deps-agp813-{{ checksum "gradle/libs.versions.toml" "gradle/wrapper/gradle-wrapper.properties" "gradle.properties" "build.gradle.kts" "settings.gradle.kts" }}'
         - paths: |
             ~/.gradle/caches/modules-*/files-*
             ~/.gradle/caches/modules-*/metadata-*
@@ -92,14 +151,14 @@ workflows:
         title: Restore Gradle dependency cache
         inputs:
         - key: |
-            {{ .OS }}-{{ .Arch }}-gradle-deps-{{ checksum "gradle/libs.versions.toml" "gradle/wrapper/gradle-wrapper.properties" "gradle.properties" "build.gradle.kts" "settings.gradle.kts" }}
-            {{ .OS }}-{{ .Arch }}-gradle-deps-
+            {{ .OS }}-{{ .Arch }}-gradle-deps-agp813-{{ checksum "gradle/libs.versions.toml" "gradle/wrapper/gradle-wrapper.properties" "gradle.properties" "build.gradle.kts" "settings.gradle.kts" }}
+            {{ .OS }}-{{ .Arch }}-gradle-deps-agp813-
     - restore-cache@2:
         title: Restore Kotlin/Native cache
         inputs:
         - key: |
-            {{ .OS }}-{{ .Arch }}-konan-{{ checksum "gradle/libs.versions.toml" }}
-            {{ .OS }}-{{ .Arch }}-konan-
+            {{ .OS }}-{{ .Arch }}-konan-k1910-{{ checksum "gradle/libs.versions.toml" }}
+            {{ .OS }}-{{ .Arch }}-konan-k1910-
     - install-missing-android-tools@3:
         inputs:
         - gradlew_path: "$PROJECT_LOCATION/gradlew"
@@ -185,7 +244,7 @@ workflows:
     - save-cache@1:
         title: Save Gradle dependency cache
         inputs:
-        - key: '{{ .OS }}-{{ .Arch }}-gradle-deps-{{ checksum "gradle/libs.versions.toml" "gradle/wrapper/gradle-wrapper.properties" "gradle.properties" "build.gradle.kts" "settings.gradle.kts" }}'
+        - key: '{{ .OS }}-{{ .Arch }}-gradle-deps-agp813-{{ checksum "gradle/libs.versions.toml" "gradle/wrapper/gradle-wrapper.properties" "gradle.properties" "build.gradle.kts" "settings.gradle.kts" }}'
         - paths: |
             ~/.gradle/caches/modules-*/files-*
             ~/.gradle/caches/modules-*/metadata-*
@@ -195,7 +254,7 @@ workflows:
     - save-cache@1:
         title: Save Kotlin/Native cache
         inputs:
-        - key: '{{ .OS }}-{{ .Arch }}-konan-{{ checksum "gradle/libs.versions.toml" }}'
+        - key: '{{ .OS }}-{{ .Arch }}-konan-k1910-{{ checksum "gradle/libs.versions.toml" }}'
         - paths: |
             ~/.konan/kotlin-*
             ~/.konan/dependencies
