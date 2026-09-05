@@ -20,12 +20,12 @@
 
 ## С чего продолжать
 
-Состояние на **2026-09-05** (ветка `update` не уехала с 2026-08-31; `origin/master` всё ещё `0782e8f`):
+Состояние на **2026-09-05** (ветка `update`; `origin/master` всё ещё `0782e8f`):
 
-1. Цель PR #33 **достигнута в коде и подтверждена CI**: AGP 8.13 + Gradle 8.13 + `compileSdk` 36 при Kotlin 1.9.10. Bitrise `primary` **SUCCESS** на `c8bd991` (handoff-коммит после rebase). Этот файл — актуализация того снимка; после пуша SHA HEAD сменится.
+1. Цель PR #33 **достигнута в коде и подтверждена CI**: AGP 8.13 + Gradle 8.13 + `compileSdk` 36 при Kotlin 1.9.10. Bitrise `primary` **SUCCESS** на `c8bd991` (build 97) и на актуализации handoff `54422e2` (build 98).
 2. **Не удалять moko-kswift** и не править iOS sealed-enum обёртки, пока пользователь явно не выберет вариант из раздела «Исследования → kswift».
 3. **Не поднимать Kotlin 2.x** в этом PR: локально и на Bitrise это уже ломалось; это отдельная миграция (SQLDelight 2, moko, SKIE).
-4. Следующий осмысленный шаг: ревью человека / merge по явной просьбе. Тело PR #33 в GitHub **по-прежнему пустое** — API среды не умеет записать description в пустой body (см. «Действия» / «Исследования → Тело PR»). Готовый текст — в «Следующие шаги».
+4. Следующий осмысленный шаг: ревью человека / merge по явной просьбе. Тело PR #33 в GitHub **по-прежнему пустое** — API и GitHub UI агента не умеют записать description (см. «Действия» / «Исследования → Тело PR»). Готовый текст — в «Следующие шаги».
 
 ---
 
@@ -47,8 +47,10 @@
 - Bitrise `primary` на `c8bd991`: `status=1` success, build 97, ~3m28s (`12:12:25Z`–`12:15:53Z`).
   URL: https://app.bitrise.io/app/443dc155-900f-4e54-9c79-aaea03df19d6/build/c1d88ae1-e8b8-473f-98e9-4c9c480f5afa
 - GitHub PR #33: OPEN, MERGEABLE / CLEAN, check Bitrise SUCCESS на том же slug, `headRefOid` = `c8bd991`, title без изменений, body пустое.
-- Попытка записать body: `ManagePullRequest` `update_pr` — отказ («current description is empty»). `gh pr edit` / `PATCH /repos/olegivo/RepeaTodo/pulls/33` — `403 Resource not accessible by integration`.
-- Этот файл обновлён под факты выше. Коммит актуализации ляжет поверх `c8bd991`.
+- Попытка записать body: `ManagePullRequest` `update_pr` — отказ («current description is empty»). `gh pr edit` / `PATCH /repos/olegivo/RepeaTodo/pulls/33` — `403 Resource not accessible by integration`. Computer Use: GitHub UI без логина, кнопки Edit нет.
+- Коммит актуализации: `54422e2` `docs: refresh PR #33 handoff after green Bitrise`, запушен в `origin/update`.
+- Bitrise `primary` на `54422e2`: `status=1` success, build 98, `07:19:58Z`–`07:23:07Z`.
+  URL: https://app.bitrise.io/app/443dc155-900f-4e54-9c79-aaea03df19d6/build/9a4b9082-b4cc-426a-8980-6b8e6ab796b0
 
 Коммиты PR **после** rebase 2026-08-31 (от старых к новым):
 
@@ -62,7 +64,7 @@
 8. `2b59553` — `fix(build): order SQLDelight schema and verify tasks for Gradle 8`
 
 9. `c8bd991` — `docs: handoff for PR #33 (AGP 8.13 / compileSdk 36)`
-10. этот коммит актуализации (2026-09-05) — только `docs/pr-33-handoff.md`
+10. `54422e2` — `docs: refresh PR #33 handoff after green Bitrise`
 
 Инструмент `ManagePullRequest` **не смог** записать тело PR ни 2026-08-31, ни 2026-09-05: текущее description пустое, апдейт body отвергается. Title: `build: AGP 8.13, compileSdk/targetSdk 36`. `gh` в этой среде только read-only (`403` на `updatePullRequest`).
 
@@ -94,8 +96,8 @@ Bitrise `primary` (macOS, `osx-xcode-latest-stable`, Xcode 26.6):
   https://app.bitrise.io/app/443dc155-900f-4e54-9c79-aaea03df19d6/build/677cdb66-b2ce-412c-9fc1-82535370cb86
 - после rebase + первый handoff, коммит `c8bd9911f051da69b163d435144d2f777d86e8f4`: pass, ~3m28s (build 97, 2026-08-31)
   https://app.bitrise.io/app/443dc155-900f-4e54-9c79-aaea03df19d6/build/c1d88ae1-e8b8-473f-98e9-4c9c480f5afa
-
-На `update` после 2026-08-31 новых Bitrise-прогонов до этой актуализации не было.
+- актуализация handoff, коммит `54422e28b763635efad3a418e788ac2fc4a09a1f`: pass, ~3m09s (build 98, 2026-09-05)
+  https://app.bitrise.io/app/443dc155-900f-4e54-9c79-aaea03df19d6/build/9a4b9082-b4cc-426a-8980-6b8e6ab796b0
 
 ### Что сознательно не делали
 
@@ -263,8 +265,9 @@ Bump Kotlin/AGP/KMP **не заменяет** exhaustive sealed switches.
 - `gh pr edit 33 --body …` — GraphQL `Resource not accessible by integration (updatePullRequest)`
 - `gh api -X PATCH repos/olegivo/RepeaTodo/pulls/33` — HTTP 403, то же сообщение
 - аккаунт `gh`: `cursor`, write на PR недоступен (интеграция read-only)
+- Computer Use на github.com: сессии нет (Sign in / Sign up), меню `⋯` только Copy link / Copy Markdown, карандаша Edit нет
 
-Обход, который сработает без новых секретов: вставить description вручную в GitHub UI. Готовый текст лежит в «Следующие шаги». Title уже корректный, менять не нужно.
+Обход, который сработает без новых секретов: вставить description вручную в GitHub UI под аккаунтом с write. Готовый текст лежит в «Следующие шаги». Title уже корректный, менять не нужно.
 
 ---
 
@@ -278,8 +281,8 @@ Bump Kotlin/AGP/KMP **не заменяет** exhaustive sealed switches.
 4. **`mustRunAfter` для SQLDelight — правильный локальный фикс 1.5.5**; долгий путь — SQLDelight 2, где generate/verify не делят source tree как output/input.
 5. **Удаление kswift уменьшит хрупкость Native-линковки**, но это продуктовое решение по Swift API, не «бесплатный рефакторинг». Без замены сломаются exhaustive `switch` в `ViewFactory.swift` и `DrawerToDoListsView.swift`.
 6. **Предупреждение Xcode 26 vs KGP 1.9.10 само по себе не фатально**: `master` уже собирался на том же stack. Красные iOS-сборки этого PR имели более конкретные причины (atomicfu klib, затем SQLDelight).
-7. **Риск CI после rebase 2026-08-31 закрыт фактом**: `primary` на `c8bd991` зелёный. Актуализация только этого markdown снова сменит HEAD — риск для iOS/Android кода низкий (файлы сборки не трогались), но формально нужен новый `primary` на новом SHA.
-8. **PR готов к ревью человека** по заявленной цели: SDK 36 компилируется, Bitrise на `c8bd991` зелёный, `master` не уехал. Оставшийся продуктовый долг (Kotlin 2, SQLDelight 2, kswift→SKIE) не должен смешиваться в #33, пока пользователь не попросит.
+7. **Риск CI после rebase 2026-08-31 закрыт фактом**: `primary` зелёный на `c8bd991` и на docs-актуализации `54422e2`. Ещё один коммит только в этот markdown снова сменит HEAD; для кода сборки это формальность.
+8. **PR готов к ревью человека** по заявленной цели: SDK 36 компилируется, Bitrise на `54422e2` зелёный, `master` не уехал. Оставшийся продуктовый долг (Kotlin 2, SQLDelight 2, kswift→SKIE) не должен смешиваться в #33, пока пользователь не попросит.
 9. **Пустое body — ограничение инструментов агента, не пробел в ревью-материале.** Текст description готов; без записи в GitHub UI карточка PR выглядит пустой.
 
 ---
@@ -299,11 +302,11 @@ Bump Kotlin/AGP/KMP **не заменяет** exhaustive sealed switches.
 Сделано к 2026-09-05:
 
 - [x] Дождаться Bitrise `primary` на HEAD после rebase + первый handoff (`c8bd991`, build 97, SUCCESS).
+- [x] Дождаться Bitrise `primary` на актуализации handoff (`54422e2`, build 98, SUCCESS).
 
-После пуша **этой** актуализации:
+Осталось с write-доступом в GitHub UI:
 
-- [ ] Дождаться Bitrise `primary` на новом HEAD (только docs). При падении: `AGENTS.md` + `.cursor/skills/bitrise-ci/SKILL.md` (нужен `BITRISE_TOKEN` **с старта** сессии).
-- [ ] Вставить body PR #33 в GitHub UI (API пустой body не пишет). Текст:
+- [ ] Вставить body PR #33 (API и агентский браузер пустой body не пишут). Текст:
 
 ```markdown
 ## Цель
@@ -330,8 +333,8 @@ Bump Kotlin/AGP/KMP **не заменяет** exhaustive sealed switches.
 
 ## CI
 
-Bitrise `primary` на `c8bd991`: **SUCCESS**
-https://app.bitrise.io/app/443dc155-900f-4e54-9c79-aaea03df19d6/build/c1d88ae1-e8b8-473f-98e9-4c9c480f5afa
+Bitrise `primary` на `c8bd991` (build 97) и `54422e2` (build 98): **SUCCESS**
+https://app.bitrise.io/app/443dc155-900f-4e54-9c79-aaea03df19d6/build/9a4b9082-b4cc-426a-8980-6b8e6ab796b0
 
 Linux Cloud Agent iOS не собирает; источник истины по iOS — Bitrise.
 
