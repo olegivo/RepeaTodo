@@ -144,7 +144,7 @@ workflows:
     triggers:
       tag:
       - name:
-          regex: :^[0-9]+\.[0-9]+\.[0-9]+$
+          regex: '^[0-9]+\.[0-9]+\.[0-9]+$'
   primary:
     description: |
       PR/CI workflow: Android debug APK, iOS simulator, shared tests.
