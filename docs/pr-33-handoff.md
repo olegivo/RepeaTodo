@@ -59,7 +59,10 @@
 
 - Ранее агент начал ту же правку без разрешения; откатили `reset --soft` + `force-with-lease` на `a5a00dd`.
 - Пользователь утвердил: путь `./androidApp/build.gradle.kts`; `git describe` = ближайший предок; `versionCode` = `Major*1000000 + Minor*10000 + Patch*100 + (BITRISE_BUILD_NUMBER % 100)`; Minor/Patch ≥ 100 не поддерживаем.
-- В `bitrise.yml` у `deploy-android-play`: триггер по тегу, `fetch_tags: "yes"`, `script@1` → `CALCULATED_VERSION_*`, шаг `change-android-versioncode-and-versionname@1`. Bundle/sign/Play не меняли. Workflow не триггерили.
+- В `bitrise.yml` у `deploy-android-play`: триггер по тегу, `fetch_tags: "yes"`, `script@1` → `CALCULATED_VERSION_*`, шаг `change-android-versioncode-and-versionname@1`. Bundle/sign/Play не меняли.
+- Ручной Start build 105 (`04f5ef0`, без тега): SUCCESS, но `git describe` дал фолбек `0.0.1` из‑за `git fetch --depth=1`. В Play internal ушло `versionCode=105`, `versionName=0.0.1.105`.
+  URL: https://app.bitrise.io/app/443dc155-900f-4e54-9c79-aaea03df19d6/build/4150f5fb-1beb-459c-9a14-27cc05908be7
+- По команде пользователя: два `git-clone@8` в `deploy-android-play` — `BITRISE_TRIGGER_METHOD=manual` → `clone_depth: "100"`; иначе дефолтный shallow. Deploy повторно не запускали.
 
 Коммиты PR **после** rebase 2026-08-31 (от старых к новым):
 
@@ -215,7 +218,8 @@ Location: '.../shared/src/commonMain/sqldelight'
 - Annotated-тег `0.6.0` → `3e78817`. Предок `origin/master` и `origin/update`.
 - В `androidApp/build.gradle.kts` зашито `versionCode = 7`, `versionName = "0.6"`; Play-сборка переписывает это шагом Bitrise.
 - `trigger_map`: `tag: ":^[0-9]+\\.[0-9]+\\.[0-9]+$"` → `deploy-android-play`.
-- `git-clone@8`: `fetch_tags: "yes"`.
+- `git-clone@8`: `fetch_tags: "yes"`. При `BITRISE_TRIGGER_METHOD=manual` ещё `clone_depth: "100"`; иначе дефолт шага (`--depth=1`).
+- Build 105: `git fetch --depth=1 --tags` скачал ref `0.6.0`, но `GIT_CLONE_COMMIT_COUNT=1` → `describe` → `0.0.1`.
 - Формула (утверждена): `versionCode = Major*1000000 + Minor*10000 + Patch*100 + (BITRISE_BUILD_NUMBER % 100)`; `versionName = <три компонента>.<BITRISE_BUILD_NUMBER>`.
 - База: `$BITRISE_GIT_TAG`, иначе `git describe --tags --abbrev=0`, иначе `0.0.1`.
 
