@@ -404,3 +404,27 @@ BOM 2026.08.00 — последний стабильный; Material3 API в and
 - Linux Cloud Agent: iOS Native disabled. Источник истины по SKIE/Xcode — Bitrise (`osx-xcode-latest-stable`, в #33 был Xcode 26.x; KGP 2.4.10 тестировался до Xcode 26.4).
 - `BITRISE_TOKEN` — runtime secret с **старта** сессии; см. `AGENTS.md` и `.cursor/skills/bitrise-ci/SKILL.md`.
 - Отвечать по-русски; `git add` только с явными путями; не коммитить `.idea` / `.vscode`.
+
+---
+
+## Addendum: фаза 1 внедрена (2026-09-05)
+
+Что сделано в коде (не переписывать разделы выше).
+
+- Kotlin **2.4.10**, Gradle **8.14.4**, AGP **8.13.0**, SKIE **0.10.14**, kswift удалён.
+- SQLDelight **2.3.2**, coroutines **1.11.0**, datetime **0.8.0** (`kotlin.time.Instant`/`Clock`), Kotest **6.2.4**, KSP **2.3.11**, Koin **4.2.2**, Turbine **1.2.1**.
+- AndroidX для AGP 8.13 / compileSdk 36: Compose BOM **2026.06.01**, navigation-compose **2.9.8**. Latest BOM 2026.08.00 и navigation 2.10.0 требуют compileSdk 37 и AGP 9.1 — это фаза 2.
+- Swift: `onEnum(of:)` вместо `*Ks`; `RepeaTodo_shared.swift` убран из pbxproj. SKIE Flow/Suspend OFF.
+- Bitrise cache keys: `gradle-deps-k2410-`, `konan-k2410-`.
+- SQLDelight 2: `mustRunAfter` generateSchema → generateInterface/verify всё ещё нужен (тот же implicit dependency).
+- Turbine 1.2: `Flow.testIn` требует `TurbineContext`; в `FreeSpec` свой `testIn` через публичный `Turbine()`.
+- Kotest 6: `io.kotest.data` нет; свои `Row2`…`Row6`. Listener через `extension()`, `TestResult` из `io.kotest.engine.test`.
+
+Локально на Linux Cloud Agent (2026-09-05):
+
+- `:shared:compileKotlinJvm` — SUCCESS
+- `:shared:jvmTest` — SUCCESS, **271** тест
+- `:androidApp:assembleDebug` — SUCCESS
+- `:shared:generateCommonMainRepeaTodoDbSchema` + `:shared:verifySqlDelightMigration` в одном графе — SUCCESS
+
+iOS / SKIE / Xcode / moko Native — только Bitrise `primary`. `3.db` после generate не коммитить.

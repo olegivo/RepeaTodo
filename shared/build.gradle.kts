@@ -135,3 +135,15 @@ sqldelight {
         }
     }
 }
+
+// SQLDelight 2 still writes schema *.db next to migration sources. Running
+// generateSchema together with generateInterface/verify in one graph trips
+// Gradle's implicit dependency check, same as 1.5.5.
+listOf(
+    "generateCommonMainRepeaTodoDbInterface",
+    "verifyCommonMainRepeaTodoDbMigration",
+).forEach { taskName ->
+    tasks.matching { it.name == taskName }.configureEach {
+        mustRunAfter("generateCommonMainRepeaTodoDbSchema")
+    }
+}
