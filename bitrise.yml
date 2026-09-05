@@ -7,41 +7,8 @@ trigger_map:
   workflow: primary
 - tag: ":^[0-9]+\\.[0-9]+\\.[0-9]+$"
   workflow: deploy-android-play
-workflows:
-  deploy-ios:
-    description: |
-      Archives the iOS app and uploads the IPA to Bitrise.io.
-
-      Next steps:
-      - Set up [Connecting to an Apple service with API key](https://devcenter.bitrise.io/en/accounts/connecting-to-services/connecting-to-an-apple-service-with-api-key.html##).
-      - Or further customise code signing following our [iOS code signing](https://devcenter.bitrise.io/en/code-signing/ios-code-signing.html) guide.
-    steps:
-    - git-clone@8: {}
-    - cocoapods-install@2:
-        inputs:
-        - is_cache_disabled: 'true'
-    - xcode-archive@5:
-        inputs:
-        - project_path: "$BITRISE_PROJECT_PATH"
-        - scheme: "$BITRISE_SCHEME"
-        - distribution_method: "$BITRISE_DISTRIBUTION_METHOD"
-        - automatic_code_signing: api-key
-        - cache_level: none
-    - deploy-to-bitrise-io@2: {}
-  deploy-android-play:
-    description: |
-      Builds a signed Android App Bundle and uploads it to Google Play
-      internal testing. Triggered by a 3-part numeric tag (1.2.3) or
-      Start/Schedule. Promote to production in Play Console.
-
-      versionName = <tag>.<BITRISE_BUILD_NUMBER>
-      versionCode = Major*1000000 + Minor*10000 + Patch*100 + (BITRISE_BUILD_NUMBER % 100)
-      Tag from BITRISE_GIT_TAG, else nearest git describe tag, else 0.0.1.
-      Manual Start clones depth 100 so describe can see ancestor tags;
-      webhook/schedule keep the default shallow clone.
-
-      Requires Bitrise Code signing: Android keystore and generic file
-      PLAY_SERVICE_ACCOUNT_JSON ($BITRISEIO_PLAY_SERVICE_ACCOUNT_JSON_URL).
+step_bundles:
+  android_git_and_version:
     steps:
     - git-clone@8:
         title: Git Clone (manual, depth 100)
@@ -65,6 +32,9 @@ workflows:
               BASE_VERSION="$BITRISE_GIT_TAG"
               echo "Сборка по тегу: $BASE_VERSION"
             else
+              # Webhook/PR clones are shallow; tags may exist as refs but not as
+              # ancestors of HEAD, so git describe falls back to 0.0.1 (build 105).
+              git fetch --deepen=100 --tags || true
               BASE_VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.1")
               echo "Сборка без тега. Найден предыдущий тег: $BASE_VERSION"
             fi
@@ -95,6 +65,44 @@ workflows:
         - build_gradle_path: "./androidApp/build.gradle.kts"
         - new_version_code: "$CALCULATED_VERSION_CODE"
         - new_version_name: "$CALCULATED_VERSION_NAME"
+workflows:
+  deploy-ios:
+    description: |
+      Archives the iOS app and uploads the IPA to Bitrise.io.
+
+      Next steps:
+      - Set up [Connecting to an Apple service with API key](https://devcenter.bitrise.io/en/accounts/connecting-to-services/connecting-to-an-apple-service-with-api-key.html##).
+      - Or further customise code signing following our [iOS code signing](https://devcenter.bitrise.io/en/code-signing/ios-code-signing.html) guide.
+    steps:
+    - git-clone@8: {}
+    - cocoapods-install@2:
+        inputs:
+        - is_cache_disabled: 'true'
+    - xcode-archive@5:
+        inputs:
+        - project_path: "$BITRISE_PROJECT_PATH"
+        - scheme: "$BITRISE_SCHEME"
+        - distribution_method: "$BITRISE_DISTRIBUTION_METHOD"
+        - automatic_code_signing: api-key
+        - cache_level: none
+    - deploy-to-bitrise-io@2: {}
+  deploy-android-play:
+    description: |
+      Builds a signed Android App Bundle and uploads it to Google Play
+      internal testing. Triggered by a 3-part numeric tag (1.2.3) or
+      Start/Schedule. Promote to production in Play Console.
+
+      versionName = <tag>.<BITRISE_BUILD_NUMBER>
+      versionCode = Major*1000000 + Minor*10000 + Patch*100 + (BITRISE_BUILD_NUMBER % 100)
+      Tag from BITRISE_GIT_TAG, else nearest git describe tag, else 0.0.1.
+      Clone + version stamping: step bundle android_git_and_version
+      (shared with primary). Manual Start clones depth 100; webhook/schedule
+      stay shallow, then untagged builds deepen so describe can see tags.
+
+      Requires Bitrise Code signing: Android keystore and generic file
+      PLAY_SERVICE_ACCOUNT_JSON ($BITRISEIO_PLAY_SERVICE_ACCOUNT_JSON_URL).
+    steps:
+    - bundle::android_git_and_version: {}
     - restore-cache@2:
         title: Restore Gradle dependency cache
         inputs:
@@ -137,12 +145,13 @@ workflows:
         - compression_level: 1
   primary:
     description: |
-      The workflow only builds the project because the project scanner could not find any tests.
+      PR/CI workflow: Android debug APK, iOS simulator, shared tests.
 
-      Next steps:
-      - Check out [Getting started with iOS apps](https://devcenter.bitrise.io/en/getting-started/getting-started-with-ios-apps.html).
+      Uses step bundle android_git_and_version (same clone + versionCode /
+      versionName stamping as deploy-android-play) so assembleDebug does not
+      keep the hardcoded 0.6 (7) from androidApp/build.gradle.kts.
     steps:
-    - git-clone@8: {}
+    - bundle::android_git_and_version: {}
     # Split Gradle vs Kotlin/Native caches. The bundled save-gradle-cache step
     # puts ~/.konan (compiler + LLVM, ~1GB) in the same archive as Maven
     # artifacts and keys it on **/*.gradle*, so a targetSdk bump forces a
