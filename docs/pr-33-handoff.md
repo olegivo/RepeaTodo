@@ -20,12 +20,12 @@
 
 ## С чего продолжать
 
-Состояние на **2026-08-31** (после ребейза `update` на `origin/master` = `0782e8f`):
+Состояние на **2026-09-05** (ветка `update` не уехала с 2026-08-31; `origin/master` всё ещё `0782e8f`):
 
-1. Цель PR #33 **достигнута в коде**: AGP 8.13 + Gradle 8.13 + `compileSdk` 36 при Kotlin 1.9.10. Bitrise `primary` был зелёный на **старом** HEAD `77cd332` (до ребейза). После ребейза SHAs сменились — **нужен новый зелёный Bitrise** на текущем HEAD.
+1. Цель PR #33 **достигнута в коде и подтверждена CI**: AGP 8.13 + Gradle 8.13 + `compileSdk` 36 при Kotlin 1.9.10. Bitrise `primary` **SUCCESS** на `c8bd991` (handoff-коммит после rebase). Этот файл — актуализация того снимка; после пуша SHA HEAD сменится.
 2. **Не удалять moko-kswift** и не править iOS sealed-enum обёртки, пока пользователь явно не выберет вариант из раздела «Исследования → kswift».
 3. **Не поднимать Kotlin 2.x** в этом PR: локально и на Bitrise это уже ломалось; это отдельная миграция (SQLDelight 2, moko, SKIE).
-4. Следующий осмысленный шаг после зелёного CI на ребейзе: дождаться ревью человека / мержа. Код для SDK 36 больше не блокируется AGP 7.4.2 aapt2.
+4. Следующий осмысленный шаг: ревью человека / merge по явной просьбе. Тело PR #33 в GitHub **по-прежнему пустое** — API среды не умеет записать description в пустой body (см. «Действия» / «Исследования → Тело PR»). Готовый текст — в «Следующие шаги».
 
 ---
 
@@ -39,7 +39,16 @@
 - Ветка `update` была отсталой относительно `master`; выполнен rebase на тогдашний `master` (версия приложения 7 / `0.6` с `master` сохранена, не затёрта черновиком PR).
 - Работа велась на существующей ветке `update`, отдельную `cursor/…-6665` не создавали.
 - **2026-08-31:** повторный rebase `update` на актуальный `origin/master` (`0782e8f`). 8 коммитов PR перенеслись без конфликтов. Новые коммиты только на `master` (инструкции агентам по Bitrise) вошли в историю `update`.
-- `git push --force-with-lease origin update` для опубликованного rebase — делается в том же заходе, что и этот документ.
+- `git push --force-with-lease origin update` для опубликованного rebase — сделан 2026-08-31 вместе с первым handoff-коммитом `c8bd991`.
+
+**2026-09-05** (сверка + актуализация этого файла, без изменений toolchain):
+
+- `git fetch origin master update`: HEAD / `origin/update` = `c8bd991`, `origin/master` = `0782e8f`, merge-base тот же, коммитов `master` не в `update` нет.
+- Bitrise `primary` на `c8bd991`: `status=1` success, build 97, ~3m28s (`12:12:25Z`–`12:15:53Z`).
+  URL: https://app.bitrise.io/app/443dc155-900f-4e54-9c79-aaea03df19d6/build/c1d88ae1-e8b8-473f-98e9-4c9c480f5afa
+- GitHub PR #33: OPEN, MERGEABLE / CLEAN, check Bitrise SUCCESS на том же slug, `headRefOid` = `c8bd991`, title без изменений, body пустое.
+- Попытка записать body: `ManagePullRequest` `update_pr` — отказ («current description is empty»). `gh pr edit` / `PATCH /repos/olegivo/RepeaTodo/pulls/33` — `403 Resource not accessible by integration`.
+- Этот файл обновлён под факты выше. Коммит актуализации ляжет поверх `c8bd991`.
 
 Коммиты PR **после** rebase 2026-08-31 (от старых к новым):
 
@@ -52,9 +61,10 @@
 7. `a8b40e2` — `fix(ios): pin atomicfu 0.17.3 for Kotlin 1.9.10 Native link`
 8. `2b59553` — `fix(build): order SQLDelight schema and verify tasks for Gradle 8`
 
-(Плюс этот документ — отдельный коммит поверх.)
+9. `c8bd991` — `docs: handoff for PR #33 (AGP 8.13 / compileSdk 36)`
+10. этот коммит актуализации (2026-09-05) — только `docs/pr-33-handoff.md`
 
-Инструмент `ManagePullRequest` **не смог** записать тело PR: текущее description пустое, апдейт body отвергается. Title: `build: AGP 8.13, compileSdk/targetSdk 36`. `gh` в этой среде только read-only.
+Инструмент `ManagePullRequest` **не смог** записать тело PR ни 2026-08-31, ни 2026-09-05: текущее description пустое, апдейт body отвергается. Title: `build: AGP 8.13, compileSdk/targetSdk 36`. `gh` в этой среде только read-only (`403` на `updatePullRequest`).
 
 ### Toolchain и модули
 
@@ -69,7 +79,7 @@
 - Bitrise cache keys переименованы в `gradle-deps-agp813-` и `konan-k1910-`, чтобы не подтягивать кэш от прогона с Kotlin 2.0.21.
 - SQLDelight: `verify*DbMigration` `mustRunAfter` `generate*DbSchema` в `shared/build.gradle.kts`.
 
-### Проверки (до rebase 2026-08-31)
+### Проверки
 
 Локально (Linux Cloud Agent VM):
 
@@ -78,12 +88,14 @@
 - `:shared:generateCommonMainRepeaTodoDbSchema :shared:verifySqlDelightMigration --stacktrace` — сначала падение Gradle 8 implicit dependency; после `mustRunAfter` — `BUILD SUCCESSFUL`, в том числе с `--rerun-tasks`.
 - iOS / XCFramework **не** собирались: хост linux_x64.
 
-Bitrise `primary` (macOS, `osx-xcode-latest-stable`, Xcode 26.6) на **до-ребейзном** коммите `77cd332db7c2dacad4625656226c5c7ac512cc39`:
+Bitrise `primary` (macOS, `osx-xcode-latest-stable`, Xcode 26.6):
 
-- check **Bitrise** = pass, ~4m42s
-- URL: https://app.bitrise.io/app/443dc155-900f-4e54-9c79-aaea03df19d6/build/677cdb66-b2ce-412c-9fc1-82535370cb86
+- до rebase, коммит `77cd332db7c2dacad4625656226c5c7ac512cc39`: pass, ~4m42s
+  https://app.bitrise.io/app/443dc155-900f-4e54-9c79-aaea03df19d6/build/677cdb66-b2ce-412c-9fc1-82535370cb86
+- после rebase + первый handoff, коммит `c8bd9911f051da69b163d435144d2f777d86e8f4`: pass, ~3m28s (build 97, 2026-08-31)
+  https://app.bitrise.io/app/443dc155-900f-4e54-9c79-aaea03df19d6/build/c1d88ae1-e8b8-473f-98e9-4c9c480f5afa
 
-После rebase 2026-08-31 этот зелёный результат **не переносится автоматически** — граф коммитов другой.
+На `update` после 2026-08-31 новых Bitrise-прогонов до этой актуализации не было.
 
 ### Что сознательно не делали
 
@@ -99,7 +111,7 @@ Bitrise `primary` (macOS, `osx-xcode-latest-stable`, Xcode 26.6) на **до-р�
 
 - Репозиторий: `olegivo/RepeaTodo` (KMP: `androidApp`, `shared`, `iosApp`).
 - База PR: `master`. Рабочая ветка PR: `update`.
-- На `master` (после fetch 2026-08-31): `0782e8f` `docs: инструкции агентам по логам Bitrise (#39)`.
+- На `master` (fetch 2026-08-31 и повтор 2026-09-05): `0782e8f` `docs: инструкции агентам по логам Bitrise (#39)`. Не уехал.
 - На `master` **нет** AGP 8.13 и `compileSdk` 36 для компиляции: приложение `targetSdk = 36`, **`compileSdk = 34`**, AGP **7.4.2**, Gradle **7.5**, Kotlin **1.9.10**.
 - Коммит на `master`, объясняющий щель SDK: `de332ff` — `build: keep compileSdk 34; AGP 7.4 aapt2 cannot read API 36` (aapt2: `RES_TABLE_TYPE_TYPE entry offsets overlap`). Play Console требовал только `targetSdk` 36.
 - Также уже на `master` (не уникально для этого PR): kotest 5.8.0, moko-mvvm 0.16.1, `androidTarget()`, Bitrise CI, Google Play internal deploy, split Gradle/Konan caches.
@@ -186,7 +198,7 @@ Location: '.../shared/src/commonMain/sqldelight'
 
 ### Прочее
 
-- Тело PR #33 в GitHub пустое.
+- Тело PR #33 в GitHub пустое (проверено `gh pr view` 2026-09-05).
 - Пользователь общается на русском; в правилах агента: отвечать по-русски; не `git add -A`; не коммитить `.idea` / `.vscode`; не удалять kswift без явного ОК.
 
 ---
@@ -244,7 +256,15 @@ Bump Kotlin/AGP/KMP **не заменяет** exhaustive sealed switches.
 
 ### Тело PR
 
-`ManagePullRequest` `update_pr` с непустым body падает, если текущее description пустое. Обход в этой сессии не искали (title уже корректный).
+`ManagePullRequest` `update_pr` с непустым body падает, если текущее description пустое — воспроизведено 2026-08-31 и 2026-09-05.
+
+2026-09-05 дополнительно пробовали:
+
+- `gh pr edit 33 --body …` — GraphQL `Resource not accessible by integration (updatePullRequest)`
+- `gh api -X PATCH repos/olegivo/RepeaTodo/pulls/33` — HTTP 403, то же сообщение
+- аккаунт `gh`: `cursor`, write на PR недоступен (интеграция read-only)
+
+Обход, который сработает без новых секретов: вставить description вручную в GitHub UI. Готовый текст лежит в «Следующие шаги». Title уже корректный, менять не нужно.
 
 ---
 
@@ -258,8 +278,9 @@ Bump Kotlin/AGP/KMP **не заменяет** exhaustive sealed switches.
 4. **`mustRunAfter` для SQLDelight — правильный локальный фикс 1.5.5**; долгий путь — SQLDelight 2, где generate/verify не делят source tree как output/input.
 5. **Удаление kswift уменьшит хрупкость Native-линковки**, но это продуктовое решение по Swift API, не «бесплатный рефакторинг». Без замены сломаются exhaustive `switch` в `ViewFactory.swift` и `DrawerToDoListsView.swift`.
 6. **Предупреждение Xcode 26 vs KGP 1.9.10 само по себе не фатально**: `master` уже собирался на том же stack. Красные iOS-сборки этого PR имели более конкретные причины (atomicfu klib, затем SQLDelight).
-7. **После rebase 2026-08-31 риск CI** низкий (на `master` добавились только docs/skills), но не нулевой: изменились merge-base и SHAs, кэш Bitrise ключуется в том числе checksum’ами gradle-файлов — ключи те же, контент Gradle с `master` docs не пересекается. Всё равно нужен новый прогон `primary`.
-8. **PR готов к ревью человека** с точки зрения заявленной цели (SDK 36 реально компилируется), если новый Bitrise зелёный. Оставшийся продуктовый долг (Kotlin 2, SQLDelight 2, kswift→SKIE) не должен смешиваться в #33, пока пользователь не попросит.
+7. **Риск CI после rebase 2026-08-31 закрыт фактом**: `primary` на `c8bd991` зелёный. Актуализация только этого markdown снова сменит HEAD — риск для iOS/Android кода низкий (файлы сборки не трогались), но формально нужен новый `primary` на новом SHA.
+8. **PR готов к ревью человека** по заявленной цели: SDK 36 компилируется, Bitrise на `c8bd991` зелёный, `master` не уехал. Оставшийся продуктовый долг (Kotlin 2, SQLDelight 2, kswift→SKIE) не должен смешиваться в #33, пока пользователь не попросит.
+9. **Пустое body — ограничение инструментов агента, не пробел в ревью-материале.** Текст description готов; без записи в GitHub UI карточка PR выглядит пустой.
 
 ---
 
@@ -275,10 +296,51 @@ Bump Kotlin/AGP/KMP **не заменяет** exhaustive sealed switches.
 
 ## Следующие шаги (ещё не сделаны)
 
-Обязательно после этого коммита/пуша:
+Сделано к 2026-09-05:
 
-- [ ] Дождаться Bitrise `primary` на HEAD после rebase + docs. При падении: `AGENTS.md` + `.cursor/skills/bitrise-ci/SKILL.md` (нужен `BITRISE_TOKEN` **с старта** сессии).
-- [ ] Если пользователь хочет осмысленное описание PR — заполнить body в GitHub UI (API-апдейт пустого body в этой среде падал).
+- [x] Дождаться Bitrise `primary` на HEAD после rebase + первый handoff (`c8bd991`, build 97, SUCCESS).
+
+После пуша **этой** актуализации:
+
+- [ ] Дождаться Bitrise `primary` на новом HEAD (только docs). При падении: `AGENTS.md` + `.cursor/skills/bitrise-ci/SKILL.md` (нужен `BITRISE_TOKEN` **с старта** сессии).
+- [ ] Вставить body PR #33 в GitHub UI (API пустой body не пишет). Текст:
+
+```markdown
+## Цель
+
+Поднять toolchain так, чтобы `compileSdk` 36 реально компилировался. На `master` приложение уже с `targetSdk` 36, но `compileSdk` 34: AGP 7.4.2 aapt2 не читает resources.arsc API 36 (`RES_TABLE_TYPE_TYPE entry offsets overlap`, коммит `de332ff`).
+
+## Что вошло
+
+- AGP 8.13.0 через `plugins {}` (не `buildscript` classpath), Gradle 8.13, JDK 17
+- `androidApp`: `compileSdk` 36, `targetSdk` 36, `versionCode` 7 / `0.6`, Compose compiler 1.5.3
+- `shared`: `compileSdk` 36; `targetSdk` у library убран
+- Kotlin **оставлен 1.9.10** (не 2.x)
+- pin `atomicfu*` 0.17.3 — Native link на Kotlin 1.9.10
+- SQLDelight 1.5.5: `verify*DbMigration` `mustRunAfter` `generate*DbSchema`
+- `.cursor/install.sh`: `platforms;android-36`, `build-tools;36.0.0`
+- ключи кэша Bitrise: `gradle-deps-agp813-`, `konan-k1910-`
+
+## Сознательно не делали
+
+- не поднимали Kotlin 2.x, SQLDelight 2, SKIE
+- не удаляли и не заменяли moko-kswift 0.6.1 (`NavigationDestinationKs`, `ToDoListKs`)
+- не снимали pin atomicfu
+- не мержили этот PR
+
+## CI
+
+Bitrise `primary` на `c8bd991`: **SUCCESS**
+https://app.bitrise.io/app/443dc155-900f-4e54-9c79-aaea03df19d6/build/c1d88ae1-e8b8-473f-98e9-4c9c480f5afa
+
+Linux Cloud Agent iOS не собирает; источник истины по iOS — Bitrise.
+
+## Контекст для ревью / следующего агента
+
+`docs/pr-33-handoff.md` — действия / факты / исследования / умозаключения раздельно.
+
+Оставшийся долг (отдельные PR, не этот): Kotlin 2.x + SQLDelight 2 + судьба kswift.
+```
 
 Только по явной просьбе пользователя:
 
