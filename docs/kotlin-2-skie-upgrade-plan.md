@@ -486,4 +486,18 @@ Addendum фазы 1 предполагал, что для них нужен «AG
 
 Bitrise: `install-missing-android-tools@3` сам ставит build-tools 36.0.0 (минимум AGP 9.1). Cache keys (`gradle-deps-k2410-`, `konan-k2410-`) считаются по `libs.versions.toml`, поэтому инвалидируются автоматически.
 
-iOS / SKIE / Xcode / moko Native — только Bitrise `primary`. `3.db` после generate не коммитить.
+### iOS зелёный: `521f6a8` / `f0720f6e` (2026-09-05)
+
+Bitrise `primary` [f0720f6e](https://app.bitrise.io/build/f0720f6e-457b-451d-817c-020efca4a1e7): **success**, 19:28:51–19:33:09 UTC, Xcode **26.6**, `osx-tahoe-26`. Коммит `521f6a8522885bedd8b952afe3b7e27826a3de33` (PR #42).
+
+Все шаги `primary` зелёные:
+
+- Gradle Android + `:shared:assembleSharedDebugXCFramework` + SKIE — SUCCESS (`shared.xcframework`)
+- **Xcode Build for Simulator — SUCCESS, Archive Succeeded**, 21.15s
+- Script без leftover `sharedSwift/` — SUCCESS
+- `:shared:jvmTest` — SUCCESS
+- Check DB Migrations — SUCCESS
+
+Неблокеры Xcode (как в фазе 1, не чинить здесь): `TaskUi: Identifiable`, `ViewModel: ObservableObject`, `stateNullable<T>` explicit specialize, `scanHexInt32` deprecated, `default will never be executed` в `TasksListView`.
+
+Критерий готовности фазы 2 по iOS выполнен. `3.db` после generate не коммитить.
