@@ -11,7 +11,6 @@ kotest = "6.2.4"
 kotlinxCoroutines = "1.11.0"
 kotlinxDatetime = "0.8.0"
 ksp = "2.3.11"
-material = "1.14.0"
 mokoMvvm = "0.16.1"
 navigationCompose = "2.9.8"
 skie = "0.10.14"
@@ -48,8 +47,6 @@ kotest-runner-junit5-jvm = { module = "io.kotest:kotest-runner-junit5-jvm", vers
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
-
-material = { module = "com.google.android.material:material", version.ref = "material" }
 
 moko-mvvm = { module = "dev.icerock.moko:mvvm-core", version.ref = "mokoMvvm" }
 moko-mvvm-flow = { module = "dev.icerock.moko:mvvm-flow", version.ref = "mokoMvvm" }
