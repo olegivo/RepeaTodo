@@ -87,9 +87,13 @@ export ANDROID_SDK_ROOT="${ANDROID_SDK_ROOT}"
 export PATH="\$JAVA_HOME/bin:${ANDROID_SDK_ROOT}/platform-tools:${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin:\$PATH"
 EOF
 
-# --- 5. Warm the build -----------------------------------------------------
-log "Warming the Gradle build (assembleDebug)"
+# --- 5. Warm the build + prime the test toolchain --------------------------
+# Warm the Android app build and the shared module's JVM unit tests in a single
+# Gradle invocation. `:shared:jvmTest` is the canonical unit-test task the CI
+# runs (see bitrise.yml), so priming it downloads the Kotest/JUnit toolchain and
+# leaves agents a fast, already-validated `./gradlew :shared:jvmTest` path.
+log "Warming the Gradle build (assembleDebug) and priming shared tests (jvmTest)"
 cd "${REPO_DIR}"
-./gradlew --no-daemon :androidApp:assembleDebug
+./gradlew --no-daemon :androidApp:assembleDebug :shared:jvmTest
 
 log "RepeaTodo environment ready"
