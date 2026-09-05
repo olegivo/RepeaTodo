@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import ru.olegivo.repeatodo.domain.LocalTasksDataSource
 import ru.olegivo.repeatodo.domain.models.Task
 

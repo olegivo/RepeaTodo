@@ -31,7 +31,11 @@ internal inline fun <reified T> PreviewEnvironment?.fakeOrInjectKoin(
 ): T =
     this?.get(parameters?.invoke()?.values?.firstOrNull())
         ?: run {
-            val result = koinInject<T>(parameters = parameters)
+            val result = if (parameters != null) {
+                koinInject<T>(parameters = parameters)
+            } else {
+                koinInject<T>()
+            }
             if (rememberKey != null) remember(rememberKey) {
                 result
             } else {

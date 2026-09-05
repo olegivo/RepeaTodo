@@ -17,7 +17,7 @@
 
 package ru.olegivo.repeatodo.domain.models
 
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import ru.olegivo.repeatodo.domain.Priority
 
 data class Task(

@@ -17,7 +17,7 @@
 
 package ru.olegivo.repeatodo.db
 
-import com.squareup.sqldelight.sqlite.driver.JdbcSqliteDriver
+import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import ru.olegivo.repeatodo.domain.models.ToDoList
 import java.util.Properties
 
@@ -46,7 +46,7 @@ class TestDbHelper private constructor(
                 instantLongAdapter = instantLongAdapter,
                 priorityAdapter = priorityAdapter
             )
-            RepeaTodoDb.Schema.create(driver)
+            RepeaTodoDb.Schema.create(driver).value
 
             return TestDbHelper(
                 database = database,
@@ -83,8 +83,8 @@ private fun TestDbHelper.createToDoList(
         sql = "INSERT INTO ToDoList (uuid, title, isPredefined) VALUES (?, ?, ?)",
         parameters = 3
     ) {
-        bindString(1, uuid)
-        bindString(2, title)
-        bindLong(3, if (isPredefined) 1 else 0)
+        bindString(0, uuid)
+        bindString(1, title)
+        bindLong(2, if (isPredefined) 1 else 0)
     }
 }

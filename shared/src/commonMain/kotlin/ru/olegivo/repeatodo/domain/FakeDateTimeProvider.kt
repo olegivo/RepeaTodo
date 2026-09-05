@@ -17,9 +17,10 @@
 
 package ru.olegivo.repeatodo.domain
 
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.toLocalDateTime
 
 class FakeDateTimeProvider: DateTimeProvider {
     var timeZone = TimeZone.currentSystemDefault()
@@ -30,9 +31,7 @@ class FakeDateTimeProvider: DateTimeProvider {
     override fun getCurrentInstant() = instant
 
     override fun getCurrentLocalDateTime() =
-        with(getCurrentTimeZone()) {
-            instant.toLocalDateTime()
-        }
+        instant.toLocalDateTime(getCurrentTimeZone())
 
     override fun getCurrentStartOfDayInstant() =
         getCurrentLocalDateTime().date

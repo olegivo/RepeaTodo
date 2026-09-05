@@ -17,7 +17,7 @@
 
 package ru.olegivo.repeatodo.domain
 
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import kotlin.time.Duration.Companion.nanoseconds
 
 // https://github.com/Kotlin/kotlinx-datetime/issues/270

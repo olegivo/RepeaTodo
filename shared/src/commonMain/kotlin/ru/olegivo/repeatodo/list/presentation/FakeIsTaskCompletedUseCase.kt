@@ -17,7 +17,7 @@
 
 package ru.olegivo.repeatodo.list.presentation
 
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import ru.olegivo.repeatodo.domain.IsTaskCompletedUseCase
 
 class FakeIsTaskCompletedUseCase(

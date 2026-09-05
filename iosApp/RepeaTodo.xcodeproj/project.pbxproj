@@ -15,7 +15,6 @@
 		5131CA6329EC461800BFC251 /* MainNavigator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5131CA6229EC461800BFC251 /* MainNavigator.swift */; };
 		5131CA6629EC47ED00BFC251 /* EnvironmentValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5131CA6529EC47ED00BFC251 /* EnvironmentValues.swift */; };
 		513E69CE2A11856500830262 /* DropdownSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513E69CD2A11856500830262 /* DropdownSelector.swift */; };
-		5168799D29D8CFA30067450C /* RepeaTodo_shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5168799B29D8CFA30067450C /* RepeaTodo_shared.swift */; };
 		51B392AF2A23EAB5004E3AC4 /* DrawerToDoListsCustomItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B392AE2A23EAB5004E3AC4 /* DrawerToDoListsCustomItemView.swift */; };
 		51E119B629F3FAF200E4D780 /* ViewModelStateNullable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E119B029F3FAF200E4D780 /* ViewModelStateNullable.swift */; };
 		51E119B729F3FAF200E4D780 /* CFlowExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E119B129F3FAF200E4D780 /* CFlowExt.swift */; };
@@ -60,7 +59,6 @@
 		5131CA6229EC461800BFC251 /* MainNavigator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainNavigator.swift; sourceTree = "<group>"; };
 		5131CA6529EC47ED00BFC251 /* EnvironmentValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentValues.swift; sourceTree = "<group>"; };
 		513E69CD2A11856500830262 /* DropdownSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropdownSelector.swift; sourceTree = "<group>"; };
-		5168799B29D8CFA30067450C /* RepeaTodo_shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RepeaTodo_shared.swift; path = ../shared/build/bin/iosSimulatorArm64/debugFramework/sharedSwift/RepeaTodo_shared.swift; sourceTree = "<group>"; };
 		51B392AE2A23EAB5004E3AC4 /* DrawerToDoListsCustomItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawerToDoListsCustomItemView.swift; sourceTree = "<group>"; };
 		51E119B029F3FAF200E4D780 /* ViewModelStateNullable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModelStateNullable.swift; sourceTree = "<group>"; };
 		51E119B129F3FAF200E4D780 /* CFlowExt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CFlowExt.swift; sourceTree = "<group>"; };
@@ -202,7 +200,6 @@
 		7555FF72242A565900829871 = {
 			isa = PBXGroup;
 			children = (
-				5168799B29D8CFA30067450C /* RepeaTodo_shared.swift */,
 				7555FF7D242A565900829871 /* RepeaTodo */,
 				7555FF7C242A565900829871 /* Products */,
 				7555FFB0242A642200829871 /* Frameworks */,
@@ -392,7 +389,6 @@
 				510B19312A1AB35E00C73335 /* SideMenu.swift in Sources */,
 				51E119B629F3FAF200E4D780 /* ViewModelStateNullable.swift in Sources */,
 				513E69CE2A11856500830262 /* DropdownSelector.swift in Sources */,
-				5168799D29D8CFA30067450C /* RepeaTodo_shared.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				51E119BC29F4392D00E4D780 /* PreviewEnvironmentExt.swift in Sources */,
 				552A5B55285B61E50059083D /* ViewFactory.swift in Sources */,

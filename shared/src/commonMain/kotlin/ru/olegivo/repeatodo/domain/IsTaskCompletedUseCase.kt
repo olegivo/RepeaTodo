@@ -17,7 +17,7 @@
 
 package ru.olegivo.repeatodo.domain
 
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 interface IsTaskCompletedUseCase {
     operator fun invoke(

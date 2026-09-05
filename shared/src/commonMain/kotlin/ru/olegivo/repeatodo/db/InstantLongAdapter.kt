@@ -17,8 +17,8 @@
 
 package ru.olegivo.repeatodo.db
 
-import com.squareup.sqldelight.ColumnAdapter
-import kotlinx.datetime.Instant
+import app.cash.sqldelight.ColumnAdapter
+import kotlin.time.Instant
 
 class InstantLongAdapter: ColumnAdapter<Instant, Long> {
 

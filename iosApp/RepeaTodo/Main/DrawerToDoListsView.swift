@@ -10,13 +10,13 @@ struct DrawerToDoListsView: View {
     var body: some View {
         VStack {
             LazyVStack(alignment: .leading) {
-                ForEach(viewModel.lists) { list in
-                    switch list {
+                ForEach(viewModel.lists, id: \.uuid) { list in
+                    switch onEnum(of: list) {
                         case .custom(let custom):
                             customitemViewFactory(custom)
-                        case .predefined(_):
+                        case .predefined:
                             Label(
-                                list.sealed.title,
+                                list.title,
                                 systemImage: "list.bullet"
                             )
                     }
@@ -40,17 +40,13 @@ struct DrawerToDoListsView: View {
     }
 }
 
-extension ToDoListKs: Identifiable {
-    public var id: String { sealed.uuid }
-}
-
 private extension DrawerToDoListsViewModel {
-    var lists: [ToDoListKs] {
+    var lists: [ToDoList] {
         get {
             return self.state(
                 \.toDoLists,
                  equals: { $0 === $1 },
-                 mapper: { items in items.map { ToDoListKs($0 as! ToDoList) } }
+                 mapper: { items in items.map { $0 as! ToDoList } }
             )
         }
     }

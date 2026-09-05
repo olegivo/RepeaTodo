@@ -75,7 +75,6 @@ class LocalToDoListsDataSourceImplTest: FreeSpec() {
                         val taskUuid = newUuid()
                         val localTasksDataSource: LocalTasksDataSource = LocalTasksDataSourceImpl(
                             db = database,
-                            instantLongAdapter = dbHelper.instantLongAdapter,
                             dispatchersProvider = dispatchersProvider
                         )
                         val task = TaskDomain(

@@ -22,9 +22,11 @@
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.multiplatform) apply false
+    alias(libs.plugins.ksp) apply false
     alias(libs.plugins.kotest) apply false
-    alias(libs.plugins.moko.kswift) apply false
+    alias(libs.plugins.skie) apply false
     alias(libs.plugins.sqlDelight) apply false
 }
 
@@ -32,16 +34,6 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-    }
-    configurations.configureEach {
-        resolutionStrategy.eachDependency {
-            if (requested.group == "org.jetbrains.kotlinx" &&
-                requested.name.startsWith("atomicfu")
-            ) {
-                useVersion("0.17.3")
-                because("atomicfu 0.23.x Native klibs need Kotlin 1.9.21+; we use 1.9.10")
-            }
-        }
     }
 }
 

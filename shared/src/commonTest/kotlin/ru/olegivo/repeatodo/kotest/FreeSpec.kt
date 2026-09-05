@@ -26,7 +26,9 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runCurrent
 import ru.olegivo.repeatodo.DispatchersProvider
 import kotlin.time.Duration
-import app.cash.turbine.testIn as turbineTestIn
+import app.cash.turbine.ReceiveTurbine
+import app.cash.turbine.Turbine
+import kotlinx.coroutines.launch
 
 abstract class FreeSpec(
     lifecycleMode: LifecycleMode = LifecycleMode.Root,
@@ -46,8 +48,9 @@ abstract class FreeSpec(
 
     protected val testCoroutineScope = coroutineListener.scope
 
-    override fun listeners() =
-        super.listeners() + listOf(coroutineListener)
+    init {
+        extension(coroutineListener)
+    }
 
     override fun isolationMode() = IsolationMode.InstancePerLeaf
 
@@ -68,12 +71,22 @@ abstract class FreeSpec(
         scope: CoroutineScope = testCoroutineScope,
         timeout: Duration? = null,
         name: String? = null
-    ) =
-        turbineTestIn(
-            scope = scope,
-            timeout = timeout,
-            name = name
-        )
+    ): ReceiveTurbine<T> {
+        val turbine = if (timeout != null) {
+            Turbine<T>(timeout = timeout, name = name)
+        } else {
+            Turbine<T>(name = name)
+        }
+        scope.launch {
+            try {
+                collect { turbine.add(it) }
+                turbine.close()
+            } catch (t: Throwable) {
+                turbine.close(t)
+            }
+        }
+        return turbine
+    }
 }
 
 enum class LifecycleMode {

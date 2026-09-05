@@ -17,13 +17,13 @@
 
 package ru.olegivo.repeatodo.db
 
-import com.squareup.sqldelight.runtime.coroutines.asFlow
-import com.squareup.sqldelight.runtime.coroutines.mapToList
-import com.squareup.sqldelight.runtime.coroutines.mapToOneOrNull
+import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToList
+import app.cash.sqldelight.coroutines.mapToOneOrNull
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import ru.olegivo.repeatodo.DispatchersProvider
 import ru.olegivo.repeatodo.domain.LocalTasksDataSource
 import ru.olegivo.repeatodo.domain.Priority
@@ -32,7 +32,6 @@ import ru.olegivo.repeatodo.utils.newUuid
 
 class LocalTasksDataSourceImpl(
     private val db: RepeaTodoDb,
-    private val instantLongAdapter: InstantLongAdapter,
     private val dispatchersProvider: DispatchersProvider
 ): LocalTasksDataSource {
     override fun getTasks(): Flow<List<Task>> =
@@ -47,7 +46,7 @@ class LocalTasksDataSourceImpl(
             .getTask(uuid, ::toDomain)
             .asFlow()
             .flowOn(dispatchersProvider.io)
-            .mapToOneOrNull()
+            .mapToOneOrNull(dispatchersProvider.default)
 
     override suspend fun save(task: Task) {
         withContext(dispatchersProvider.io) {
@@ -97,15 +96,13 @@ class LocalTasksDataSourceImpl(
         daysPeriodicity: Int,
         priority: Priority?,
         toDoListUuid: String,
-        lastCompletionDate: Long?
+        lastCompletionDate: Instant?
     ) = Task(
         uuid = uuid,
         title = title,
         daysPeriodicity = daysPeriodicity,
         priority = priority,
         toDoListUuid = toDoListUuid,
-        lastCompletionDate = lastCompletionDate?.toInstant()
+        lastCompletionDate = lastCompletionDate
     )
-
-    private fun Long.toInstant() = instantLongAdapter.decode(this)
 }

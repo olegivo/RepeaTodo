@@ -19,15 +19,21 @@
 
 package ru.olegivo.repeatodo
 
-import io.kotest.core.test.TestContext
-import io.kotest.data.Row2
-import io.kotest.data.Row3
-import io.kotest.data.Row4
-import io.kotest.data.Row5
-import io.kotest.data.Row6
-import io.kotest.data.row
+import io.kotest.core.test.TestScope
 
 val booleans = listOf(true, false)
+
+data class Row2<A, B>(val a: A, val b: B)
+data class Row3<A, B, C>(val a: A, val b: B, val c: C)
+data class Row4<A, B, C, D>(val a: A, val b: B, val c: C, val d: D)
+data class Row5<A, B, C, D, E>(val a: A, val b: B, val c: C, val d: D, val e: E)
+data class Row6<A, B, C, D, E, F>(val a: A, val b: B, val c: C, val d: D, val e: E, val f: F)
+
+fun <A, B> row(a: A, b: B) = Row2(a, b)
+fun <A, B, C> row(a: A, b: B, c: C) = Row3(a, b, c)
+fun <A, B, C, D> row(a: A, b: B, c: C, d: D) = Row4(a, b, c, d)
+fun <A, B, C, D, E> row(a: A, b: B, c: C, d: D, e: E) = Row5(a, b, c, d, e)
+fun <A, B, C, D, E, F> row(a: A, b: B, c: C, d: D, e: E, f: F) = Row6(a, b, c, d, e, f)
 
 // 2
 fun <T1, T2> combinator(
@@ -43,7 +49,7 @@ fun <T1, T2> combinator(
         }
         .filter { !except2.contains(it) }
 
-suspend fun <T1, T2> TestContext.combinator(
+suspend fun <T1, T2> TestScope.combinator(
     inputs1: List<T1>,
     inputs2: List<T2>,
     except2: Set<Row2<T1, T2>> = emptySet(),
@@ -76,7 +82,7 @@ fun <T1, T2, T3> combinator(
         }
         .filter { !except3.contains(it) }
 
-suspend fun <T1, T2, T3> TestContext.combinator(
+suspend fun <T1, T2, T3> TestScope.combinator(
     inputs1: List<T1>,
     inputs2: List<T2>,
     inputs3: List<T3>,
@@ -112,7 +118,7 @@ fun <T1, T2, T3, T4> combinator(
         }
         .filter { !except4.contains(it) }
 
-suspend fun <T1, T2, T3, T4> TestContext.combinator(
+suspend fun <T1, T2, T3, T4> TestScope.combinator(
     inputs1: List<T1>,
     inputs2: List<T2>,
     inputs3: List<T3>,
@@ -140,7 +146,7 @@ fun <T1, T2, T3, T4, T5> combinator(
         }
         .filter { !except5.contains(it) }
 
-suspend fun <T1, T2, T3, T4, T5> TestContext.combinator(
+suspend fun <T1, T2, T3, T4, T5> TestScope.combinator(
     inputs1: List<T1>,
     inputs2: List<T2>,
     inputs3: List<T3>,
@@ -170,7 +176,7 @@ fun <T1, T2, T3, T4, T5, T6> combinator(
         }
         .filter { !except6.contains(it) }
 
-suspend fun <T1, T2, T3, T4, T5, T6> TestContext.combinator(
+suspend fun <T1, T2, T3, T4, T5, T6> TestScope.combinator(
     inputs1: List<T1>,
     inputs2: List<T2>,
     inputs3: List<T3>,

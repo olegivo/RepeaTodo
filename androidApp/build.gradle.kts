@@ -18,6 +18,7 @@
 plugins {
     alias(libs.plugins.android.application)
     kotlin("android")
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -35,14 +36,8 @@ android {
         }
     }
     namespace = "ru.olegivo.repeatodo.android"
-    kotlinOptions {
-        freeCompilerArgs += "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api,androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi"
-    }
     buildFeatures {
         compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.3"
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -52,6 +47,12 @@ android {
 
 kotlin {
     jvmToolchain(17)
+    compilerOptions {
+        freeCompilerArgs.addAll(
+            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+            "-opt-in=androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi"
+        )
+    }
 }
 
 dependencies {
@@ -61,9 +62,10 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.constraintlayout.compose)
-    implementation(platform("androidx.compose:compose-bom:2023.03.00"))
+    implementation(platform(libs.androidx.compose.bom))
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material3:material3-window-size-class")
+    implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.compose.ui:ui-tooling-preview")
     debugImplementation("androidx.compose.ui:ui-tooling")
     implementation(libs.androidx.navigation.compose)

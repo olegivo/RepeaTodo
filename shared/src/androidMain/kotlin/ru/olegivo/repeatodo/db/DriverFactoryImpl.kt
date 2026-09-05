@@ -19,8 +19,8 @@ package ru.olegivo.repeatodo.db
 
 import android.content.Context
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.squareup.sqldelight.android.AndroidSqliteDriver
-import com.squareup.sqldelight.db.SqlDriver
+import app.cash.sqldelight.driver.android.AndroidSqliteDriver
+import app.cash.sqldelight.db.SqlDriver
 
 actual class DriverFactoryImpl(private val context: Context): DriverFactory {
     actual override fun createDriver(dbName: String, foreignKeyConstraints: Boolean): SqlDriver =
