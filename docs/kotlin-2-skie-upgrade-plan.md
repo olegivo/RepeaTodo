@@ -434,3 +434,24 @@ Bitrise `primary` на `b6d728a` (`89c9e8aa`, 2026-09-05):
 - `:shared:assembleSharedDebugXCFramework` + SKIE — SUCCESS
 - Xcode simulator — FAIL: `sealed interface ToDoList` в SKIE это Swift **protocol**, `extension ToDoList: Identifiable` нельзя. Чинить `ForEach(..., id: \.uuid)`.
 - Debug-скрипт `ls .../sharedSwift/` — leftover kswift, падает и **скипает** `jvmTest` (`is_always_run: true`).
+
+Последующие красные `primary` (те же классы ошибок, плюс Xcode 26):
+
+- `a49ad06` / `4e8e11f4` — `ToDoList` protocol + leftover `sharedSwift/`.
+- `165841b` / `bd7f12b0` — `CFlowExt.swift`: Xcode 26 не видит `DispatchQueue` через один `import Combine`; нужен `import Foundation`.
+
+### iOS зелёный: `07ad3ca` / `9f4e4020` (2026-09-05)
+
+Bitrise `primary` [9f4e4020](https://app.bitrise.io/build/9f4e4020-f9f8-4394-980e-efed47413845): **success**, 15:04:54–15:10:41 UTC, Xcode **26.6**, `osx-tahoe-26`. Коммит `07ad3cae70d8e0891782f76d320e5bb70ba0e72c`.
+
+Все шаги `primary` зелёные, включая ранее красные:
+
+- Gradle Android + `:shared:assembleSharedDebugXCFramework` + SKIE — SUCCESS (`shared.xcframework`)
+- **Xcode Build for Simulator — SUCCESS, Archive Succeeded**, 19.17s (шаг больше не skippable)
+- Script без `sharedSwift/` — SUCCESS
+- `:shared:jvmTest` — SUCCESS
+- Check DB Migrations — SUCCESS
+
+Неблокеры Xcode (как на master, не чинить в фазе 1): `TaskUi: Identifiable`, `ViewModel: ObservableObject`, `stateNullable<T>` explicit specialize, `scanHexInt32` deprecated.
+
+Критерий готовности фазы 1 по iOS выполнен. Фаза 2 (AGP 9.1 / KMP Android library) — отдельный PR.
