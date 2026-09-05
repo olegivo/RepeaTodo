@@ -17,8 +17,8 @@
 
 package ru.olegivo.repeatodo.di
 
-import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import ru.olegivo.repeatodo.DispatchersProvider

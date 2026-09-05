@@ -46,8 +46,9 @@ abstract class FreeSpec(
 
     protected val testCoroutineScope = coroutineListener.scope
 
-    override fun listeners() =
-        super.listeners() + listOf(coroutineListener)
+    init {
+        extension(coroutineListener)
+    }
 
     override fun isolationMode() = IsolationMode.InstancePerLeaf
 
