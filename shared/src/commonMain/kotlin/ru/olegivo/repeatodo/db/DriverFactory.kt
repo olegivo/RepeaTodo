@@ -17,7 +17,8 @@
 
 package ru.olegivo.repeatodo.db
 
-import com.squareup.sqldelight.db.SqlDriver
+import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
+import app.cash.sqldelight.db.SqlDriver
 
 interface DriverFactory {
     fun createDriver(dbName: String, foreignKeyConstraints: Boolean): SqlDriver
@@ -41,8 +42,13 @@ fun createDatabase(
     )
     val database = RepeaTodoDb(
         driver = driver,
-        TaskAdapter = Task.Adapter(priorityAdapter = priorityAdapter),
-        TaskCompletionAdapter = TaskCompletion.Adapter(completionDateUtcAdapter = instantLongAdapter)
+        TaskAdapter = Task.Adapter(
+            daysPeriodicityAdapter = IntColumnAdapter,
+            priorityAdapter = priorityAdapter
+        ),
+        TaskCompletionAdapter = TaskCompletion.Adapter(
+            completionDateUtcAdapter = instantLongAdapter
+        )
     )
 
     // Do more work with the database (see below).

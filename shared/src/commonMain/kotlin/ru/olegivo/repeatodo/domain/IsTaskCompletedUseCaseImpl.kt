@@ -17,7 +17,7 @@
 
 package ru.olegivo.repeatodo.domain
 
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import ru.olegivo.repeatodo.extensions.atStartOfDayIn
 import kotlin.time.Duration.Companion.days
 

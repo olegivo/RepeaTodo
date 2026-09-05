@@ -1,4 +1,4 @@
-import kotlinx.datetime.Instant;
+import kotlin.time.Instant;
 import ru.olegivo.repeatodo.domain.Priority;
 
 CREATE TABLE ToDoList (

@@ -17,7 +17,7 @@
 
 package ru.olegivo.repeatodo.list.presentation
 
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 interface RelativeDateFormatter {
     fun format(value: Instant): String

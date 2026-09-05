@@ -17,13 +17,13 @@
 
 package ru.olegivo.repeatodo.db
 
-import com.squareup.sqldelight.ColumnAdapter
+import app.cash.sqldelight.ColumnAdapter
 import ru.olegivo.repeatodo.domain.Priority
 
 class PriorityLongAdapter: ColumnAdapter<Priority, Long> {
 
     override fun decode(databaseValue: Long): Priority =
-        Priority.values().single { it.value.toLong() == databaseValue }
+        Priority.entries.single { it.value.toLong() == databaseValue }
 
     override fun encode(value: Priority): Long =
         value.value.toLong()

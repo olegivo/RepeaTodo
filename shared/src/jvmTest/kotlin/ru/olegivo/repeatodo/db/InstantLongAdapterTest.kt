@@ -18,8 +18,8 @@
 package ru.olegivo.repeatodo.db
 
 import io.kotest.matchers.shouldBe
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
+import kotlin.time.Clock
+import kotlin.time.Instant
 import ru.olegivo.repeatodo.domain.roundNanoseconds
 import ru.olegivo.repeatodo.kotest.FreeSpec
 import ru.olegivo.repeatodo.randomInstant

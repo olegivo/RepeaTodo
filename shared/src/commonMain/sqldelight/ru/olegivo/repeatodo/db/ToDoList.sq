@@ -1,3 +1,5 @@
+import kotlin.Boolean;
+
 CREATE TABLE ToDoList (
     uuid TEXT NOT NULL PRIMARY KEY,
     title TEXT NOT NULL,

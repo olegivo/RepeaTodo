@@ -19,7 +19,7 @@ package ru.olegivo.repeatodo.list.presentation
 
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import ru.olegivo.repeatodo.booleans
 import ru.olegivo.repeatodo.combinator
 import ru.olegivo.repeatodo.domain.Priority

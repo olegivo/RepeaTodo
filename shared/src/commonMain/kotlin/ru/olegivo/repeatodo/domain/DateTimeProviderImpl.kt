@@ -17,9 +17,10 @@
 
 package ru.olegivo.repeatodo.domain
 
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.toLocalDateTime
 
 class DateTimeProviderImpl: DateTimeProvider {
     override fun getCurrentTimeZone() = TimeZone.currentSystemDefault()
@@ -30,7 +31,5 @@ class DateTimeProviderImpl: DateTimeProvider {
         .atStartOfDayIn(getCurrentTimeZone())
 
     override fun getCurrentLocalDateTime() =
-        with(getCurrentTimeZone()) {
-            getCurrentInstant().toLocalDateTime()
-        }
+        getCurrentInstant().toLocalDateTime(getCurrentTimeZone())
 }

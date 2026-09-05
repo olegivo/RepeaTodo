@@ -18,7 +18,7 @@
 package ru.olegivo.repeatodo.domain
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import ru.olegivo.repeatodo.domain.models.Task
 
 interface LocalTasksDataSource {

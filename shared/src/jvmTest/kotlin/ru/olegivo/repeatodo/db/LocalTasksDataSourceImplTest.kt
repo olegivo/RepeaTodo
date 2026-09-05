@@ -44,7 +44,6 @@ class LocalTasksDataSourceImplTest: FreeSpec() {
 
             val localTasksDataSource: LocalTasksDataSource = LocalTasksDataSourceImpl(
                 db = database,
-                instantLongAdapter = dbHelper.instantLongAdapter,
                 dispatchersProvider = dispatchersProvider
             )
 
@@ -151,15 +150,17 @@ class LocalTasksDataSourceImplTest: FreeSpec() {
                             "should delete deleted task's completions" {
                                 val long = dbHelper.driver
                                     .executeQuery(
-                                        null,
-                                        "select count(*) from TaskCompletion WHERE taskUuid = ?",
-                                        1
+                                        identifier = null,
+                                        sql = "select count(*) from TaskCompletion WHERE taskUuid = ?",
+                                        mapper = { cursor ->
+                                            check(cursor.next().value)
+                                            app.cash.sqldelight.db.QueryResult.Value(cursor.getLong(0))
+                                        },
+                                        parameters = 1
                                     ) {
-                                        bindString(1, task1.uuid)
+                                        bindString(0, task1.uuid)
                                     }
-                                    .use {
-                                        it.getLong(0)
-                                    }
+                                    .value
                                 long shouldBe 0L
                             }
                         }
@@ -168,7 +169,7 @@ class LocalTasksDataSourceImplTest: FreeSpec() {
                             val newVersion = Task(
                                 uuid = task1.uuid,
                                 lastCompletionDate = null,
-                                priority = Priority.values()
+                                priority = Priority.entries
                                     .filter { it != task1.priority }
                                     .random(),
                                 title = randomString(),

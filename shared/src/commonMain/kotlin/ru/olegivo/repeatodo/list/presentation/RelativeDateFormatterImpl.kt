@@ -17,7 +17,7 @@
 
 package ru.olegivo.repeatodo.list.presentation
 
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import kotlinx.datetime.daysUntil
 import kotlinx.datetime.periodUntil
 import ru.olegivo.repeatodo.domain.DateTimeProvider
