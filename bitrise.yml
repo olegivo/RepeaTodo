@@ -37,11 +37,21 @@ workflows:
       versionName = <tag>.<BITRISE_BUILD_NUMBER>
       versionCode = Major*1000000 + Minor*10000 + Patch*100 + (BITRISE_BUILD_NUMBER % 100)
       Tag from BITRISE_GIT_TAG, else nearest git describe tag, else 0.0.1.
+      Manual Start clones depth 100 so describe can see ancestor tags;
+      webhook/schedule keep the default shallow clone.
 
       Requires Bitrise Code signing: Android keystore and generic file
       PLAY_SERVICE_ACCOUNT_JSON ($BITRISEIO_PLAY_SERVICE_ACCOUNT_JSON_URL).
     steps:
     - git-clone@8:
+        title: Git Clone (manual, depth 100)
+        run_if: '{{getenv "BITRISE_TRIGGER_METHOD" | eq "manual"}}'
+        inputs:
+        - fetch_tags: "yes"
+        - clone_depth: "100"
+    - git-clone@8:
+        title: Git Clone (automatic, default shallow)
+        run_if: '{{getenv "BITRISE_TRIGGER_METHOD" | ne "manual"}}'
         inputs:
         - fetch_tags: "yes"
     - script@1:
