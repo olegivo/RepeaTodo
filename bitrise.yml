@@ -99,8 +99,8 @@ workflows:
         title: Restore Gradle dependency cache
         inputs:
         - key: |
-            {{ .OS }}-{{ .Arch }}-gradle-deps-agp813-{{ checksum "gradle/libs.versions.toml" "gradle/wrapper/gradle-wrapper.properties" "gradle.properties" "build.gradle.kts" "settings.gradle.kts" }}
-            {{ .OS }}-{{ .Arch }}-gradle-deps-agp813-
+            {{ .OS }}-{{ .Arch }}-gradle-deps-k2410-{{ checksum "gradle/libs.versions.toml" "gradle/wrapper/gradle-wrapper.properties" "gradle.properties" "build.gradle.kts" "settings.gradle.kts" }}
+            {{ .OS }}-{{ .Arch }}-gradle-deps-k2410-
     - install-missing-android-tools@3:
         inputs:
         - gradlew_path: "$PROJECT_LOCATION/gradlew"
@@ -128,7 +128,7 @@ workflows:
     - save-cache@1:
         title: Save Gradle dependency cache
         inputs:
-        - key: '{{ .OS }}-{{ .Arch }}-gradle-deps-agp813-{{ checksum "gradle/libs.versions.toml" "gradle/wrapper/gradle-wrapper.properties" "gradle.properties" "build.gradle.kts" "settings.gradle.kts" }}'
+        - key: '{{ .OS }}-{{ .Arch }}-gradle-deps-k2410-{{ checksum "gradle/libs.versions.toml" "gradle/wrapper/gradle-wrapper.properties" "gradle.properties" "build.gradle.kts" "settings.gradle.kts" }}'
         - paths: |
             ~/.gradle/caches/modules-*/files-*
             ~/.gradle/caches/modules-*/metadata-*
@@ -151,14 +151,14 @@ workflows:
         title: Restore Gradle dependency cache
         inputs:
         - key: |
-            {{ .OS }}-{{ .Arch }}-gradle-deps-agp813-{{ checksum "gradle/libs.versions.toml" "gradle/wrapper/gradle-wrapper.properties" "gradle.properties" "build.gradle.kts" "settings.gradle.kts" }}
-            {{ .OS }}-{{ .Arch }}-gradle-deps-agp813-
+            {{ .OS }}-{{ .Arch }}-gradle-deps-k2410-{{ checksum "gradle/libs.versions.toml" "gradle/wrapper/gradle-wrapper.properties" "gradle.properties" "build.gradle.kts" "settings.gradle.kts" }}
+            {{ .OS }}-{{ .Arch }}-gradle-deps-k2410-
     - restore-cache@2:
         title: Restore Kotlin/Native cache
         inputs:
         - key: |
-            {{ .OS }}-{{ .Arch }}-konan-k1910-{{ checksum "gradle/libs.versions.toml" }}
-            {{ .OS }}-{{ .Arch }}-konan-k1910-
+            {{ .OS }}-{{ .Arch }}-konan-k2410-{{ checksum "gradle/libs.versions.toml" }}
+            {{ .OS }}-{{ .Arch }}-konan-k2410-
     - install-missing-android-tools@3:
         inputs:
         - gradlew_path: "$PROJECT_LOCATION/gradlew"
@@ -244,7 +244,7 @@ workflows:
     - save-cache@1:
         title: Save Gradle dependency cache
         inputs:
-        - key: '{{ .OS }}-{{ .Arch }}-gradle-deps-agp813-{{ checksum "gradle/libs.versions.toml" "gradle/wrapper/gradle-wrapper.properties" "gradle.properties" "build.gradle.kts" "settings.gradle.kts" }}'
+        - key: '{{ .OS }}-{{ .Arch }}-gradle-deps-k2410-{{ checksum "gradle/libs.versions.toml" "gradle/wrapper/gradle-wrapper.properties" "gradle.properties" "build.gradle.kts" "settings.gradle.kts" }}'
         - paths: |
             ~/.gradle/caches/modules-*/files-*
             ~/.gradle/caches/modules-*/metadata-*
@@ -254,7 +254,7 @@ workflows:
     - save-cache@1:
         title: Save Kotlin/Native cache
         inputs:
-        - key: '{{ .OS }}-{{ .Arch }}-konan-k1910-{{ checksum "gradle/libs.versions.toml" }}'
+        - key: '{{ .OS }}-{{ .Arch }}-konan-k2410-{{ checksum "gradle/libs.versions.toml" }}'
         - paths: |
             ~/.konan/kotlin-*
             ~/.konan/dependencies

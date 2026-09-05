@@ -15,23 +15,25 @@
  * RepeaTodo.
  */
 
+import co.touchlab.skie.configuration.FlowInterop
+import co.touchlab.skie.configuration.SuspendInterop
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
-    kotlin("multiplatform")
+    alias(libs.plugins.multiplatform)
     alias(libs.plugins.android.library)
-    id("io.kotest.multiplatform")
-    id("dev.icerock.moko.kswift")
-    id("com.squareup.sqldelight")
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.kotest)
+    alias(libs.plugins.skie)
+    alias(libs.plugins.sqlDelight)
 }
 
 kotlin {
     jvmToolchain(17)
+    compilerOptions {
+        freeCompilerArgs.add("-Xexpect-actual-classes")
+    }
     jvm {
-//        compilations.all {
-//            kotlinOptions.jvmTarget = "1.8"
-//        }
-//        withJava()
         testRuns["test"].executionTask.configure {
             useJUnitPlatform()
         }
@@ -65,66 +67,34 @@ kotlin {
             }
         }
 
-        val commonMain by getting {
-            dependencies {
-                implementation(libs.koin.core)
-                implementation(libs.kotlinx.coroutines.core)
-                api(libs.kotlinx.datetime)
-                api(libs.moko.mvvm)
-                api(libs.moko.mvvm.flow)
-                implementation(libs.sqlDelight.extensions.coroutines)
-            }
+        commonMain.dependencies {
+            implementation(libs.koin.core)
+            implementation(libs.kotlinx.coroutines.core)
+            api(libs.kotlinx.datetime)
+            api(libs.moko.mvvm)
+            api(libs.moko.mvvm.flow)
+            implementation(libs.sqlDelight.extensions.coroutines)
+            implementation(libs.sqlDelight.primitive.adapters)
         }
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test"))
-                implementation(libs.kotest.framework.engine)
-                implementation(libs.kotest.framework.datatest)
-                implementation(libs.kotest.assertions.core)
-                implementation(libs.kotlinx.coroutines.test)
-                implementation(libs.turbine)
-            }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.kotest.framework.engine)
+            implementation(libs.kotest.assertions.core)
+            implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.turbine)
         }
-        val jvmMain by getting {
-            dependencies {
-                dependsOn(commonMain)
-                implementation(libs.sqlDelight.driver.sqlite)
-            }
+        jvmMain.dependencies {
+            implementation(libs.sqlDelight.driver.sqlite)
         }
-        val jvmTest by getting {
-            dependencies {
-                dependsOn(jvmMain)
-                implementation(libs.kotest.runner.junit5.jvm)
-            }
+        jvmTest.dependencies {
+            implementation(libs.kotest.runner.junit5.jvm)
         }
-        val androidMain by getting {
-            dependencies {
-                implementation(libs.koin.android)
-                implementation(libs.sqlDelight.driver.android)
-            }
+        androidMain.dependencies {
+            implementation(libs.koin.android)
+            implementation(libs.sqlDelight.driver.android)
         }
-        val androidUnitTest by getting
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
-        val iosMain by creating {
-            dependencies {
-                implementation(libs.sqlDelight.driver.native)
-            }
-
-            dependsOn(commonMain)
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
-        }
-        val iosX64Test by getting
-        val iosArm64Test by getting
-        val iosSimulatorArm64Test by getting
-        val iosTest by creating {
-            dependsOn(commonTest)
-            iosX64Test.dependsOn(this)
-            iosArm64Test.dependsOn(this)
-            iosSimulatorArm64Test.dependsOn(this)
+        iosMain.dependencies {
+            implementation(libs.sqlDelight.driver.native)
         }
     }
 }
@@ -142,23 +112,26 @@ android {
     }
 }
 
-kswift {
-    install(dev.icerock.moko.kswift.plugin.feature.SealedToSwiftEnumFeature)
-
-    excludeLibrary("kotlinx-coroutines-core")
-}
-
-sqldelight {
-    database("RepeaTodoDb") {
-        packageName = "ru.olegivo.repeatodo.db"
-        schemaOutputDirectory = file("src/commonMain/sqldelight/databases")
-        verifyMigrations = true
+skie {
+    features {
+        coroutinesInterop.set(false)
+        group {
+            FlowInterop.Enabled(false)
+            SuspendInterop.Enabled(false)
+        }
+        group("dev.icerock.moko") {
+            FlowInterop.Enabled(false)
+            SuspendInterop.Enabled(false)
+        }
     }
 }
 
-// SQLDelight 1.5.5 writes schema dumps under src/commonMain/sqldelight, which
-// VerifyMigrationTask also reads. Gradle 8 treats that as an implicit
-// dependency unless the tasks are ordered (Bitrise runs both together).
-tasks.withType<com.squareup.sqldelight.gradle.VerifyMigrationTask>().configureEach {
-    mustRunAfter(tasks.withType<com.squareup.sqldelight.gradle.GenerateSchemaTask>())
+sqldelight {
+    databases {
+        create("RepeaTodoDb") {
+            packageName.set("ru.olegivo.repeatodo.db")
+            schemaOutputDirectory.set(file("src/commonMain/sqldelight/databases"))
+            verifyMigrations.set(true)
+        }
+    }
 }
