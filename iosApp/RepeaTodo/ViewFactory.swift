@@ -13,11 +13,11 @@ class ViewFactory {
     
     @ViewBuilder
     func makeView(_ destination: NavigationDestination) -> some View {
-        switch NavigationDestinationKs(destination) {
+        switch onEnum(of: destination) {
         case .addTask:
             fatalError("Not implemented")
-        case .editTask(let value):
-            EditTaskView.factory(uuid: value.uuid)
+        case .editTask(let destination):
+            EditTaskView.factory(uuid: destination.uuid)
         }
     }
 }
