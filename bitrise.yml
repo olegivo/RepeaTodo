@@ -182,7 +182,6 @@ workflows:
         inputs:
         - code_signing_allowed: 'yes'
         - configuration: Debug
-        is_skippable: true
     - script@1:
         inputs:
         - content: |-
@@ -202,7 +201,9 @@ workflows:
             ls ./shared/build/bin/
             ls ./shared/build/bin/iosSimulatorArm64/
             ls ./shared/build/bin/iosSimulatorArm64/debugFramework/
-            ls ./shared/build/bin/iosSimulatorArm64/debugFramework/sharedSwift/
+            # SKIE does not emit kswift's sharedSwift/ directory.
+            ls ./shared/build/XCFrameworks/ 2>/dev/null || true
+            ls ./shared/build/skie/ 2>/dev/null || true
 
             # or run a script from your repository, like:
             # bash ./path/to/script.sh

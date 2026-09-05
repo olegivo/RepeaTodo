@@ -428,3 +428,9 @@ BOM 2026.08.00 — последний стабильный; Material3 API в and
 - `:shared:generateCommonMainRepeaTodoDbSchema` + `:shared:verifySqlDelightMigration` в одном графе — SUCCESS
 
 iOS / SKIE / Xcode / moko Native — только Bitrise `primary`. `3.db` после generate не коммитить.
+
+Bitrise `primary` на `b6d728a` (`89c9e8aa`, 2026-09-05):
+
+- `:shared:assembleSharedDebugXCFramework` + SKIE — SUCCESS
+- Xcode simulator — FAIL: `sealed interface ToDoList` в SKIE это Swift **protocol**, `extension ToDoList: Identifiable` нельзя. Чинить `ForEach(..., id: \.uuid)`.
+- Debug-скрипт `ls .../sharedSwift/` — leftover kswift, падает и **скипает** `jvmTest` (`is_always_run: true`).

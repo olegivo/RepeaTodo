@@ -10,7 +10,7 @@ struct DrawerToDoListsView: View {
     var body: some View {
         VStack {
             LazyVStack(alignment: .leading) {
-                ForEach(viewModel.lists) { list in
+                ForEach(viewModel.lists, id: \.uuid) { list in
                     switch onEnum(of: list) {
                         case .custom(let custom):
                             customitemViewFactory(custom)
@@ -38,10 +38,6 @@ struct DrawerToDoListsView: View {
             }
         )
     }
-}
-
-extension ToDoList: Identifiable {
-    public var id: String { uuid }
 }
 
 private extension DrawerToDoListsViewModel {
