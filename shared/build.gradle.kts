@@ -17,11 +17,12 @@
 
 import co.touchlab.skie.configuration.FlowInterop
 import co.touchlab.skie.configuration.SuspendInterop
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
     alias(libs.plugins.multiplatform)
-    alias(libs.plugins.android.library)
+    alias(libs.plugins.android.kotlinMultiplatformLibrary)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotest)
     alias(libs.plugins.skie)
@@ -38,7 +39,18 @@ kotlin {
             useJUnitPlatform()
         }
     }
-    androidTarget()
+
+    // AGP 9 KMP Android library plugin: the Android target and its Android
+    // configuration live in `kotlin { android { } }`; the old top-level
+    // `android {}` + `androidTarget()` combo is gone.
+    android {
+        namespace = "ru.olegivo.repeatodo"
+        compileSdk = 36
+        minSdk = 26
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
+        }
+    }
 
     val xcf = XCFramework("shared")
 
@@ -96,19 +108,6 @@ kotlin {
         iosMain.dependencies {
             implementation(libs.sqlDelight.driver.native)
         }
-    }
-}
-
-android {
-    compileSdk = 36
-    defaultConfig {
-        minSdk = 26
-    }
-    namespace = "ru.olegivo.repeatodo"
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 

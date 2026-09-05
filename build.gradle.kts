@@ -21,7 +21,7 @@
 // in two classloaders and breaks SDK loading on AGP 8.7+.
 plugins {
     alias(libs.plugins.android.application) apply false
-    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.android.kotlinMultiplatformLibrary) apply false
     alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.multiplatform) apply false
     alias(libs.plugins.ksp) apply false
