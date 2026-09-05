@@ -455,3 +455,35 @@ Bitrise `primary` [9f4e4020](https://app.bitrise.io/build/9f4e4020-f9f8-4394-980
 Неблокеры Xcode (как на master, не чинить в фазе 1): `TaskUi: Identifiable`, `ViewModel: ObservableObject`, `stateNullable<T>` explicit specialize, `scanHexInt32` deprecated.
 
 Критерий готовности фазы 1 по iOS выполнен. Фаза 2 (AGP 9.1 / KMP Android library) — отдельный PR.
+
+---
+
+## Addendum: фаза 2 внедрена (2026-09-05)
+
+Что сделано в коде (не переписывать разделы выше).
+
+- AGP **8.13.0 → 9.1.1** (R8 9.1.29 нужен для метаданных Kotlin 2.4), Gradle **8.14.4 → 9.3.1** (минимум AGP 9.1).
+- `shared`: `com.android.library` + `androidTarget()` + верхний `android {}` → `com.android.kotlin.multiplatform.library` с блоком `kotlin { android { namespace, compileSdk 36, minSdk 26, compilerOptions.jvmTarget = JVM_17 } }`. Верхний `android {}` удалён.
+- `androidApp`: убран `kotlin("android")` — в AGP 9 Kotlin встроенный. Compose compiler plugin **2.4.10** остался и совпал со встроенным KGP (иначе бы `assembleDebug` упал на несовпадении версий). `kotlin { jvmToolchain(17); compilerOptions { … } }` работает и со встроенным Kotlin.
+- Корневой `build.gradle.kts`: alias `android.library` → `android.kotlinMultiplatformLibrary` (apply false).
+- `gradle.properties`: удалены `android.nonTransitiveRClass=false` и `android.nonFinalResIds=false`. `nonFinalResIds=false` в AGP 9 deprecated (удаляется в AGP 10); `androidApp` собирается на дефолтах AGP 9 (оба `true`).
+- Удалён шаблонный `shared/src/androidInstrumentedTest/androidTest.kt` (наследие мастера KMP): никогда не компилировался (нет junit-зависимости), дублирует `commonTest` `GreetingTest`. Новый плагин переименовал бы source set в `androidDeviceTest`, а device-тесты на Linux/Bitrise всё равно не гоняются.
+
+### Почему НЕ compileSdk 37 / Compose BOM 2026.08.00 / navigation 2.10.0
+
+Addendum фазы 1 предполагал, что для них нужен «AGP 9.1». По факту Compose **1.12** (BOM 2026.08.00) и navigation **2.10.0** поднимают `compileSdk` до **API 37** и требуют минимум **AGP 9.2.0**. AGP 9.2 — **вне** fully-supported матрицы KGP **2.4.10** (max AGP 9.1.0). Поэтому оставлены Compose BOM **2026.06.01** и navigation-compose **2.9.8**, `compileSdk`/`targetSdk` **36**. compileSdk 37 + свежие Compose/nav — это будущая фаза (после Kotlin, официально закрывающего AGP 9.2+).
+
+### Проверки
+
+Локально на Linux Cloud Agent (2026-09-05), Gradle 9.3.1 / AGP 9.1.1:
+
+- `:shared:compileKotlinJvm` — SUCCESS
+- `:shared:compileAndroidMain` (новый KMP Android library plugin) — SUCCESS
+- `:androidApp:assembleDebug` — SUCCESS
+- `:androidApp:bundleRelease` (воркфлоу `deploy-android-play`) — SUCCESS: release-вариант резолвится против single-variant `:shared`
+- `:shared:jvmTest` — SUCCESS, **271** тест
+- `:shared:generateCommonMainRepeaTodoDbSchema` + `:shared:verifySqlDelightMigration` в одном графе — SUCCESS
+
+Bitrise: `install-missing-android-tools@3` сам ставит build-tools 36.0.0 (минимум AGP 9.1). Cache keys (`gradle-deps-k2410-`, `konan-k2410-`) считаются по `libs.versions.toml`, поэтому инвалидируются автоматически.
+
+iOS / SKIE / Xcode / moko Native — только Bitrise `primary`. `3.db` после generate не коммитить.

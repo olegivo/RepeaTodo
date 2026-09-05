@@ -13,7 +13,7 @@
 set -euo pipefail
 
 # --- Pinned versions -------------------------------------------------------
-JDK_APT_PACKAGE="openjdk-17-jdk-headless"           # AGP 8.13 + Gradle 8.13 need JDK 17
+JDK_APT_PACKAGE="openjdk-17-jdk-headless"           # AGP 9.1 + Gradle 9.3 need JDK 17
 JAVA_HOME_DIR="/usr/lib/jvm/java-17-openjdk-amd64"
 ANDROID_SDK_ROOT="${ANDROID_SDK_ROOT:-$HOME/android-sdk}"
 CMDLINE_TOOLS_ZIP="commandlinetools-linux-11076708_latest.zip"
